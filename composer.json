@@ -1,0 +1,25 @@
+{
+    "name": "alireza/laravel-file-explorer",
+    "description": "A laravel file manager",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alireza\\LaravelFileExplorer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alireza Mohammadi"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alireza\\LaravelFileExplorer\\LaravelFileExplorerServiceProvider"
+            ]
+        }
+    }
+}
