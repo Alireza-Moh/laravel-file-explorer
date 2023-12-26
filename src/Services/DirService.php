@@ -6,7 +6,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class DirectoryService
+class DirService
 {
     private Filesystem $storage;
     private string $diskName;
@@ -57,6 +57,7 @@ class DirectoryService
             $allDirs[] = [
                 "diskName" => $this->diskName,
                 "label" => basename($dir),
+                "path" => $dir,
                 "subDir" => $subDirs
             ];
         }
@@ -168,5 +169,9 @@ class DirectoryService
     public function getDirs(string $dirName): array
     {
         return $this->storage->directories($dirName);
+    }
+
+    private function getDirMetaData() {
+
     }
 }

@@ -4,7 +4,7 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Services\DiskService;
 use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
-use Alireza\LaravelFileExplorer\Services\DirectoryService;
+use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
@@ -33,7 +33,7 @@ class FileExplorerLoaderController extends Controller
      */
     public function loadDirItems(string $diskName, string $dirName): JsonResponse
     {
-        $directoryService = new DirectoryService($diskName);
+        $directoryService = new DirService($diskName);
 
         return response()->json([
             "dirName" => $dirName,
@@ -50,7 +50,7 @@ class FileExplorerLoaderController extends Controller
     {
         $config = new ExplorerConfig();
         $defaultDisk = $config->getDefaultDiskOnLoading();
-        $directoryService = new DirectoryService($defaultDisk);
+        $directoryService = new DirService($defaultDisk);
 
         $dirsForSelectedDisk = [
             "dirs" => $directoryService->getDiskDirs(),
