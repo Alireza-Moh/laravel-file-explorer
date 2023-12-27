@@ -32,10 +32,10 @@ class DirService
         $items = [];
 
         foreach ($folderContent as $item) {
-            $items[] = $this->getItemMetaData($item);
+            $items[] = $this->getItemMetaData($dirName, $item);
         }
 
-        $this->getFoldersMetaData($dirs, $items);
+        $this->getFoldersMetaData($dirName, $dirs, $items);
 
         return $items;
     }
@@ -70,50 +70,56 @@ class DirService
      *
      * @return array containing files on the disk.
      */
-    public function getDiskFiles(): array
+    public function getDiskFiles(string $dirName): array
     {
         $folderContent = $this->storage->files();
 
-        return array_map(function ($item) {
-            return $this->getItemMetaData($item);
+        return array_map(function ($dirName, $item) {
+            return $this->getItemMetaData($dirName, $item);
         }, $folderContent);
     }
 
     /**
      * Retrieve metadata for a specific item.
      *
+     * @param string $dirName The directory name.
      * @param string $item The item path.
      *
      * @return array Metadata information for the item.
      */
-    private function getItemMetaData(string $item): array
+    private function getItemMetaData(string $dirName, string $item): array
     {
         return [
+            'diskName' => $this->diskName,
+            'dirName' => $dirName,
             'name' => $this->getItemBaseName($item),
             'size' => $this->getFileSizeInKB($item) . ' KB',
             'lastModified' => $this->getLastModified($item),
             'type' => 'file',
-            "img" => "/vendor/laravel-file-explorer/img/file-earmark-fill.svg"
+            'path' => $item,
         ];
     }
 
     /**
      * Get a list of directories
      *
+     * @param string $dirName The directory name.
      * @param array $dirFromFolder directories.
      * @param array $items dir items.
      *
      * @return void
      */
-    private function getFoldersMetaData(array $dirFromFolder, array &$items): void
+    private function getFoldersMetaData(string $dirName, array $dirFromFolder, array &$items): void
     {
         foreach ($dirFromFolder as $dir) {
             $items[] = [
+                'diskName' => $this->diskName,
+                'dirName' => $dirName,
                 'name' => $this->getItemBaseName($dir),
                 'size' => "-",
                 'lastModified' => "-",
                 'type' => 'dir',
-                "img" => "/vendor/laravel-file-explorer/img/folder-fill.svg"
+                'path' => $dir,
             ];
         }
     }
@@ -169,9 +175,5 @@ class DirService
     public function getDirs(string $dirName): array
     {
         return $this->storage->directories($dirName);
-    }
-
-    private function getDirMetaData() {
-
     }
 }

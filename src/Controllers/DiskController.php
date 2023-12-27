@@ -17,11 +17,11 @@ class DiskController extends Controller
      */
     public function loadDiskDirs(string $diskName): JsonResponse
     {
-        $directoryService = new DirService($diskName);
-        $dirs = $directoryService->getDiskDirs();
+        $dirService = new DirService($diskName);
+        $dirs = $dirService->getDiskDirs();
 
         $selectedDir = "";
-        list($dirItems, $selectedDir) = $this->getSelectedDirItems($dirs, $selectedDir, $directoryService);
+        list($dirItems, $selectedDir) = $this->getSelectedDirItems($dirs, $selectedDir, $dirService);
 
         return response()->json([
             "dirs" => $dirs,
@@ -35,18 +35,18 @@ class DiskController extends Controller
      *
      * @param array $dirs Array of directories.
      * @param mixed $selectedDir Selected directory name.
-     * @param DirService $directoryService Instance of DirService.
+     * @param DirService $dirService
      *
      * @return array containing selected directory items and the selected directory name.
      */
-    public function getSelectedDirItems(array $dirs, mixed $selectedDir, DirService $directoryService): array
+    public function getSelectedDirItems(array $dirs, mixed $selectedDir, DirService $dirService): array
     {
         $dirItems = [];
         if (!empty($dirs)) {
             $selectedDir = $dirs[0]["label"];
-            $dirItems = $directoryService->getDirItems($selectedDir);
+            $dirItems = $dirService->getDirItems($selectedDir);
         } else {
-            $dirItems = $directoryService->getDiskFiles();
+            $dirItems = $dirService->getDiskFiles($selectedDir);
         }
 
         return array($dirItems, $selectedDir);

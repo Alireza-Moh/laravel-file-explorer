@@ -12,21 +12,21 @@ class DirController extends Controller
     /**
      * Rename a directory.
      *
-     * @param string            $diskName           The name of the disk.
-     * @param Request           $request
+     * @param string $diskName The name of the disk.
+     * @param string $dirName the old name of the directory
+     * @param Request $request http request
      * @param FileSystemService $fileSystemService
      *
      * @return JsonResponse successful/failed
      */
-    public function renameDir(string $diskName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    public function renameDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
     {
         $validatedData = $request->validate([
-            "oldName" => "required|string",
             "oldPath" => "required|string",
             "newPath" => "required|string",
         ]);
 
-        $result = $fileSystemService->renameDir($diskName, $validatedData["oldName"], $validatedData["oldPath"], $validatedData["newPath"]);
+        $result = $fileSystemService->renameDir($diskName, $dirName, $validatedData);
 
         return response()->json($result);
     }
