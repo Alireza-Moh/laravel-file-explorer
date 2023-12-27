@@ -148,7 +148,7 @@ class DirService
     private function getLastModified(string $item, string $format = 'Y-m-d H:i:s'): string
     {
         $lastModifiedTimestamp = $this->storage->lastModified($item);
-        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp);
+        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)->timezone('Europe/Vienna');
 
         return $lastModified->format($format);
     }

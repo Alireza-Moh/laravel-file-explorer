@@ -50,4 +50,16 @@ class DirController extends Controller
         $result = $fileSystemService->deleteDir($diskName, $dirName, $validatedData["path"]);
         return response()->json($result);
     }
+
+    public function createDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    {
+        $validatedData = $request->validate([
+            "path" => "required|string",
+            "type" => "required|string",
+        ]);
+
+        $result = $fileSystemService->create($diskName, $dirName, $validatedData);
+
+        return response()->json($result);
+    }
 }

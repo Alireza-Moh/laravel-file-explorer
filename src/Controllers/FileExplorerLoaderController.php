@@ -2,7 +2,6 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Services\DiskService;
 use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
@@ -38,7 +37,7 @@ class FileExplorerLoaderController extends Controller
         return response()->json([
             "dirName" => $dirName,
             "items" => $directoryService->getDirItems($dirName),
-        ], 200);
+        ]);
     }
 
     /**

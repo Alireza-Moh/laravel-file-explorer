@@ -50,6 +50,39 @@ class FileSystemService
         return $this->getResult($result, 'Directory deleted successfully', 'Failed to delete directory');
     }
 
+    public function create(string $diskName, string $dirName, array $validatedData): array
+    {
+        $result = null;
+        $message = null;
+
+        switch ($validatedData["type"]) {
+            case "file":
+                $result = Storage::disk($diskName)->put($validatedData["path"], "");
+                $message = $result ? "File created successfully" : "Failed to create file";
+                break;
+            case "dir":
+                $result = Storage::disk($diskName)->makeDirectory($validatedData["path"]);
+                $message = $result ? "Directory created successfully" : "Failed to create directory";
+                break;
+            default:
+                return [
+                    "result" => [
+                        'status' => "failed",
+                        'message' => "Invalid type",
+                        'items' => []
+                    ]
+                ];
+        }
+
+        return [
+            "result" => [
+                'status' => $result ? "success" : "failed",
+                'message' => $message,
+                'items' => $result ? $this->getDirItems($diskName, $dirName) : [],
+            ]
+        ];
+    }
+
     /**
      * Get the response based on the operation result
      *
@@ -80,5 +113,10 @@ class FileSystemService
     private function isDefaultDirectory(?string $defaultDirOnLoading, string $dirName): bool
     {
         return $defaultDirOnLoading && $defaultDirOnLoading == $dirName;
+    }
+
+    private function getDirItems(string $diskName, string $dirName): array
+    {
+        return (new DirService($diskName))->getDirItems($dirName);
     }
 }
