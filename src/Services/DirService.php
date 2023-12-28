@@ -97,6 +97,7 @@ class DirService
             'lastModified' => $this->getLastModified($item),
             'type' => 'file',
             'path' => $item,
+            "url" => $this->storage->url($item),
         ];
     }
 
