@@ -78,7 +78,7 @@ class FileSystemService
             "result" => [
                 'status' => $result ? "success" : "failed",
                 'message' => $message,
-                'items' => $result ? $this->getDirItems($diskName, $dirName) : [],
+                'items' => $this->getDirItems($diskName, $dirName),
             ]
         ];
     }

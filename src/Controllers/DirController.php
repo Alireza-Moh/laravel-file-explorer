@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
+use Alireza\LaravelFileExplorer\Services\DirService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,5 +62,23 @@ class DirController extends Controller
         $result = $fileSystemService->create($diskName, $dirName, $validatedData);
 
         return response()->json($result);
+    }
+
+    /**
+     * Load items from a specified directory.
+     *
+     * @param string $diskName The name of the disk.
+     * @param string $dirName The directory name.
+     *
+     * @return JsonResponse directory items.
+     */
+    public function loadDirItems(string $diskName, string $dirName): JsonResponse
+    {
+        $dirService = new DirService($diskName);
+
+        return response()->json([
+            "dirName" => $dirName,
+            "paginate" => $dirService->getDirItems($dirName),
+        ]);
     }
 }

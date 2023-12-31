@@ -23,24 +23,6 @@ class FileExplorerLoaderController extends Controller
     }
 
     /**
-     * Load items from a specified directory.
-     *
-     * @param string $diskName The name of the disk.
-     * @param string $dirName The directory name.
-     *
-     * @return JsonResponse directory items.
-     */
-    public function loadDirItems(string $diskName, string $dirName): JsonResponse
-    {
-        $directoryService = new DirService($diskName);
-
-        return response()->json([
-            "dirName" => $dirName,
-            "items" => $directoryService->getDirItems($dirName),
-        ]);
-    }
-
-    /**
      * Get default explorer data on initialization.
      *
      * @return array default explorer data.
@@ -49,10 +31,10 @@ class FileExplorerLoaderController extends Controller
     {
         $config = new ExplorerConfig();
         $defaultDisk = $config->getDefaultDiskOnLoading();
-        $directoryService = new DirService($defaultDisk);
+        $dirService = new DirService($defaultDisk);
 
         $dirsForSelectedDisk = [
-            "dirs" => $directoryService->getDiskDirs(),
+            "dirs" => $dirService->getDiskDirs(),
             "diskName" => $defaultDisk
         ];
 
@@ -61,7 +43,7 @@ class FileExplorerLoaderController extends Controller
             "dirsForSelectedDisk" => $dirsForSelectedDisk,
             "selectedDisk" => $config->getDefaultDiskOnLoading(),
             "selectedDir" => $config->getDefaultDirectoryOnLoading(),
-            "selectedDirItems" => $directoryService->getDirItems($config->getDefaultDirectoryOnLoading()),
+            "selectedDirItems" => $dirService->getDirItems($config->getDefaultDirectoryOnLoading()),
         ];
     }
 }

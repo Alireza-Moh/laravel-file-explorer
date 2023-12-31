@@ -161,7 +161,7 @@ class DirService
      *
      * @return string base name
      */
-    public function getItemBaseName(string $dir): string
+    private function getItemBaseName(string $dir): string
     {
         return basename($dir);
     }
@@ -173,7 +173,7 @@ class DirService
      *
      * @return array containing directories.
      */
-    public function getDirs(string $dirName): array
+    private function getDirs(string $dirName): array
     {
         return $this->storage->directories($dirName);
     }

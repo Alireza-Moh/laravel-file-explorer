@@ -15,7 +15,7 @@ Route::group([
 ], function () {
     Route::get('load-file-explorer', [FileExplorerLoaderController::class, 'initFileExplorer']);
     Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs']);
-    Route::get('disks/{diskName}/dirs/{dirName}', [FileExplorerLoaderController::class, 'loadDirItems']);
+    Route::get('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems']);
 
     Route::post('disks/{diskName}/dirs/{dirName}/new-file', [FileController::class, 'createFile']);
     Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir']);
