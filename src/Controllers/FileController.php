@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Services\DirService;
+use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Illuminate\Http\JsonResponse;
@@ -34,12 +34,9 @@ class FileController extends Controller
         return response()->json($result);
     }
 
-    public function createFile(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    public function createFile(string $diskName, string $dirName, CreateFileRequest $request, FileSystemService $fileSystemService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-            "type" => "required|string",
-        ]);
+        $validatedData = $request->validated();
 
         $result = $fileSystemService->create($diskName, $dirName, $validatedData);
 
