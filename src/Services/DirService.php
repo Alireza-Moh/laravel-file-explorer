@@ -89,6 +89,7 @@ class DirService
      */
     private function getItemMetaData(string $dirName, string $item): array
     {
+        $url = $this->storage->url($item);
         return [
             'diskName' => $this->diskName,
             'dirName' => $dirName,
@@ -97,7 +98,8 @@ class DirService
             'lastModified' => $this->getLastModified($item),
             'type' => 'file',
             'path' => $item,
-            "url" => $this->storage->url($item),
+            "url" => $url,
+            "extension" => pathinfo($item, PATHINFO_EXTENSION),
         ];
     }
 
@@ -121,6 +123,7 @@ class DirService
                 'lastModified' => "-",
                 'type' => 'dir',
                 'path' => $dir,
+                "extension" => null
             ];
         }
     }
