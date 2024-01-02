@@ -21,11 +21,12 @@ class DiskController extends Controller
         $dirs = $dirService->getDiskDirs();
 
         $selectedDir = "";
-        list($dirItems, $selectedDir) = $this->getSelectedDirItems($dirs, $selectedDir, $dirService);
+        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($dirs, $selectedDir, $dirService);
 
         return response()->json([
             "dirs" => $dirs,
             "selectedDir" => $selectedDir,
+            "selectedDirPath" => $selectedDirPath,
             "selectedDirItems" => $dirItems
         ]);
     }
@@ -44,11 +45,13 @@ class DiskController extends Controller
         $dirItems = [];
         if (!empty($dirs)) {
             $selectedDir = $dirs[0]["label"];
+            $selectedDirPath = $dirs[0]["path"];
             $dirItems = $dirService->getDirItems($selectedDir);
         } else {
             $dirItems = $dirService->getDiskFiles($selectedDir);
+            $selectedDirPath = $selectedDir;
         }
 
-        return array($dirItems, $selectedDir);
+        return array($dirItems, $selectedDir, $selectedDirPath);
     }
 }

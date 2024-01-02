@@ -72,13 +72,23 @@ class DirController extends Controller
      *
      * @return JsonResponse directory items.
      */
-    public function loadDirItems(string $diskName, string $dirName): JsonResponse
+    public function loadDirItems(string $diskName, string $dirName, Request $request): JsonResponse
     {
+        $validatedData = $request->validate([
+            "path" => "required|string",
+        ]);
         $dirService = new DirService($diskName);
+
+        $dirByLabel = $dirService->findDirectoryByLabel($dirName);
+        $selectedDirPath = null;
+        if ($dirByLabel !== null) {
+            $selectedDirPath = $dirByLabel['path'];
+        }
 
         return response()->json([
             "dirName" => $dirName,
-            "paginate" => $dirService->getDirItems($dirName),
+            "items" => $dirService->getDirItems($validatedData["path"]),
+            "selectedDirPath" => $selectedDirPath,
         ]);
     }
 }

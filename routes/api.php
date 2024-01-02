@@ -15,10 +15,11 @@ Route::group([
 ], function () {
     Route::get('load-file-explorer', [FileExplorerLoaderController::class, 'initFileExplorer']);
     Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs']);
-    Route::get('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems']);
 
     Route::post('disks/{diskName}/dirs/{dirName}/new-file', [FileController::class, 'createFile']);
     Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir']);
+    Route::post('disks/{diskName}/files/upload', [FileController::class, 'uploadFiles']);
+    Route::post('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems']);
 
     Route::put('disks/{diskName}/dirs/{dirName}', [DirController::class, 'renameDir']);
     Route::put('disks/{diskName}/files/{dirName}', [FileController::class, 'renameFile']);

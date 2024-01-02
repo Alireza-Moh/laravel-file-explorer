@@ -27,7 +27,7 @@ class FileExplorerLoaderController extends Controller
      *
      * @return array default explorer data.
      */
-    public function getDefaultExplorerDataOnInitialization(): array
+    private function getDefaultExplorerDataOnInitialization(): array
     {
         $config = new ExplorerConfig();
         $defaultDisk = $config->getDefaultDiskOnLoading();
@@ -38,12 +38,19 @@ class FileExplorerLoaderController extends Controller
             "diskName" => $defaultDisk
         ];
 
+        $dirByLabel = $dirService->findDirectoryByLabel($config->getDefaultDirectoryOnLoading());
+        $selectedDirPath = null;
+        if ($dirByLabel !== null) {
+            $selectedDirPath = $dirByLabel['path'];
+        }
+
         return [
             "disks" => $config->getDisks(),
             "dirsForSelectedDisk" => $dirsForSelectedDisk,
             "selectedDisk" => $config->getDefaultDiskOnLoading(),
             "selectedDir" => $config->getDefaultDirectoryOnLoading(),
-            "selectedDirItems" => $dirService->getDirItems($config->getDefaultDirectoryOnLoading()),
+            "selectedDirPath" => $selectedDirPath,
+            "selectedDirItems" => $dirService->getDirItems($config->getDefaultDirectoryOnLoading())
         ];
     }
 }

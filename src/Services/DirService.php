@@ -79,6 +79,27 @@ class DirService
         }, $folderContent);
     }
 
+    public function findDirectoryByLabel(string $label, array $dirs = []) {
+        if (empty($dirs)) {
+            $dirs = $this->getDiskDirs();
+        }
+
+        foreach ($dirs as $directory) {
+            if ($directory['label'] === $label) {
+                return $directory;
+            }
+
+            if (!empty($directory['subDir'])) {
+                $foundInSubDir = $this->findDirectoryByLabel($label, $directory['subDir']);
+                if ($foundInSubDir !== null) {
+                    return $foundInSubDir;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Retrieve metadata for a specific item.
      *
