@@ -6,9 +6,11 @@ use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Requests\UploadFilesRequest;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileController extends Controller
 {
@@ -51,5 +53,33 @@ class FileController extends Controller
         $result = $fileService->upload($diskName, $validatedData);
 
         return response()->json($result);
+    }
+
+    public function downloadFile(string $diskName, string $dirName, string $fileName, Request $request, FileService $fileService): StreamedResponse|JsonResponse
+    {
+        $validatedData = $request->validate([
+            "path" => "required|string",
+            "type" => "required|string"
+        ]);
+
+        if($validatedData["type"] === "dir") {
+            return $this->getJsonResponse("failed", "Can not download directory", 403);
+        }
+
+        try {
+            return $fileService->download($diskName, $validatedData);
+        } catch (Exception $e) {
+            return $this->getJsonResponse("failed", "File not found", 404);
+        }
+    }
+
+    private function getJsonResponse(string $statusType, string $message, int $httpStatus = 200): JsonResponse
+    {
+        return response()->json([
+            "result" => [
+                'status' => $statusType,
+                'message' => $message,
+            ]
+        ], $httpStatus);
     }
 }

@@ -3,6 +3,7 @@
 namespace Alireza\LaravelFileExplorer\Services;
 
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileService
 {
@@ -60,5 +61,10 @@ class FileService
                 'items' => $dirService->getDirItems($dirName),
             ]
         ];
+    }
+
+    public function download(string $diskName, array $validatedData): StreamedResponse
+    {
+        return Storage::disk($diskName)->download($validatedData["path"]);
     }
 }
