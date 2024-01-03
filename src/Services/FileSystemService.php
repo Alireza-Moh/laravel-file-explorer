@@ -50,6 +50,15 @@ class FileSystemService
         return $this->getResult($result, 'Directory deleted successfully', 'Failed to delete directory');
     }
 
+    /**
+     * Create a file or directory.
+     *
+     * @param string $diskName The disk name.
+     * @param string $dirName The directory name.
+     * @param array $validatedData Validated data containing "path" and "type" (file or dir).
+     *
+     * @return array Result of the operation with status, message, and updated items.
+     */
     public function create(string $diskName, string $dirName, array $validatedData): array
     {
         $result = null;
@@ -115,6 +124,14 @@ class FileSystemService
         return $defaultDirOnLoading && $defaultDirOnLoading == $dirName;
     }
 
+    /**
+     * Get items within a directory.
+     *
+     * @param string $diskName The disk name.
+     * @param string $dirName The directory name.
+     *
+     * @return array Items within the specified directory.
+     */
     private function getDirItems(string $diskName, string $dirName): array
     {
         return (new DirService($diskName))->getDirItems($dirName);

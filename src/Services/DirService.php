@@ -8,10 +8,21 @@ use Illuminate\Support\Facades\Storage;
 
 class DirService
 {
+    /**
+     * @var Filesystem $storage The instance of the filesystem.
+     */
     private Filesystem $storage;
+
+    /**
+     * @var string $diskName The name of the disk.
+     */
     private string $diskName;
 
-
+    /**
+     * DirService constructor.
+     *
+     * @param string $diskName The name of the disk.
+     */
     public function __construct(string $diskName)
     {
         $this->storage = Storage::disk($diskName);
@@ -79,7 +90,16 @@ class DirService
         }, $folderContent);
     }
 
-    public function findDirectoryByLabel(string $label, array $dirs = []) {
+    /**
+     * Find a directory by label.
+     *
+     * @param string $label The label to search for.
+     * @param array $dirs The list of directories.
+     *
+     * @return array|null The found directory or null if not found.
+     */
+    public function findDirectoryByLabel(string $label, array $dirs = []): ?array
+    {
         if (empty($dirs)) {
             $dirs = $this->getDiskDirs();
         }

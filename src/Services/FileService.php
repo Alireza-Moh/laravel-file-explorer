@@ -7,6 +7,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileService
 {
+    /**
+     * Rename a file.
+     *
+     * @param string $diskName The disk name.
+     * @param array $validatedData Validated data containing "oldPath" and "newPath".
+     *
+     * @return array Result of the operation with status and message.
+     */
     public function rename(string $diskName, array $validatedData): array
     {
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
@@ -19,6 +27,14 @@ class FileService
         ];
     }
 
+    /**
+     * Delete a file.
+     *
+     * @param string $diskName The disk name.
+     * @param array $validatedData Validated data containing "path".
+     *
+     * @return array Result of the operation with status and message.
+     */
     public function delete(string $diskName, array $validatedData): array
     {
         $result = Storage::disk($diskName)->delete($validatedData["path"]);
@@ -31,6 +47,14 @@ class FileService
         ];
     }
 
+    /**
+     * Upload files.
+     *
+     * @param string $diskName The disk name.
+     * @param array $validatedData Validated data containing "destination", "files", and "ifFileExist".
+     *
+     * @return array Result of the operation with status, message, and updated items.
+     */
     public function upload(string $diskName, array $validatedData): array
     {
         $result = null;
@@ -63,6 +87,14 @@ class FileService
         ];
     }
 
+    /**
+     * Download a file.
+     *
+     * @param string $diskName The disk name.
+     * @param array $validatedData Validated data containing "path".
+     *
+     * @return StreamedResponse Streamed response for file download.
+     */
     public function download(string $diskName, array $validatedData): StreamedResponse
     {
         return Storage::disk($diskName)->download($validatedData["path"]);

@@ -52,6 +52,15 @@ class DirController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Create a directory.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param Request $request
+     * @param FileSystemService $fileSystemService
+     * @return JsonResponse
+     */
     public function createDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
     {
         $validatedData = $request->validate([

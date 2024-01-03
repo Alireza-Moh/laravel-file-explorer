@@ -14,6 +14,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileController extends Controller
 {
+    /**
+     * Rename a file.
+     *
+     * @param string $diskName
+     * @param string $fileName
+     * @param Request $request
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
     public function renameFile(string $diskName, string $fileName, Request $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -26,6 +35,15 @@ class FileController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Delete a file.
+     *
+     * @param string $diskName
+     * @param string $fileName
+     * @param Request $request
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
     public function deleteFile(string $diskName, string $fileName, Request $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -37,6 +55,15 @@ class FileController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Create a file.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param CreateFileRequest $request
+     * @param FileSystemService $fileSystemService
+     * @return JsonResponse
+     */
     public function createFile(string $diskName, string $dirName, CreateFileRequest $request, FileSystemService $fileSystemService): JsonResponse
     {
         $validatedData = $request->validated();
@@ -46,6 +73,14 @@ class FileController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Upload files.
+     *
+     * @param string $diskName
+     * @param UploadFilesRequest $request
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
     public function uploadFiles(string $diskName, UploadFilesRequest $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
@@ -55,6 +90,16 @@ class FileController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Download a file.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param string $fileName
+     * @param Request $request
+     * @param FileService $fileService
+     * @return StreamedResponse|JsonResponse
+     */
     public function downloadFile(string $diskName, string $dirName, string $fileName, Request $request, FileService $fileService): StreamedResponse|JsonResponse
     {
         $validatedData = $request->validate([
@@ -73,6 +118,14 @@ class FileController extends Controller
         }
     }
 
+    /**
+     * Get a JSON response.
+     *
+     * @param string $statusType
+     * @param string $message
+     * @param int $httpStatus
+     * @return JsonResponse
+     */
     private function getJsonResponse(string $statusType, string $message, int $httpStatus = 200): JsonResponse
     {
         return response()->json([

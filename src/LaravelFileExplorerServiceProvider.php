@@ -7,6 +7,11 @@ use Illuminate\Support\ServiceProvider;
 
 class LaravelFileExplorerServiceProvider extends ServiceProvider
 {
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
     public function boot(): void {
         //publish config
         $this->publishes([
@@ -17,5 +22,10 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
     }
 
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
     public function register() {}
 }

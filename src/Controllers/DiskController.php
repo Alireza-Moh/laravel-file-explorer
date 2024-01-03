@@ -40,7 +40,7 @@ class DiskController extends Controller
      *
      * @return array containing selected directory items and the selected directory name.
      */
-    public function getSelectedDirItems(array $dirs, mixed $selectedDir, DirService $dirService): array
+    private function getSelectedDirItems(array $dirs, mixed $selectedDir, DirService $dirService): array
     {
         $dirItems = [];
         if (!empty($dirs)) {

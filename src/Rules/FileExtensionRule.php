@@ -8,6 +8,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class FileExtensionRule implements ValidationRule
 {
+    /**
+     * Validate the file extension.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param Closure $fail
+     * @return void
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $explorerConfig = new ExplorerConfig();

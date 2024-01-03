@@ -10,11 +10,21 @@ use Illuminate\Validation\Rules\File;
 
 class UploadFilesRequest extends FormRequest
 {
+    /**
+     * Set validation rule
+     *
+     * @return array
+     */
     public function rules(): array
     {
         return $this->getRules();
     }
 
+    /**
+     * Set validation error message
+     *
+     * @return array
+     */
     public function messages(): array
     {
         return [
@@ -31,6 +41,9 @@ class UploadFilesRequest extends FormRequest
     }
 
     /**
+     * Handle a failed validation attempt.
+     *
+     * @param Validator $validator
      * @throws HttpResponseException
      */
     protected function failedValidation(Validator $validator)
@@ -51,6 +64,11 @@ class UploadFilesRequest extends FormRequest
         throw new HttpResponseException($response);
     }
 
+    /**
+     * Get validation rules based on the settings in the repo config file
+     *
+     * @return array
+     */
     private function getRules(): array
     {
         $config = new ExplorerConfig();
