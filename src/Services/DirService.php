@@ -121,6 +121,33 @@ class DirService
     }
 
     /**
+     * Delete a directory.
+     *
+     * @param string $diskName The name of the disk
+     * @param array $validatedData dirs to delete
+     *
+     * @return array
+     */
+    public function delete(string $diskName, array $validatedData): array
+    {
+        if ($this->existDefaultDirOnLoadingInArray($validatedData["items"])) {
+            return [
+                "status" => "failed",
+                "message" => "You cannot delete the default directory because it's needed for initiation"
+            ];
+        }
+        $storage = Storage::disk($diskName);
+        foreach ($validatedData["items"] as $dir) {
+            $storage->deleteDirectory($dir["path"]);
+        }
+
+        return [
+            "status" => "success",
+            "message" => 'Directory deleted successfully'
+        ];
+    }
+
+    /**
      * Retrieve metadata for a specific item.
      *
      * @param string $dirName The directory name.
@@ -220,5 +247,20 @@ class DirService
     private function getDirs(string $dirName): array
     {
         return $this->storage->directories($dirName);
+    }
+
+    private function existDefaultDirOnLoadingInArray(array $dirs): bool
+    {
+        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
+
+        if ($defaultDirOnLoading === null) {
+            return false;
+        }
+        $filteredDirs = array_filter($dirs, function ($dir) use ($defaultDirOnLoading) {
+            return $dir['name'] === $defaultDirOnLoading;
+        });
+
+        return !empty($filteredDirs);
+
     }
 }

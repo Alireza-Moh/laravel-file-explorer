@@ -3,6 +3,7 @@
 namespace Alireza\LaravelFileExplorer\Services;
 
 use Illuminate\Support\Facades\Storage;
+use mysql_xdevapi\RowResult;
 
 class FileSystemService
 {
@@ -26,28 +27,6 @@ class FileSystemService
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
         return $this->getResult($result, 'Directory renamed successfully', 'Failed to rename directory');
-    }
-
-    /**
-     * Delete a directory.
-     *
-     * @param string $diskName The name of the disk
-     * @param string $dirName The directory name
-     * @param string $path     The path of the directory to delete.
-     *
-     * @return array The result of the delete operation.
-     */
-    public function deleteDir(string $diskName, string $dirName, string $path): array
-    {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
-
-        if ($this->isDefaultDirectory($defaultDirOnLoading, $dirName)) {
-            return $this->getResult(false, "", "You cannot delete the default directory because it's needed for initiation.");
-        }
-
-        $result = Storage::disk($diskName)->deleteDirectory($path);
-
-        return $this->getResult($result, 'Directory deleted successfully', 'Failed to delete directory');
     }
 
     /**
@@ -83,11 +62,13 @@ class FileSystemService
                 ];
         }
 
+        list($dirs, $items) = $this->getRefreshedDiskData($diskName, $validatedData["dirPath"]);
         return [
             "result" => [
                 'status' => $result ? "success" : "failed",
                 'message' => $message,
-                'items' => $this->getDirItems($diskName, $dirName),
+                'items' => $items,
+                "dirs" => $dirs,
             ]
         ];
     }
@@ -132,8 +113,10 @@ class FileSystemService
      *
      * @return array Items within the specified directory.
      */
-    private function getDirItems(string $diskName, string $dirName): array
+    private function getRefreshedDiskData(string $diskName, string $dirName): array
     {
-        return (new DirService($diskName))->getDirItems($dirName);
+        $dirService = new DirService($diskName);
+
+        return array($dirService->getDiskDirs(), $dirService->getDirItems($dirName));
     }
 }

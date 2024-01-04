@@ -20,11 +20,11 @@ Route::group([
     Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir']);
     Route::post('disks/{diskName}/files/upload', [FileController::class, 'uploadFiles']);
     Route::post('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems']);
-    Route::post('disks/{diskName}/dirs/{dirName}/files/{fileName}/download', [FileController::class, 'downloadFile']);
+    Route::post('disks/{diskName}/files/download', [FileController::class, 'downloadFile']);
 
     Route::put('disks/{diskName}/dirs/{dirName}', [DirController::class, 'renameDir']);
     Route::put('disks/{diskName}/files/{dirName}', [FileController::class, 'renameFile']);
 
-    Route::delete('disks/{diskName}/dirs/{dirName}', [DirController::class, 'deleteDir']);
-    Route::delete('disks/{diskName}/files/{fileName}', [FileController::class, 'deleteFile']);
+    Route::delete('disks/{diskName}/dirs/delete', [DirController::class, 'deleteDir']);
+    Route::delete('disks/{diskName}/files/delete', [FileController::class, 'deleteFile']);
 });

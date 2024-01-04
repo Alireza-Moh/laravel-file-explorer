@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
+use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Illuminate\Http\JsonResponse;
@@ -35,21 +36,18 @@ class DirController extends Controller
     /**
      * Delete a directory.
      *
-     * @param string            $diskName           The name of the disk.
-     * @param string            $dirName            The directory name to delete.
-     * @param Request           $request
-     * @param FileSystemService $fileSystemService
+     * @param string  $diskName
+     * @param DeleteItemRequest $request
      *
-     * @return JsonResponse successful/failed
+     * @return JsonResponse
      */
-    public function deleteDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    public function deleteDir(string $diskName, DeleteItemRequest $request): JsonResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-        ]);
+        $dirService = new DirService($diskName);
+        $validatedData = $request->validated();
 
-        $result = $fileSystemService->deleteDir($diskName, $dirName, $validatedData["path"]);
-        return response()->json($result);
+        $result = $dirService->delete($diskName, $validatedData);
+        return response()->json(["result" => $result]);
     }
 
     /**
@@ -66,6 +64,7 @@ class DirController extends Controller
         $validatedData = $request->validate([
             "path" => "required|string",
             "type" => "required|string",
+            "dirPath" => "required|string"
         ]);
 
         $result = $fileSystemService->create($diskName, $dirName, $validatedData);

@@ -3,6 +3,8 @@
 namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
+use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
+use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
 use Alireza\LaravelFileExplorer\Requests\UploadFilesRequest;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
@@ -10,7 +12,11 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipArchive;
 
 class FileController extends Controller
 {
@@ -39,16 +45,13 @@ class FileController extends Controller
      * Delete a file.
      *
      * @param string $diskName
-     * @param string $fileName
-     * @param Request $request
+     * @param DeleteItemRequest $request
      * @param FileService $fileService
      * @return JsonResponse
      */
-    public function deleteFile(string $diskName, string $fileName, Request $request, FileService $fileService): JsonResponse
+    public function deleteFile(string $diskName, DeleteItemRequest $request, FileService $fileService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-        ]);
+        $validatedData = $request->validated();
 
         $result = $fileService->delete($diskName, $validatedData);
 
@@ -94,45 +97,27 @@ class FileController extends Controller
      * Download a file.
      *
      * @param string $diskName
-     * @param string $dirName
-     * @param string $fileName
-     * @param Request $request
+     * @param DownloadFileRequest $request
      * @param FileService $fileService
-     * @return StreamedResponse|JsonResponse
+     * @return BinaryFileResponse|JsonResponse|StreamedResponse
      */
-    public function downloadFile(string $diskName, string $dirName, string $fileName, Request $request, FileService $fileService): StreamedResponse|JsonResponse
+    public function downloadFile(string $diskName, DownloadFileRequest $request, FileService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-            "type" => "required|string"
-        ]);
+        $validatedData = $request->validated();
 
-        if($validatedData["type"] === "dir") {
-            return $this->getJsonResponse("failed", "Can not download directory", 403);
+        if (count($validatedData["files"]) === 1) {
+            try {
+                return $fileService->download($diskName, $validatedData);
+            } catch (Exception $e) {
+                return response()->json([
+                    "result" => [
+                        "status" => "failed",
+                        "message" => "Failed to download files"
+                    ]
+                ], 404);
+            }
         }
 
-        try {
-            return $fileService->download($diskName, $validatedData);
-        } catch (Exception $e) {
-            return $this->getJsonResponse("failed", "File not found", 404);
-        }
-    }
-
-    /**
-     * Get a JSON response.
-     *
-     * @param string $statusType
-     * @param string $message
-     * @param int $httpStatus
-     * @return JsonResponse
-     */
-    private function getJsonResponse(string $statusType, string $message, int $httpStatus = 200): JsonResponse
-    {
-        return response()->json([
-            "result" => [
-                'status' => $statusType,
-                'message' => $message,
-            ]
-        ], $httpStatus);
+        return $fileService->downloadAsZip($diskName, $validatedData);
     }
 }
