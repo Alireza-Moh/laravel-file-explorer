@@ -2,7 +2,9 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
+use Alireza\LaravelFileExplorer\Requests\CreateDirRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
+use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Illuminate\Http\JsonResponse;
@@ -16,17 +18,14 @@ class DirController extends Controller
      *
      * @param string $diskName The name of the disk.
      * @param string $dirName the old name of the directory
-     * @param Request $request http request
+     * @param RenameItemRequest $request http request
      * @param FileSystemService $fileSystemService
      *
      * @return JsonResponse successful/failed
      */
-    public function renameDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    public function renameDir(string $diskName, string $dirName, RenameItemRequest $request, FileSystemService $fileSystemService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "oldPath" => "required|string",
-            "newPath" => "required|string",
-        ]);
+        $validatedData = $request->validated();
 
         $result = $fileSystemService->renameDir($diskName, $dirName, $validatedData);
 
@@ -55,18 +54,13 @@ class DirController extends Controller
      *
      * @param string $diskName
      * @param string $dirName
-     * @param Request $request
+     * @param CreateDirRequest $request
      * @param FileSystemService $fileSystemService
      * @return JsonResponse
      */
-    public function createDir(string $diskName, string $dirName, Request $request, FileSystemService $fileSystemService): JsonResponse
+    public function createDir(string $diskName, string $dirName, CreateDirRequest $request, FileSystemService $fileSystemService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-            "type" => "required|string",
-            "dirPath" => "required|string"
-        ]);
-
+        $validatedData = $request->validated();
         $result = $fileSystemService->create($diskName, $dirName, $validatedData);
 
         return response()->json($result);

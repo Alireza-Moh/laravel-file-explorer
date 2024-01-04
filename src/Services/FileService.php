@@ -69,25 +69,16 @@ class FileService
         foreach ($validatedData["files"] as $file) {
             $fileName = $file->getClientOriginalName();
 
-            if ($storage->exists($dirName . '/' . $fileName)) {
-                if ((int) $validatedData["ifFileExist"] === 1) { //overwrite file if exists
-                    $result = $storage->putFileAs($dirName, $file, $fileName);
-                }
-                else {
-                    $result = "skipped";
-                }
-            }
-            else {
-                $result = $storage->putFileAs($dirName, $file, $fileName);
+            if (!$storage->exists($dirName . '/' . $fileName) || (int)$validatedData["ifFileExist"] === 1) {
+                $storage->putFileAs($dirName, $file, $fileName);
             }
         }
-
         $dirService = new DirService($diskName);
 
         return [
             "result" => [
-                'status'  => $result ? "success" : "failed",
-                'message' => $result ? "File uploaded successfully" : "Failed to upload file",
+                'status'  => "success",
+                'message' => "File uploaded successfully",
                 'items' => $dirService->getDirItems($dirName),
             ]
         ];

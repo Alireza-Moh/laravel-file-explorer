@@ -3,7 +3,6 @@
 namespace Alireza\LaravelFileExplorer\Services;
 
 use Illuminate\Support\Facades\Storage;
-use mysql_xdevapi\RowResult;
 
 class FileSystemService
 {

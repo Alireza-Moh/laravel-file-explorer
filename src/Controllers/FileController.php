@@ -5,6 +5,7 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
+use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Requests\UploadFilesRequest;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
@@ -12,11 +13,8 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipArchive;
 
 class FileController extends Controller
 {
@@ -25,17 +23,13 @@ class FileController extends Controller
      *
      * @param string $diskName
      * @param string $fileName
-     * @param Request $request
+     * @param RenameItemRequest $request
      * @param FileService $fileService
      * @return JsonResponse
      */
-    public function renameFile(string $diskName, string $fileName, Request $request, FileService $fileService): JsonResponse
+    public function renameFile(string $diskName, string $fileName, RenameItemRequest $request, FileService $fileService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "oldPath" => "required|string",
-            "newPath" => "required|string",
-        ]);
-
+        $validatedData = $request->validated();
         $result = $fileService->rename($diskName, $validatedData);
 
         return response()->json($result);
@@ -70,7 +64,6 @@ class FileController extends Controller
     public function createFile(string $diskName, string $dirName, CreateFileRequest $request, FileSystemService $fileSystemService): JsonResponse
     {
         $validatedData = $request->validated();
-
         $result = $fileSystemService->create($diskName, $dirName, $validatedData);
 
         return response()->json($result);
@@ -87,7 +80,6 @@ class FileController extends Controller
     public function uploadFiles(string $diskName, UploadFilesRequest $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
-
         $result = $fileService->upload($diskName, $validatedData);
 
         return response()->json($result);
