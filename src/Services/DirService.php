@@ -162,7 +162,7 @@ class DirService
             'diskName' => $this->diskName,
             'dirName' => $dirName,
             'name' => $this->getItemBaseName($item),
-            'size' => $this->getFileSizeInKB($item) . ' KB',
+            'size' => $this->getFileSizeInKB($item),
             'lastModified' => $this->getLastModified($item),
             'type' => 'file',
             'path' => $item,
