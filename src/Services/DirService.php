@@ -249,6 +249,13 @@ class DirService
         return $this->storage->directories($dirName);
     }
 
+    /**
+     * Check if the default directory from default disk is present in the given array of directories.
+     *
+     * @param array $dirs An array containing directory information.
+     *
+     * @return bool
+     */
     private function existDefaultDirOnLoadingInArray(array $dirs): bool
     {
         $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
