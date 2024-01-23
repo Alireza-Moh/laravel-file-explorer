@@ -16,10 +16,14 @@ class FileExplorerLoaderController extends Controller
      */
     public function initFileExplorer(): JsonResponse
     {
-        return response()->json([
-            "status" => 200,
-            "data" => $this->getDefaultExplorerDataOnInitialization()
-        ]);
+        return response()->json(
+            [
+                "result" => [
+                    "status" => "success",
+                    "data" => $this->getDefaultExplorerDataOnInitialization()
+                ]
+            ]
+        );
     }
 
     /**
@@ -31,26 +35,48 @@ class FileExplorerLoaderController extends Controller
     {
         $config = new ExplorerConfig();
         $defaultDisk = $config->getDefaultDiskOnLoading();
-        $dirService = new DirService($defaultDisk);
+        $dirService = new DirService();
 
-        $dirsForSelectedDisk = [
-            "dirs" => $dirService->getDiskDirs(),
+        return [
+            "disks" => $config->getDisks(),
+            "dirsForSelectedDisk" => $this->getDirsForSelectedDisk($dirService, $defaultDisk),
+            "selectedDisk" => $config->getDefaultDiskOnLoading(),
+            "selectedDir" => $config->getDefaultDirectoryOnLoading(),
+            "selectedDirPath" =>  $this->getSelectedDirPath($dirService, $defaultDisk, $config),
+            "selectedDirItems" => $dirService->getDirItems($defaultDisk, $config->getDefaultDirectoryOnLoading())
+        ];
+    }
+
+    /**
+     *
+     * Get the directories of the default selected disk
+     * @param DirService $dirService
+     * @param string|null $defaultDisk
+     * @return array
+     */
+    private function getDirsForSelectedDisk(DirService $dirService, ?string $defaultDisk): array
+    {
+        return [
+            "dirs" => $dirService->getDiskDirs($defaultDisk),
             "diskName" => $defaultDisk
         ];
+    }
 
-        $dirByLabel = $dirService->findDirectoryByLabel($config->getDefaultDirectoryOnLoading());
+    /**
+     * Get the path of the default selected dir
+     *
+     * @param DirService $dirService
+     * @param string|null $defaultDisk
+     * @param ExplorerConfig $config
+     * @return mixed|null
+     */
+    private function getSelectedDirPath(DirService $dirService, ?string $defaultDisk, ExplorerConfig $config): mixed
+    {
+        $dirByLabel = $dirService->findDirectoryByName($defaultDisk, $config->getDefaultDirectoryOnLoading());
         $selectedDirPath = null;
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];
         }
-
-        return [
-            "disks" => $config->getDisks(),
-            "dirsForSelectedDisk" => $dirsForSelectedDisk,
-            "selectedDisk" => $config->getDefaultDiskOnLoading(),
-            "selectedDir" => $config->getDefaultDirectoryOnLoading(),
-            "selectedDirPath" => $selectedDirPath,
-            "selectedDirItems" => $dirService->getDirItems($config->getDefaultDirectoryOnLoading())
-        ];
+        return $selectedDirPath;
     }
 }

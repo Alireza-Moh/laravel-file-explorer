@@ -1,52 +1,30 @@
 <?php
-
 namespace Alireza\LaravelFileExplorer\Services;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class DirService
 {
     /**
-     * @var Filesystem $storage The instance of the filesystem.
-     */
-    private Filesystem $storage;
-
-    /**
-     * @var string $diskName The name of the disk.
-     */
-    private string $diskName;
-
-    /**
-     * DirService constructor.
-     *
-     * @param string $diskName The name of the disk.
-     */
-    public function __construct(string $diskName)
-    {
-        $this->storage = Storage::disk($diskName);
-        $this->diskName = $diskName;
-    }
-
-    /**
      * Retrieve items within a directory.
      *
-     * @param string $dirName The directory name.
+     * @param string $diskName
+     * @param string $dirName
      *
      * @return array items
      */
-    public function getDirItems(string $dirName): array
+    public function getDirItems(string $diskName, string $dirName): array
     {
-        $dirs = $this->getDirs($dirName);
-        $folderContent = $this->storage->files($dirName);
         $items = [];
 
-        foreach ($folderContent as $item) {
-            $items[] = $this->getItemMetaData($dirName, $item);
+        foreach (Storage::disk($diskName)->files($dirName) as $item) {
+            $items[] = $this->getItemMetaData($diskName, $dirName, $item);
         }
 
-        $this->getFoldersMetaData($dirName, $dirs, $items);
+        foreach ($this->getDirs($diskName, $dirName) as $dir) {
+            $items[] = $this->getFolderMetaData($diskName, $dirName, $dir);
+        }
 
         return $items;
     }
@@ -54,63 +32,51 @@ class DirService
     /**
      * Get directories within the disk.
      *
-     * @param string $dirName The directory name.
+     * @param string $diskName
+     * @param string $dirName
      *
      * @return array containing directories on the disk.
      */
-    public function getDiskDirs(string $dirName = ''): array
+    public function getDiskDirs(string $diskName, string $dirName = ''): array
     {
-        $dirs = $this->getDirs($dirName);
-        $allDirs = [];
-
-        foreach ($dirs as $dir) {
-            $subDirs = $this->getDiskDirs($dir);
-            $allDirs[] = [
-                "diskName" => $this->diskName,
-                "label" => basename($dir),
-                "path" => $dir,
-                "subDir" => $subDirs
-            ];
-        }
-
-        return $allDirs;
+        return $this->getDiskItems($diskName, $dirName, true);
     }
 
     /**
      * Get files within the disk.
      *
+     * @param string $diskName
+     * @param string $dirName
+     *
      * @return array containing files on the disk.
      */
-    public function getDiskFiles(string $dirName): array
+    public function getDiskFiles(string $diskName, string $dirName): array
     {
-        $folderContent = $this->storage->files();
-
-        return array_map(function ($dirName, $item) {
-            return $this->getItemMetaData($dirName, $item);
-        }, $folderContent);
+        return $this->getDiskItems($diskName, $dirName, false);
     }
 
     /**
      * Find a directory by label.
      *
-     * @param string $label The label to search for.
-     * @param array $dirs The list of directories.
+     * @param string $diskName
+     * @param string $dirName
+     * @param array $dirs
      *
      * @return array|null The found directory or null if not found.
      */
-    public function findDirectoryByLabel(string $label, array $dirs = []): ?array
+    public function findDirectoryByName(string $diskName, string $dirName, array $dirs = []): ?array
     {
         if (empty($dirs)) {
-            $dirs = $this->getDiskDirs();
+            $dirs = $this->getDiskDirs($diskName);
         }
 
         foreach ($dirs as $directory) {
-            if ($directory['label'] === $label) {
+            if ($directory['name'] === $dirName) {
                 return $directory;
             }
 
             if (!empty($directory['subDir'])) {
-                $foundInSubDir = $this->findDirectoryByLabel($label, $directory['subDir']);
+                $foundInSubDir = $this->findDirectoryByName($dirName, $directory['subDir']);
                 if ($foundInSubDir !== null) {
                     return $foundInSubDir;
                 }
@@ -123,7 +89,7 @@ class DirService
     /**
      * Delete a directory.
      *
-     * @param string $diskName The name of the disk
+     * @param string $diskName
      * @param array $validatedData dirs to delete
      *
      * @return array
@@ -147,106 +113,27 @@ class DirService
         ];
     }
 
-    /**
-     * Retrieve metadata for a specific item.
-     *
-     * @param string $dirName The directory name.
-     * @param string $item The item path.
-     *
-     * @return array Metadata information for the item.
-     */
-    private function getItemMetaData(string $dirName, string $item): array
-    {
-        $url = $this->storage->url($item);
-        return [
-            'diskName' => $this->diskName,
-            'dirName' => $dirName,
-            'name' => $this->getItemBaseName($item),
-            'size' => $this->getFileSizeInKB($item),
-            'lastModified' => $this->getLastModified($item),
-            'type' => 'file',
-            'path' => $item,
-            "url" => $url,
-            "extension" => pathinfo($item, PATHINFO_EXTENSION),
-        ];
-    }
 
-    /**
-     * Get a list of directories
-     *
-     * @param string $dirName The directory name.
-     * @param array $dirFromFolder directories.
-     * @param array $items dir items.
-     *
-     * @return void
-     */
-    private function getFoldersMetaData(string $dirName, array $dirFromFolder, array &$items): void
+    private function getDiskItems(string $diskName, string $dirName, bool $isDir): array
     {
-        foreach ($dirFromFolder as $dir) {
-            $items[] = [
-                'diskName' => $this->diskName,
-                'dirName' => $dirName,
-                'name' => $this->getItemBaseName($dir),
-                'size' => "-",
-                'lastModified' => "-",
-                'type' => 'dir',
-                'path' => $dir,
-                "extension" => null
-            ];
-        }
-    }
+        $items = $isDir ? $this->getDirs($diskName, $dirName) : Storage::disk($diskName)->files($dirName);
 
-    /**
-     * Get the size of a file in kilobytes.
-     *
-     * @param string $item The file path.
-     *
-     * @return float Size
-     */
-    private function getFileSizeInKB(string $item): float
-    {
-        $fileSizeBytes = $this->storage->size($item);
-        return round($fileSizeBytes / 1024, 2);
-    }
-
-    /**
-     * Get the last modified time of an item.
-     *
-     * @param string $item The item path.
-     * @param string $format The format of the timestamp (optional, default: 'Y-m-d H:i:s').
-     *
-     * @return string Last modified timestamp
-     */
-    private function getLastModified(string $item, string $format = 'Y-m-d H:i:s'): string
-    {
-        $lastModifiedTimestamp = $this->storage->lastModified($item);
-        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)->timezone('Europe/Vienna');
-
-        return $lastModified->format($format);
-    }
-
-    /**
-     * Get the base name of an item.
-     *
-     * @param string $dir The item path.
-     *
-     * @return string base name
-     */
-    private function getItemBaseName(string $dir): string
-    {
-        return basename($dir);
+        return array_map(function ($item) use ($diskName, $dirName, $isDir) {
+            return $isDir ? $this->getFolderMetaData($diskName, $dirName, $item) : $this->getItemMetaData($diskName, $dirName, $item);
+        }, $items);
     }
 
     /**
      * Get directories within a specified directory.
      *
-     * @param string $dirName The directory name.
+     * @param string $diskName
+     * @param string $dirName
      *
      * @return array containing directories.
      */
-    private function getDirs(string $dirName): array
+    private function getDirs(string $diskName, string $dirName): array
     {
-        return $this->storage->directories($dirName);
+        return Storage::disk($diskName)->directories($dirName);
     }
 
     /**
@@ -268,6 +155,54 @@ class DirService
         });
 
         return !empty($filteredDirs);
+    }
 
+    private function getItemMetaData(string $diskName, string $dirName, string $item): array
+    {
+        $url = Storage::disk($diskName)->url($item);
+        return [
+            'diskName' => $diskName,
+            'dirName' => $dirName,
+            'name' => $this->getItemBaseName($item),
+            'size' => $this->getFileSizeInKB($diskName, $item),
+            'lastModified' => $this->getLastModified($diskName, $item),
+            'type' => 'file',
+            'path' => $item,
+            "url" => $url,
+            "extension" => pathinfo($item, PATHINFO_EXTENSION),
+        ];
+    }
+
+    private function getFolderMetaData(string $diskName, string $dirName, string $dir): array
+    {
+        return [
+            'diskName' => $diskName,
+            'dirName' => $dirName,
+            'name' => $this->getItemBaseName($dir),
+            'size' => "-",
+            'lastModified' => "-",
+            'type' => 'dir',
+            'path' => $dir,
+            "extension" => null
+        ];
+    }
+
+    private function getItemBaseName(string $dir): string
+    {
+        return basename($dir);
+    }
+
+    private function getLastModified(string $diskName, string $item, string $format = 'Y-m-d H:i:s'): string
+    {
+        $lastModifiedTimestamp = Storage::disk($diskName)->lastModified($item);
+        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)->timezone('Europe/Vienna');
+
+        return $lastModified->format($format);
+    }
+
+    private function getFileSizeInKB(string $diskName, string $item): float
+    {
+        $fileSizeBytes = Storage::disk($diskName)->size($item);
+        return round($fileSizeBytes / 1024, 2);
     }
 }

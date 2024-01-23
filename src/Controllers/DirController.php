@@ -37,15 +37,15 @@ class DirController extends Controller
      *
      * @param string  $diskName
      * @param DeleteItemRequest $request
+     * @param DirService $dirService
      *
      * @return JsonResponse
      */
-    public function deleteDir(string $diskName, DeleteItemRequest $request): JsonResponse
+    public function deleteDir(string $diskName, DeleteItemRequest $request, DirService $dirService): JsonResponse
     {
-        $dirService = new DirService($diskName);
         $validatedData = $request->validated();
-
         $result = $dirService->delete($diskName, $validatedData);
+
         return response()->json(["result" => $result]);
     }
 
@@ -71,17 +71,18 @@ class DirController extends Controller
      *
      * @param string $diskName The name of the disk.
      * @param string $dirName The directory name.
+     * @param Request $request
+     * @param DirService $dirService
      *
      * @return JsonResponse directory items.
      */
-    public function loadDirItems(string $diskName, string $dirName, Request $request): JsonResponse
+    public function loadDirItems(string $diskName, string $dirName, Request $request, DirService $dirService): JsonResponse
     {
         $validatedData = $request->validate([
             "path" => "required|string",
         ]);
-        $dirService = new DirService($diskName);
 
-        $dirByLabel = $dirService->findDirectoryByLabel($dirName);
+        $dirByLabel = $dirService->findDirectoryByName($diskName, $dirName);
         $selectedDirPath = null;
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];
@@ -89,7 +90,7 @@ class DirController extends Controller
 
         return response()->json([
             "dirName" => $dirName,
-            "items" => $dirService->getDirItems($validatedData["path"]),
+            "items" => $dirService->getDirItems($diskName, $validatedData["path"]),
             "selectedDirPath" => $selectedDirPath,
         ]);
     }

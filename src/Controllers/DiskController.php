@@ -11,17 +11,16 @@ class DiskController extends Controller
     /**
      * Load directories for a specified disk.
      *
-     * @param string $diskName The name of the disk.
-     *
-     * @return JsonResponse The directories of the disk
+     * @param string $diskName
+     * @param DirService $dirService
+     * @return JsonResponse
      */
-    public function loadDiskDirs(string $diskName): JsonResponse
+    public function loadDiskDirs(string $diskName, DirService $dirService): JsonResponse
     {
-        $dirService = new DirService($diskName);
-        $dirs = $dirService->getDiskDirs();
+        $dirs = $dirService->getDiskDirs($diskName);
 
         $selectedDir = "";
-        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($dirs, $selectedDir, $dirService);
+        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($diskName, $dirs, $selectedDir, $dirService);
 
         return response()->json([
             "dirs" => $dirs,
@@ -34,21 +33,21 @@ class DiskController extends Controller
     /**
      * Get selected directory items.
      *
-     * @param array $dirs Array of directories.
-     * @param mixed $selectedDir Selected directory name.
+     * @param string $diskName
+     * @param array $dirs
+     * @param mixed $selectedDir
      * @param DirService $dirService
      *
-     * @return array containing selected directory items and the selected directory name.
+     * @return array containing
      */
-    private function getSelectedDirItems(array $dirs, mixed $selectedDir, DirService $dirService): array
+    private function getSelectedDirItems(string $diskName, array $dirs, mixed $selectedDir, DirService $dirService): array
     {
-        $dirItems = [];
         if (!empty($dirs)) {
-            $selectedDir = $dirs[0]["label"];
+            $selectedDir = $dirs[0]["name"];
             $selectedDirPath = $dirs[0]["path"];
-            $dirItems = $dirService->getDirItems($selectedDir);
+            $dirItems = $dirService->getDirItems($diskName, $selectedDir);
         } else {
-            $dirItems = $dirService->getDiskFiles($selectedDir);
+            $dirItems = $dirService->getDiskFiles($diskName, $selectedDir);
             $selectedDirPath = $selectedDir;
         }
 

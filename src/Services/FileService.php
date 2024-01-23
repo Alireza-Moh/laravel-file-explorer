@@ -14,10 +14,10 @@ class FileService
     /**
      * Rename a file.
      *
-     * @param string $diskName The disk name.
-     * @param array $validatedData Validated data containing "oldPath" and "newPath".
+     * @param string $diskName
+     * @param array $validatedData Validated data
      *
-     * @return array Result of the operation with status and message.
+     * @return array Result of the operation
      */
     public function rename(string $diskName, array $validatedData): array
     {
@@ -34,10 +34,10 @@ class FileService
     /**
      * Delete a file.
      *
-     * @param string $diskName The disk name.
-     * @param array $validatedData Validated data containing "path".
+     * @param string $diskName
+     * @param array $validatedData Validated data
      *
-     * @return array Result of the operation with status and message.
+     * @return array Result of the operation
      */
     public function delete(string $diskName, array $validatedData): array
     {
@@ -56,14 +56,13 @@ class FileService
     /**
      * Upload files.
      *
-     * @param string $diskName The disk name.
-     * @param array $validatedData Validated data containing "destination", "files", and "ifFileExist".
+     * @param string $diskName
+     * @param array $validatedData Validated data
      *
-     * @return array Result of the operation with status, message, and updated items.
+     * @return array Result of the operation
      */
     public function upload(string $diskName, array $validatedData): array
     {
-        $result = null;
         $storage = Storage::disk($diskName);
         $dirName = $validatedData["destination"];
         foreach ($validatedData["files"] as $file) {
@@ -73,13 +72,12 @@ class FileService
                 $storage->putFileAs($dirName, $file, $fileName);
             }
         }
-        $dirService = new DirService($diskName);
 
         return [
             "result" => [
                 'status'  => "success",
                 'message' => "File uploaded successfully",
-                'items' => $dirService->getDirItems($dirName),
+                'items' => (new DirService())->getDirItems($diskName, $dirName),
             ]
         ];
     }
@@ -87,8 +85,8 @@ class FileService
     /**
      * Download a file.
      *
-     * @param string $diskName The disk name.
-     * @param array $validatedData Validated data containing "path".
+     * @param string $diskName
+     * @param array $validatedData Validated data
      *
      * @return StreamedResponse Streamed response for file download.
      */
@@ -100,8 +98,9 @@ class FileService
     /**
      * Downloads files as a ZIP archive.
      *
-     * @param string $diskName The name of the disk
+     * @param string $diskName
      * @param array $validatedData Validated data
+     *
      * @return BinaryFileResponse|JsonResponse
      */
     public function downloadAsZip(string $diskName, array $validatedData): BinaryFileResponse|JsonResponse
@@ -127,10 +126,11 @@ class FileService
     /**
      * Creates a ZIP archive.
      *
-     * @param string $zipFileName Name of the ZIP file
-     * @param string $diskName The name of the disk
+     * @param string $zipFileName
+     * @param string $diskName
      * @param array $files Files to include in the ZIP archive.
-     * @return bool True if ZIP creation was successful, otherwise false.
+     *
+     * @return bool
      */
     private function createZipArchive(string $zipFileName, string $diskName, array $files): bool
     {
@@ -148,9 +148,10 @@ class FileService
     /**
      * Adds files to ZIP archive.
      *
-     * @param ZipArchive $zip The ZipArchive instance.
-     * @param string $diskName The name of the disk containing the files.
+     * @param ZipArchive $zip
+     * @param string $diskName
      * @param array $files Files to include in the ZIP archive.
+     *
      * @return void
      */
     private function addFilesToZip(ZipArchive $zip, string $diskName, array $files): void
