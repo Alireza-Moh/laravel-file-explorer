@@ -18,11 +18,11 @@ class DirService
     {
         $items = [];
         foreach (Storage::disk($diskName)->files($dirName) as $item) {
-            $items[] = $this->getItemMetaData($diskName, $dirName, $item);
+            $items[] = $this->getMetaData($diskName, $dirName, $item, "file");
         }
 
         foreach ($this->getDirs($diskName, $dirName) as $dir) {
-            $items[] = $this->getDirMetaData($diskName, $dirName, $dir);
+            $items[] = $this->getMetaData($diskName, $dirName, $dir, "dir");
         }
 
         return $items;
@@ -66,7 +66,7 @@ class DirService
         $dirContent = Storage::disk($diskName)->files();
 
         return array_map(function ($diskName, $dirName, $item) {
-            return $this->getItemMetaData($diskName, $dirName, $item);
+            return $this->getMetaData($diskName, $dirName, $item, "file");
         }, $dirContent);
     }
 
@@ -132,46 +132,32 @@ class DirService
      *
      * @param string $diskName
      * @param string $dirName
-     * @param string $item The item path.
-     *
+     * @param string $path
+     * @param string $type
      * @return array Metadata information for the item.
      */
-    private function getItemMetaData(string $diskName, string $dirName, string $item): array
+    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
     {
-        $url = Storage::disk($diskName)->url($item);
-        return [
+        $url = Storage::disk($diskName)->url($path);
+        $commonMetaData = [
             'diskName' => $diskName,
             'dirName' => $dirName,
-            'name' => basename($item),
-            'size' => $this->getFileSizeInKB($diskName, $item),
-            'lastModified' => $this->getLastModified($diskName, $item),
-            'type' => 'file',
-            'path' => $item,
-            "url" => $url,
-            "extension" => pathinfo($item, PATHINFO_EXTENSION),
-        ];
-    }
-
-    /**
-     * Get a list of directories
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @param string $dirPath
-     * @return array
-     */
-    private function getDirMetaData(string $diskName, string $dirName, string $dirPath): array
-    {
-        return [
-            'diskName' => $diskName,
-            'dirName' => $dirName,
-            'name' => basename($dirPath),
+            'name' => basename($path),
+            'path' => $path,
+            'type' => $type,
             'size' => "-",
             'lastModified' => "-",
-            'type' => 'dir',
-            'path' => $dirPath,
-            "extension" => null
+            'extension' => null,
+            'url' => $url,
         ];
+
+        if ($type === 'file') {
+            $commonMetaData['size'] = $this->getFileSizeInKB($diskName, $path);
+            $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
+            $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
+        }
+
+        return $commonMetaData;
     }
 
     /**
