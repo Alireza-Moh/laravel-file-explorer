@@ -3,3 +3,5 @@
 /.vscode
 /.phpunit.cache
 .phpunit.result.cache
+/workbench
+phpunit.xml.bak

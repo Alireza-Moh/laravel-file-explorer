@@ -8,6 +8,11 @@
             "Alireza\\LaravelFileExplorer\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Alireza\\LaravelFileExplorer\\tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Alireza Mohammadi"
@@ -23,5 +28,14 @@
                 "Alireza\\LaravelFileExplorer\\LaravelFileExplorerServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev",
+        "orchestra/testbench": "9.x-dev"
     }
 }
