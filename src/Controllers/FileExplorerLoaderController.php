@@ -51,10 +51,10 @@ class FileExplorerLoaderController extends Controller
      *
      * Get the directories of the default selected disk
      * @param DirService $dirService
-     * @param string|null $defaultDisk
+     * @param string $defaultDisk
      * @return array
      */
-    private function getDirsForSelectedDisk(DirService $dirService, ?string $defaultDisk): array
+    private function getDirsForSelectedDisk(DirService $dirService, string $defaultDisk): array
     {
         return [
             "dirs" => $dirService->getDiskDirs($defaultDisk),
@@ -66,14 +66,14 @@ class FileExplorerLoaderController extends Controller
      * Get the path of the default selected dir
      *
      * @param DirService $dirService
-     * @param string|null $defaultDisk
+     * @param string $defaultDisk
      * @param ExplorerConfig $config
      * @return mixed|null
      */
-    private function getSelectedDirPath(DirService $dirService, ?string $defaultDisk, ExplorerConfig $config): mixed
+    private function getSelectedDirPath(DirService $dirService, string $defaultDisk, ExplorerConfig $config): string
     {
         $dirByLabel = $dirService->findDirectoryByName($defaultDisk, $config->getDefaultDirectoryOnLoading());
-        $selectedDirPath = null;
+        $selectedDirPath = "";
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];
         }

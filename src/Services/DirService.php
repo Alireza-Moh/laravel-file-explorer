@@ -65,7 +65,7 @@ class DirService
     {
         $dirContent = Storage::disk($diskName)->files();
 
-        return array_map(function ($diskName, $dirName, $item) {
+        return array_map(function ($item) use ($diskName, $dirName) {
             return $this->getMetaData($diskName, $dirName, $item, "file");
         }, $dirContent);
     }

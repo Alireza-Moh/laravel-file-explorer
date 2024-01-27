@@ -11,7 +11,6 @@ use Alireza\LaravelFileExplorer\Services\FileService;
 use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -91,6 +90,7 @@ class FileController extends Controller
      * @param string $diskName
      * @param DownloadFileRequest $request
      * @param FileService $fileService
+     *
      * @return BinaryFileResponse|JsonResponse|StreamedResponse
      */
     public function downloadFile(string $diskName, DownloadFileRequest $request, FileService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse

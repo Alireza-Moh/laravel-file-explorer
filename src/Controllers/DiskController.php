@@ -19,8 +19,7 @@ class DiskController extends Controller
     {
         $dirs = $dirService->getDiskDirs($diskName);
 
-        $selectedDir = "";
-        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($diskName, $dirs, $selectedDir, $dirService);
+        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($diskName, $dirs, $dirService);
 
         return response()->json([
             "dirs" => $dirs,
@@ -35,13 +34,13 @@ class DiskController extends Controller
      *
      * @param string $diskName
      * @param array $dirs
-     * @param mixed $selectedDir
      * @param DirService $dirService
      *
      * @return array containing
      */
-    private function getSelectedDirItems(string $diskName, array $dirs, mixed $selectedDir, DirService $dirService): array
+    private function getSelectedDirItems(string $diskName, array $dirs, DirService $dirService): array
     {
+        $selectedDir = "";
         if (!empty($dirs)) {
             $selectedDir = $dirs[0]["name"];
             $selectedDirPath = $dirs[0]["path"];
