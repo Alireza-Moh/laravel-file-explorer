@@ -35,7 +35,7 @@ class DeleteItemRequest extends FormRequest
         $errors = $validator->errors();
 
         $response = response()->json([
-            'message' => 'Invalid data send',
+            'message' => 'Invalid data sent',
             'errors' => $errors->messages(),
         ], 422);
 

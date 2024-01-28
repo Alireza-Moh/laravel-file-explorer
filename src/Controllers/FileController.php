@@ -8,7 +8,6 @@ use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Requests\UploadFilesRequest;
 use Alireza\LaravelFileExplorer\Services\FileService;
-use Alireza\LaravelFileExplorer\Services\FileSystemService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -29,7 +28,7 @@ class FileController extends Controller
     public function renameFile(string $diskName, string $fileName, RenameItemRequest $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileService->rename($diskName, $validatedData);
+        $result = $fileService->rename($diskName, $fileName, $validatedData);
 
         return response()->json($result);
     }
@@ -57,13 +56,13 @@ class FileController extends Controller
      * @param string $diskName
      * @param string $dirName
      * @param CreateFileRequest $request
-     * @param FileSystemService $fileSystemService
+     * @param FileService $fileService
      * @return JsonResponse
      */
-    public function createFile(string $diskName, string $dirName, CreateFileRequest $request, FileSystemService $fileSystemService): JsonResponse
+    public function createFile(string $diskName, string $dirName, CreateFileRequest $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileSystemService->create($diskName, $dirName, $validatedData);
+        $result = $fileService->create($diskName, $validatedData);
 
         return response()->json($result);
     }

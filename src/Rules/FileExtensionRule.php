@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Rules;
 
-use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
+use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -18,11 +18,9 @@ class FileExtensionRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $explorerConfig = new ExplorerConfig();
-
         $extension = pathinfo($value, PATHINFO_EXTENSION);
 
-        if (!in_array($extension, $explorerConfig->getAllowedFileExtensions())) {
+        if (!in_array($extension, ConfigRepository::getAllowedFileExtensions())) {
             $fail("The $extension extension is not allowed.");
         }
     }

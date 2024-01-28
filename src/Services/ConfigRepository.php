@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Services;
 
-final class ExplorerConfig
+final class ConfigRepository
 {
     /**
      * Get the default disk on loading.

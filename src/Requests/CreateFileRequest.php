@@ -22,8 +22,7 @@ class CreateFileRequest extends FormRequest
                 "string",
                 new FileExtensionRule()
             ],
-            "type" => "required|string",
-            "dirPath" => "required|string"
+            "destination" => "required|string"
         ];
     }
 
@@ -38,7 +37,7 @@ class CreateFileRequest extends FormRequest
         $errors = $validator->errors();
 
         $response = response()->json([
-            'message' => 'Invalid data send',
+            'message' => 'Invalid data sent',
             'errors' => $errors->messages(),
         ], 422);
 

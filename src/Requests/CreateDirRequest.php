@@ -18,8 +18,7 @@ class CreateDirRequest extends FormRequest
     {
         return [
             "path" => "required|string",
-            "type" => "required|string",
-            "dirPath" => "required|string"
+            "destination" => "required|string"
         ];
     }
 
@@ -34,7 +33,7 @@ class CreateDirRequest extends FormRequest
         $errors = $validator->errors();
 
         $response = response()->json([
-            'message' => 'Invalid data send',
+            'message' => 'Invalid data sent',
             'errors' => $errors->messages(),
         ], 422);
 

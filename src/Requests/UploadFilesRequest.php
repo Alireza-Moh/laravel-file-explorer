@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
-use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
+use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -57,7 +57,7 @@ class UploadFilesRequest extends FormRequest
         }
 
         $response = response()->json([
-            'message' => 'Invalid data send',
+            'message' => 'Invalid data sent',
             'errors' => $errors
         ], 422);
 
@@ -71,9 +71,8 @@ class UploadFilesRequest extends FormRequest
      */
     private function getRules(): array
     {
-        $config = new ExplorerConfig();
-        $maxFileSize = $config->getMaxAllowedFileSize();
-        $allowedFileExtensions = $config->getAllowedFileExtensions();
+        $maxFileSize = ConfigRepository::getMaxAllowedFileSize();
+        $allowedFileExtensions = ConfigRepository::getAllowedFileExtensions();
 
         $rules = [
             "ifFileExist" => ["required", "numeric", "in:0,1"],

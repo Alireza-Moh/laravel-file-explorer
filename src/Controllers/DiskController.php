@@ -19,18 +19,18 @@ class DiskController extends Controller
     {
         $dirs = $dirService->getDiskDirs($diskName);
 
-        list($dirItems, $selectedDir, $selectedDirPath) = $this->getSelectedDirItems($diskName, $dirs, $dirService);
+        list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs, $dirService);
 
         return response()->json([
             "dirs" => $dirs,
             "selectedDir" => $selectedDir,
             "selectedDirPath" => $selectedDirPath,
-            "selectedDirItems" => $dirItems
+            "selectedDirItems" => $diskItems
         ]);
     }
 
     /**
-     * Get selected directory items.
+     * Get disk data.
      *
      * @param string $diskName
      * @param array $dirs
@@ -38,18 +38,18 @@ class DiskController extends Controller
      *
      * @return array containing
      */
-    private function getSelectedDirItems(string $diskName, array $dirs, DirService $dirService): array
+    private function getDiskData(string $diskName, array $dirs, DirService $dirService): array
     {
+        $diskItems = $dirService->getDiskItems($diskName);
         $selectedDir = "";
-        if (!empty($dirs)) {
-            $selectedDir = $dirs[0]["name"];
-            $selectedDirPath = $dirs[0]["path"];
-            $dirItems = $dirService->getDirItems($diskName, $selectedDir);
-        } else {
-            $dirItems = $dirService->getDiskFiles($diskName, $selectedDir);
-            $selectedDirPath = $selectedDir;
+        $selectedDirPath = "";
+        if (empty($diskItems)) {
+            if (!empty($dirs)) {
+                $selectedDir = $dirs[0]["name"];
+                $selectedDirPath = $dirs[0]["path"];
+                $diskItems = $dirService->getDirItems($diskName, $selectedDir);
+            }
         }
-
-        return array($dirItems, $selectedDir, $selectedDirPath);
+        return array($diskItems, $selectedDir, $selectedDirPath);
     }
 }

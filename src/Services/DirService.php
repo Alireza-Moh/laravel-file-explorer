@@ -1,11 +1,14 @@
 <?php
 namespace Alireza\LaravelFileExplorer\Services;
 
-use Illuminate\Support\Carbon;
+use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
+use Alireza\LaravelFileExplorer\Utilities\DirManager;
 use Illuminate\Support\Facades\Storage;
 
-class DirService
+class DirService extends BaseItemManager implements ItemOperations
 {
+    use DirManager;
+
     /**
      * Retrieve items within a directory.
      *
@@ -16,16 +19,10 @@ class DirService
      */
     public function getDirItems(string $diskName, string $dirName): array
     {
-        $items = [];
-        foreach (Storage::disk($diskName)->files($dirName) as $item) {
-            $items[] = $this->getMetaData($diskName, $dirName, $item, "file");
-        }
-
-        foreach ($this->getDirs($diskName, $dirName) as $dir) {
-            $items[] = $this->getMetaData($diskName, $dirName, $dir, "dir");
-        }
-
-        return $items;
+        return array_merge(
+            $this->getDirItemsByType($diskName, 'file', dirName: $dirName),
+            $this->getDirItemsByType($diskName, 'dir', dirName: $dirName)
+        );
     }
 
     /**
@@ -38,7 +35,7 @@ class DirService
      */
     public function getDiskDirs(string $diskName, string $dirName = ''): array
     {
-        $dirs = $this->getDirs($diskName, $dirName);
+        $dirs = Storage::disk($diskName)->directories($dirName);
         $allDirs = [];
 
         foreach ($dirs as $dir) {
@@ -58,16 +55,14 @@ class DirService
      * Get files within the disk.
      *
      * @param string $diskName
-     * @param string $dirName
      * @return array
      */
-    public function getDiskFiles(string $diskName, string $dirName): array
+    public function getDiskItems(string $diskName): array
     {
-        $dirContent = Storage::disk($diskName)->files();
-
-        return array_map(function ($item) use ($diskName, $dirName) {
-            return $this->getMetaData($diskName, $dirName, $item, "file");
-        }, $dirContent);
+        return array_merge(
+            $this->getDirItemsByType($diskName, 'file', false),
+            $this->getDirItemsByType($diskName, 'dir', false)
+        );
     }
 
     /**
@@ -121,27 +116,65 @@ class DirService
             $storage->deleteDirectory($dir["path"]);
         }
 
-        return [
-            "status" => "success",
-            "message" => 'Directory deleted successfully'
-        ];
+        return $this->getResponse(true, success: "Directory deleted successfully");
+    }
+
+    /**
+     * Rename a directory.
+     *
+     * @param string $diskName
+     * @param string $oldName The old name of the directory.
+     * @param array $validatedData
+     *
+     * @return array The result of the rename operation.
+     */
+    public function rename(string $diskName, string $oldName, array $validatedData): array
+    {
+        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
+        if ($this->isDefaultDirectory($defaultDirOnLoading, $oldName)) {
+            return $this->getResponse(
+                false,
+                failure: "You cannot rename the default directory because it's needed for initiation."
+            );
+        }
+        $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
+
+        return $this->getResponse(
+            $result,
+            'Directory renamed successfully',
+            'Failed to rename directory'
+        );
+    }
+
+    /**
+     * Create a directory
+     *
+     * @param string $diskName
+     * @param array $validatedData Validated data for directory creation.
+     *
+     * @return array Result of the directory creation.
+     */
+    public function create(string $diskName, array $validatedData): array
+    {
+        $result = Storage::disk($diskName)->makeDirectory($validatedData["path"]);
+        $message = $result ? "Directory created successfully" : "Failed to create directory";
+
+        return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
     }
 
     /**
      * Retrieve metadata for a specific item.
      *
      * @param string $diskName
-     * @param string $dirName
      * @param string $path
      * @param string $type
      * @return array Metadata information for the item.
      */
-    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
+    private function getMetaData(string $diskName, string $path, string $type): array
     {
         $url = Storage::disk($diskName)->url($path);
         $commonMetaData = [
             'diskName' => $diskName,
-            'dirName' => $dirName,
             'name' => basename($path),
             'path' => $path,
             'type' => $type,
@@ -158,70 +191,5 @@ class DirService
         }
 
         return $commonMetaData;
-    }
-
-    /**
-     * Get the size of a file in kilobytes.
-     *
-     * @param string $diskName
-     * @param string $item The file path.
-     *
-     * @return float Size
-     */
-    private function getFileSizeInKB(string $diskName, string $item): float
-    {
-        $fileSizeBytes = Storage::disk($diskName)->size($item);
-        return round($fileSizeBytes / 1024, 2);
-    }
-
-    /**
-     * Get the last modified time of an item.
-     *
-     * @param string $diskName
-     * @param string $item The item path.
-     * @param string $format
-     *
-     * @return string
-     */
-    private function getLastModified(string $diskName, string $item, string $format = 'Y-m-d H:i:s'): string
-    {
-        $lastModifiedTimestamp = Storage::disk($diskName)->lastModified($item);
-        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)->timezone('Europe/Vienna');
-
-        return $lastModified->format($format);
-    }
-
-    /**
-     * Get directories within a specified directory.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     *
-     * @return array containing directories.
-     */
-    private function getDirs(string $diskName, string $dirName): array
-    {
-        return Storage::disk($diskName)->directories($dirName);
-    }
-
-    /**
-     * Check if the default directory from default disk is present in the given array of directories.
-     *
-     * @param array $dirs An array containing directory information.
-     *
-     * @return bool
-     */
-    private function existDefaultDirOnLoadingInArray(array $dirs): bool
-    {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
-
-        if ($defaultDirOnLoading === null) {
-            return false;
-        }
-        $filteredDirs = array_filter($dirs, function ($dir) use ($defaultDirOnLoading) {
-            return $dir['name'] === $defaultDirOnLoading;
-        });
-
-        return !empty($filteredDirs);
     }
 }

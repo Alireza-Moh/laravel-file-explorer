@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Services;
 
+use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -9,26 +10,22 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 
-class FileService
+class FileService extends BaseItemManager implements ItemOperations
 {
     /**
      * Rename a file.
      *
      * @param string $diskName
+     * @param string $oldName
      * @param array $validatedData Validated data
      *
      * @return array Result of the operation
      */
-    public function rename(string $diskName, array $validatedData): array
+    public function rename(string $diskName, string $oldName, array $validatedData): array
     {
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
-        return [
-            "result" => [
-                'status'  => $result ? "success" : "failed",
-                'message' => $result ? "File renamed successfully" : "Failed to rename file",
-            ]
-        ];
+        return $this->getResponse($result, "File renamed successfully", "Failed to rename file");
     }
 
     /**
@@ -42,15 +39,9 @@ class FileService
     public function delete(string $diskName, array $validatedData): array
     {
         $itemToDelete = collect($validatedData["items"])->pluck("path")->toArray();
-
         $result = Storage::disk($diskName)->delete($itemToDelete);
 
-        return [
-            "result" => [
-                'status'  => $result ? "success" : "failed",
-                'message' => $result ? "File deleted successfully" : "Failed to delete file",
-            ]
-        ];
+        return $this->getResponse($result, "File deleted successfully", "Failed to delete file");
     }
 
     /**
@@ -73,13 +64,29 @@ class FileService
             }
         }
 
-        return [
-            "result" => [
-                'status'  => "success",
-                'message' => "File uploaded successfully",
-                'items' => (new DirService())->getDirItems($diskName, $dirName),
+        return $this->getResponse(
+            true,
+            success: "File uploaded successfully",
+            customData: [
+                'items' => (new DirService())->getDirItems($diskName, $dirName)
             ]
-        ];
+        );
+    }
+
+    /**
+     * Create a file
+     *
+     * @param string $diskName
+     * @param array $validatedData Validated data for file creation.
+     *
+     * @return array Result of the file creation.
+     */
+    public function create(string $diskName, array $validatedData): array
+    {
+        $result = Storage::disk($diskName)->put($validatedData["path"], "");
+        $message = $result ? "File created successfully" : "Failed to create file";
+
+        return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
     }
 
     /**
@@ -114,13 +121,9 @@ class FileService
         if ($zipArchiveCreated) {
             return Response::download(storage_path($zipFileName))->deleteFileAfterSend();
         }
-
-        return response()->json([
-            "result" => [
-                'status' => "failed",
-                'message' => "Failed to download files",
-            ]
-        ]);
+        return response()->json(
+            $this->getResponse(false, failure: "Failed to download files")
+        );
     }
 
     /**
@@ -169,7 +172,7 @@ class FileService
 
     private function getFileNameToUpload($file)
     {
-        if (ExplorerConfig::getHashFileWhenUploading()) {
+        if (ConfigRepository::getHashFileWhenUploading()) {
             return $file->hashName();
         }
         return $file->getClientOriginalName();

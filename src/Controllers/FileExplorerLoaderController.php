@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
+use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -33,17 +33,16 @@ class FileExplorerLoaderController extends Controller
      */
     private function getDefaultExplorerDataOnInitialization(): array
     {
-        $config = new ExplorerConfig();
-        $defaultDisk = $config->getDefaultDiskOnLoading();
+        $defaultDisk = ConfigRepository::getDefaultDiskOnLoading();
         $dirService = new DirService();
 
         return [
-            "disks" => $config->getDisks(),
+            "disks" => ConfigRepository::getDisks(),
             "dirsForSelectedDisk" => $this->getDirsForSelectedDisk($dirService, $defaultDisk),
-            "selectedDisk" => $config->getDefaultDiskOnLoading(),
-            "selectedDir" => $config->getDefaultDirectoryOnLoading(),
-            "selectedDirPath" =>  $this->getSelectedDirPath($dirService, $defaultDisk, $config),
-            "selectedDirItems" => $dirService->getDirItems($defaultDisk, $config->getDefaultDirectoryOnLoading())
+            "selectedDisk" => ConfigRepository::getDefaultDiskOnLoading(),
+            "selectedDir" => ConfigRepository::getDefaultDirectoryOnLoading(),
+            "selectedDirPath" =>  $this->getSelectedDirPath($dirService, $defaultDisk),
+            "selectedDirItems" => $dirService->getDirItems($defaultDisk, ConfigRepository::getDefaultDirectoryOnLoading())
         ];
     }
 
@@ -67,12 +66,11 @@ class FileExplorerLoaderController extends Controller
      *
      * @param DirService $dirService
      * @param string $defaultDisk
-     * @param ExplorerConfig $config
-     * @return mixed|null
+     * @return string
      */
-    private function getSelectedDirPath(DirService $dirService, string $defaultDisk, ExplorerConfig $config): string
+    private function getSelectedDirPath(DirService $dirService, string $defaultDisk): string
     {
-        $dirByLabel = $dirService->findDirectoryByName($defaultDisk, $config->getDefaultDirectoryOnLoading());
+        $dirByLabel = $dirService->findDirectoryByName($defaultDisk, ConfigRepository::getDefaultDirectoryOnLoading());
         $selectedDirPath = "";
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];
