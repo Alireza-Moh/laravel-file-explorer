@@ -51,5 +51,12 @@ return [
      *
      * Type: string
      */
-    "route_prefix" => "laravel-file-explorer"
+    "route_prefix" => "laravel-file-explorer",
+
+    /**
+     * Hash file name when uploading
+     *
+     * Type: boolean
+     */
+    "hash_file_name_when_uploading" => true,
 ];

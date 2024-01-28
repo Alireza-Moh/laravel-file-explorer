@@ -9,7 +9,7 @@ final class ExplorerConfig
      *
      * @return string|null The default disk name.
      */
-    final public function getDefaultDiskOnLoading(): string|null
+    final public static function getDefaultDiskOnLoading(): string|null
     {
         return config("laravel-file-explorer.default_disk_on_loading");
     }
@@ -19,7 +19,7 @@ final class ExplorerConfig
      *
      * @return string|null The default directory path.
      */
-    final public function getDefaultDirectoryOnLoading(): string|null
+    final public static function getDefaultDirectoryOnLoading(): string|null
     {
         return config("laravel-file-explorer.default_directory_from_default_disk_on_loading");
     }
@@ -29,7 +29,7 @@ final class ExplorerConfig
      *
      * @return array The list of disk names.
      */
-    final public function getDisks(): array
+    final public static function getDisks(): array
     {
         $disks = config("laravel-file-explorer.disks");
 
@@ -44,7 +44,7 @@ final class ExplorerConfig
      *
      * @return array|null The list of allowed file extensions.
      */
-    final public function getAllowedFileExtensions(): array|null
+    final public static function getAllowedFileExtensions(): array|null
     {
         return config("laravel-file-explorer.allowed_file_extensions");
     }
@@ -54,7 +54,7 @@ final class ExplorerConfig
      *
      * @return int|null The maximum allowed file size in bytes.
      */
-    final public function getMaxAllowedFileSize(): int|null
+    final public static function getMaxAllowedFileSize(): int|null
     {
         return config("laravel-file-explorer.max_allowed_file_size");
     }
@@ -64,7 +64,7 @@ final class ExplorerConfig
      *
      * @return array|null The list of middleware names.
      */
-    final public function getMiddlewares(): array|null
+    final public static function getMiddlewares(): array|null
     {
         return config("laravel-file-explorer.middlewares");
     }
@@ -74,8 +74,13 @@ final class ExplorerConfig
      *
      * @return string|null The configured route prefix.
      */
-    final public function getRoutePrefix(): string|null
+    final public static function getRoutePrefix(): string|null
     {
         return config("laravel-file-explorer.route_prefix");
+    }
+
+    final public static function getHashFileWhenUploading(): bool
+    {
+        return config("laravel-file-explorer.hash_file_name_when_uploading");
     }
 }

@@ -66,7 +66,7 @@ class FileService
         $storage = Storage::disk($diskName);
         $dirName = $validatedData["destination"];
         foreach ($validatedData["files"] as $file) {
-            $fileName = $file->getClientOriginalName();
+            $fileName = $this->getFileNameToUpload($file);
 
             if (!$storage->exists($dirName . '/' . $fileName) || (int)$validatedData["ifFileExist"] === 1) {
                 $storage->putFileAs($dirName, $file, $fileName);
@@ -165,5 +165,13 @@ class FileService
                 $zip->addFromString(basename($filePath), $fileContent);
             }
         }
+    }
+
+    private function getFileNameToUpload($file)
+    {
+        if (ExplorerConfig::getHashFileWhenUploading()) {
+            return $file->hashName();
+        }
+        return $file->getClientOriginalName();
     }
 }
