@@ -3,6 +3,7 @@
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('should rename a given file', function () {
     $file = createFakeFiles();
