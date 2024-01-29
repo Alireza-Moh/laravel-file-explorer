@@ -56,7 +56,7 @@ class FileExplorerLoaderController extends Controller
     private function getDirsForSelectedDisk(DirService $dirService, string $defaultDisk): array
     {
         return [
-            "dirs" => $dirService->getDiskDirs($defaultDisk),
+            "dirs" => $dirService->getDiskDirsForTree($defaultDisk),
             "diskName" => $defaultDisk
         ];
     }

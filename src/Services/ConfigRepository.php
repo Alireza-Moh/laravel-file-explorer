@@ -21,7 +21,7 @@ final class ConfigRepository
      */
     final public static function getDefaultDirectoryOnLoading(): string|null
     {
-        return config("laravel-file-explorer.default_directory_from_default_disk_on_loading");
+        return config("laravel-file-explorer.default_directory_on_loading");
     }
 
     /**

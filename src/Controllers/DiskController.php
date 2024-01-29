@@ -17,7 +17,7 @@ class DiskController extends Controller
      */
     public function loadDiskDirs(string $diskName, DirService $dirService): JsonResponse
     {
-        $dirs = $dirService->getDiskDirs($diskName);
+        $dirs = $dirService->getDiskDirsForTree($diskName);
 
         list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs, $dirService);
 

@@ -18,7 +18,7 @@ class FileSystemService
      */
     public function renameDir(string $diskName, string $oldName, array $validatedData): array
     {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
+        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
 
         if ($this->isDefaultDirectory($defaultDirOnLoading, $oldName)) {
             return $this->getResult(false, "", "You cannot rename the default directory because it's needed for initiation.");
@@ -115,7 +115,7 @@ class FileSystemService
     {
         $dirService = new DirService();
 
-        return array($dirService->getDiskDirs($diskName), $dirService->getDirItems($diskName, $dirName));
+        return array($dirService->getDiskDirsForTree($diskName), $dirService->getDirItems($diskName, $dirName));
     }
 
     /**

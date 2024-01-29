@@ -19,8 +19,7 @@ class DeleteItemRequest extends FormRequest
             "items" => "required|array",
             "items.*" => "required",
             "items.*.name" => "required|string",
-            "items.*.path" => "required|string",
-            "items.*.type" => "required|string",
+            "items.*.path" => "required|string"
         ];
     }
 

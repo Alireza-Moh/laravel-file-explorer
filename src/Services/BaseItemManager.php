@@ -44,29 +44,16 @@ abstract class BaseItemManager
      */
     protected function getCreationResponse(string $diskName, bool $result, string $message, string $destination): array
     {
-        list($dirs, $items) = $this->getRefreshedDiskData($diskName, $destination);
-
-        return [
-            "result" => [
-                'status' => $result ? "success" : "failed",
-                'message' => $message,
-                'items' => $items,
-                "dirs" => $dirs,
-            ]
-        ];
-    }
-
-    /**
-     * Get items within a directory.
-     *
-     * @param string $diskName
-     * @param string $destination Directory path
-     * @return array Items within the specified directory.
-     */
-    private function getRefreshedDiskData(string $diskName, string $destination): array
-    {
         $dirService = new DirService();
 
-        return array($dirService->getDiskDirs($diskName), $dirService->getDirItems($diskName, $destination));
+        return $this->getResponse(
+            $result,
+            $message,
+            $message,
+            [
+                "items" => $dirService->getDirItems($diskName, $destination),
+                "dirs" => $dirService->getDiskDirsForTree($diskName)
+            ]
+        );
     }
 }

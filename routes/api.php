@@ -4,14 +4,14 @@ use Alireza\LaravelFileExplorer\Controllers\DirController;
 use Alireza\LaravelFileExplorer\Controllers\DiskController;
 use Alireza\LaravelFileExplorer\Controllers\FileController;
 use Alireza\LaravelFileExplorer\Controllers\FileExplorerLoaderController;
-use Alireza\LaravelFileExplorer\Services\ExplorerConfig;
+use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Facades\Route;
 
-$configService = resolve(ExplorerConfig::class);
+$configService = resolve(ConfigRepository::class);
 
 Route::group([
-    'middleware' => $configService->getMiddlewares(),
-    'prefix'     => $configService->getRoutePrefix()
+    'middleware' => $configService::getMiddlewares(),
+    'prefix'     => $configService::getRoutePrefix()
 ], function () {
     Route::get('load-file-explorer', [FileExplorerLoaderController::class, 'initFileExplorer'])->name("fx.init-file-explorer");
     Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs'])->name("fx.disks");

@@ -16,7 +16,7 @@ return [
      *
      * Type: string | null
      */
-    "default_directory_from_default_disk_on_loading" => null,
+    "default_directory_on_loading" => null,
 
     /**
      * List of available disks. Specify disk names from config/filesystems.

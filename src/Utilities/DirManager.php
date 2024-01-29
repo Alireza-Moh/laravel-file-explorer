@@ -60,7 +60,7 @@ trait DirManager
      */
     protected function existDefaultDirOnLoadingInArray(array $dirs): bool
     {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
+        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
 
         if ($defaultDirOnLoading === null) {
             return false;

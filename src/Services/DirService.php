@@ -33,13 +33,13 @@ class DirService extends BaseItemManager implements ItemOperations
      *
      * @return array containing directories on the disk.
      */
-    public function getDiskDirs(string $diskName, string $dirName = ''): array
+    public function getDiskDirsForTree(string $diskName, string $dirName = ''): array
     {
         $dirs = Storage::disk($diskName)->directories($dirName);
         $allDirs = [];
 
         foreach ($dirs as $dir) {
-            $subDirs = $this->getDiskDirs($diskName, $dir);
+            $subDirs = $this->getDiskDirsForTree($diskName, $dir);
             $allDirs[] = [
                 "diskName" => $diskName,
                 "name" => basename($dir),
@@ -77,7 +77,7 @@ class DirService extends BaseItemManager implements ItemOperations
     public function findDirectoryByName(string $diskName, string $dirName, array $dirs = []): ?array
     {
         if (empty($dirs)) {
-            $dirs = $this->getDiskDirs($diskName);
+            $dirs = $this->getDiskDirsForTree($diskName);
         }
 
         foreach ($dirs as $directory) {
@@ -130,7 +130,7 @@ class DirService extends BaseItemManager implements ItemOperations
      */
     public function rename(string $diskName, string $oldName, array $validatedData): array
     {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_from_default_disk_on_loading');
+        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
         if ($this->isDefaultDirectory($defaultDirOnLoading, $oldName)) {
             return $this->getResponse(
                 false,
