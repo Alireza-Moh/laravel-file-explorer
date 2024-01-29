@@ -1,6 +1,5 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Services\DirService;
 use Alireza\LaravelFileExplorer\Services\FileService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
