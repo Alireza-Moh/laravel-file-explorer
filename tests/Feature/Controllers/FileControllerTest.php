@@ -11,8 +11,7 @@ test('should create file and return success response with all file inside the di
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
-            "type" => "file",
-            "dirPath" => "ios",
+            "destination" => "ios",
             "path" => "ios/config.txt"
         ]
     );
@@ -32,7 +31,6 @@ test('should create file and return success response with all file inside the di
         ->has('result.dirs')
         ->has('result.items.0', fn(AssertableJson $json) =>
             $json->where("name", "config.txt")
-                ->where('dirName', 'ios')
                 ->where('name', 'config.txt')
                 ->where('path', 'ios/config.txt')
                 ->where('type', 'file')
@@ -62,7 +60,7 @@ test('should throw an error when form data is missing', function () {
         $json->hasAll([
             "message",
             "errors"
-        ])->where("message", "Invalid data send")
+        ])->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.path')
         ->where('errors.path.0', 'The path field is required.')
@@ -99,7 +97,6 @@ test('should upload file or files and return success response with all file insi
         ->has('result.items')
         ->has('result.items.0', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
             ->where('name', 'photo1.jpg')
             ->where('path', 'ios/photo1.jpg')
             ->where('type', 'file')
@@ -109,7 +106,6 @@ test('should upload file or files and return success response with all file insi
         )
         ->has('result.items.1', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
             ->where('name', 'photo2.jpg')
             ->where('path', 'ios/photo2.jpg')
             ->where('type', 'file')
@@ -142,7 +138,7 @@ test('should throw an error when something is missing in the form while uploadin
             "message",
             "errors"
         ])
-        ->where("message", "Invalid data send")
+        ->where("message", "Invalid data sent")
         ->where(
             'errors',
             [
@@ -154,19 +150,7 @@ test('should throw an error when something is missing in the form while uploadin
 });
 
 test('should download a single image', function () {
-    $this->postJson(
-        route(
-            "fx.file-upload",
-            ["diskName" => "tests"]
-        ),
-        [
-            "ifFileExist" => 0,
-            "destination" => "ios",
-            "files" => [
-                UploadedFile::fake()->image('photo.png'),
-            ]
-        ]
-    );
+    $images = createFakeImages();
 
     $response = $this->postJson(
         route(
@@ -176,7 +160,7 @@ test('should download a single image', function () {
         [
             "files" => [
                 [
-                    "path" => "ios/photo.png",
+                    "path" => "ios/" . $images[0],
                     "type" => "file"
                 ]
             ]
@@ -187,20 +171,7 @@ test('should download a single image', function () {
 });
 
 test('should download multiple files as a ZIP folder', function () {
-    $this->postJson(
-        route(
-            "fx.file-upload",
-            ["diskName" => "tests"]
-        ),
-        [
-            "ifFileExist" => 0,
-            "destination" => "ios",
-            "files" => [
-                UploadedFile::fake()->image('photo1.png'),
-                UploadedFile::fake()->image('photo2.png')
-            ]
-        ]
-    );
+    $images = createFakeImages(2);
 
     $response = $this->postJson(
         route(
@@ -210,11 +181,11 @@ test('should download multiple files as a ZIP folder', function () {
         [
             "files" => [
                 [
-                    "path" => "ios/photo1.png",
+                    "path" => "ios/" . $images[0],
                     "type" => "file"
                 ],
                 [
-                    "path" => "ios/photo2.png",
+                    "path" => "ios/" . $images[1],
                     "type" => "file"
                 ]
             ]
@@ -227,19 +198,7 @@ test('should download multiple files as a ZIP folder', function () {
 });
 
 test('should rename a file', function () {
-    $this->postJson(
-        route(
-            "fx.file-upload",
-            ["diskName" => "tests"]
-        ),
-        [
-            "ifFileExist" => 0,
-            "destination" => "ios",
-            "files" => [
-                UploadedFile::fake()->image('oldName.png'),
-            ]
-        ]
-    );
+    $images = createFakeImages();
     $response = $this->putJson(
         route(
             "fx.file-rename",
@@ -247,7 +206,7 @@ test('should rename a file', function () {
         ),
         [
             "newPath" => "ios/newName.png",
-            "oldPath" => "ios/oldName.png",
+            "oldPath" => "ios/" . $images[0],
         ]
     );
 
@@ -281,7 +240,7 @@ test('should throw an error when something is missing in form for renaming a fil
         "message",
         "errors"
     ])
-        ->where("message", "Invalid data send")
+        ->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.oldPath')
         ->where('errors.oldPath.0', 'The old path field is required.')
@@ -290,6 +249,7 @@ test('should throw an error when something is missing in form for renaming a fil
 
 test('should delete one file', function () {
     $images = createFakeImages();
+
     $response = $this->deleteJson(
         route(
             "fx.file-delete",
@@ -320,12 +280,12 @@ test('should delete one file', function () {
 
 test('should delete multiple files', function () {
     $images = createFakeImages(10);
+
     $imagesToDelete = [];
     foreach ($images as $image) {
         $imagesToDelete[] = [
             "name" => $image,
             "path" => "ios/" . $image,
-            "type" => "file"
         ];
     }
     $response = $this->deleteJson(
@@ -353,6 +313,7 @@ test('should delete multiple files', function () {
 
 test('should throw an error when something is missing in form for deleting a file', function () {
     $images = createFakeImages();
+
     $response = $this->deleteJson(
         route(
             "fx.file-delete",
@@ -361,9 +322,8 @@ test('should throw an error when something is missing in form for deleting a fil
         [
             "items" => [
                 [
-                    "name" => $images[0],
-                    "path" => "ios/" . $images[0]
-                    //"type" => "file"
+                    "name" => $images[0]
+                    //"path" => "ios/" . $images[0]
                 ]
             ]
         ]
@@ -375,6 +335,6 @@ test('should throw an error when something is missing in form for deleting a fil
             "message",
             "errors"
         ])
-        ->where("message", "Invalid data send")
+        ->where("message", "Invalid data sent")
     );
 });

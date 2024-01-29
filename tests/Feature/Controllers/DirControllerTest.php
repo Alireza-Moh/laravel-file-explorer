@@ -9,8 +9,7 @@ test('should create directory and return success response with all file inside t
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
-            "type" => "dir",
-            "dirPath" => "ios",
+            "destination" => "ios",
             "path" => "ios/configDir"
         ]
     );
@@ -30,7 +29,6 @@ test('should create directory and return success response with all file inside t
         ->has('result.dirs')
         ->has('result.items.0', fn(AssertableJson $json) =>
             $json->where("diskName", "tests")
-                ->where('dirName', 'ios')
                 ->where('name', 'configDir')
                 ->where('path', 'ios/configDir')
                 ->where('type', 'dir')
@@ -73,7 +71,7 @@ test('should throw an error when form data is missing', function () {
     $json->hasAll([
         "message",
         "errors"
-    ])->where("message", "Invalid data send")
+    ])->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.path')
         ->where('errors.path.0', 'The path field is required.')
@@ -105,62 +103,56 @@ test('should get all items from a specified directory', function () {
         ->has('items')
         ->has('items.0', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
-            ->where('name', 'fake_file_0')
-            ->where('path', 'ios/fake_file_0')
+            ->where('name', 'fake_file_0.txt')
+            ->where('path', 'ios/fake_file_0.txt')
             ->where('type', 'file')
             ->where('size', 0)
-            ->where('extension', '')
-            ->where('url', '/storage/ios/fake_file_0')
+            ->where('extension', 'txt')
+            ->where('url', '/storage/ios/fake_file_0.txt')
             ->etc()
         )
         ->has('items.1', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
-            ->where('name', 'fake_file_1')
-            ->where('path', 'ios/fake_file_1')
+            ->where('name', 'fake_file_1.txt')
+            ->where('path', 'ios/fake_file_1.txt')
             ->where('type', 'file')
             ->where('size', 0)
-            ->where('extension', '')
-            ->where('url', '/storage/ios/fake_file_1')
+            ->where('extension', 'txt')
+            ->where('url', '/storage/ios/fake_file_1.txt')
             ->etc()
         )
         ->has('items.2', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
-            ->where('name', 'fake_file_2')
-            ->where('path', 'ios/fake_file_2')
+            ->where('name', 'fake_file_2.txt')
+            ->where('path', 'ios/fake_file_2.txt')
             ->where('type', 'file')
             ->where('size', 0)
-            ->where('extension', '')
-            ->where('url', '/storage/ios/fake_file_2')
+            ->where('extension', 'txt')
+            ->where('url', '/storage/ios/fake_file_2.txt')
             ->etc()
         )
         ->has('items.3', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
-            ->where('name', 'fake_file_3')
-            ->where('path', 'ios/fake_file_3')
+            ->where('name', 'fake_file_3.txt')
+            ->where('path', 'ios/fake_file_3.txt')
             ->where('type', 'file')
             ->where('size', 0)
-            ->where('extension', '')
-            ->where('url', '/storage/ios/fake_file_3')
+            ->where('extension', 'txt')
+            ->where('url', '/storage/ios/fake_file_3.txt')
             ->etc()
         )
         ->has('items.4', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
-            ->where('name', 'fake_file_4')
-            ->where('path', 'ios/fake_file_4')
+            ->where('name', 'fake_file_4.txt')
+            ->where('path', 'ios/fake_file_4.txt')
             ->where('type', 'file')
             ->where('size', 0)
-            ->where('extension', '')
-            ->where('url', '/storage/ios/fake_file_4')
+            ->where('extension', 'txt')
+            ->where('url', '/storage/ios/fake_file_4.txt')
             ->etc()
         )
         ->has('items.5', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
-            ->where('dirName', 'ios')
             ->where('name', 'fake_dir_0')
             ->where('path', 'ios/fake_dir_0')
             ->where('type', 'dir')
@@ -242,7 +234,7 @@ test('should throw an error when something is missing in form for renaming a fil
         "message",
         "errors"
     ])
-        ->where("message", "Invalid data send")
+        ->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.oldPath')
         ->where('errors.oldPath.0', 'The old path field is required.')
@@ -259,15 +251,15 @@ test('should delete one directory', function () {
         [
             "items" => [
                 [
-                    "name" => $dirs[0],
-                    "path" => "ios/" . $dirs[0],
+                    "name" => $dirs[0]["name"],
+                    "path" => "ios/" . $dirs[0]["path"],
                     "type" => "dir"
                 ]
             ]
         ]
     );
 
-    Storage::disk("tests")->assertMissing("ios/" . $dirs[0]);
+    Storage::disk("tests")->assertMissing("ios/" . $dirs[0]["path"]);
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('result')
         ->hasAll([
@@ -280,12 +272,12 @@ test('should delete one directory', function () {
 });
 
 test('should delete multiple files', function () {
-    $dirs = createFakeDirs(10, "");
+    $dirs = createFakeDirs(10);
     $imagesToDelete = [];
     foreach ($dirs as $dir) {
         $imagesToDelete[] = [
-            "name" => $dir,
-            "path" => "ios/" . $dir,
+            "name" => $dir["name"],
+            "path" => $dir["path"],
             "type" => "dir"
         ];
     }
@@ -312,7 +304,7 @@ test('should delete multiple files', function () {
     );
 });
 
-test('should throw an error when something is missing in form for deleting a file', function () {
+test('should throw an error when something is missing in form for deleting a directory', function () {
     $dirs = createFakeDirs();
     $response = $this->deleteJson(
         route(
@@ -322,20 +314,20 @@ test('should throw an error when something is missing in form for deleting a fil
         [
             "items" => [
                 [
-                    "name" => $dirs[0],
-                    "path" => $dirs[0]
-                    //"type" => "dir"
+                    "name" => $dirs[0]["name"],
+                    //"path" => $dirs[0]["path"]
                 ]
             ]
         ]
     );
 
-    Storage::disk("tests")->assertExists($dirs[0]);
+
+    Storage::disk("tests")->assertExists($dirs[0]["path"]);
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
             "message",
             "errors"
         ])
-        ->where("message", "Invalid data send")
+        ->where("message", "Invalid data sent")
     );
 });

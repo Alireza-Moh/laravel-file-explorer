@@ -17,7 +17,7 @@ trait DirManager
      */
     protected function isDefaultDirectory(?string $defaultDirOnLoading, string $dirName): bool
     {
-        return $defaultDirOnLoading && $defaultDirOnLoading == $dirName;
+        return $defaultDirOnLoading && $defaultDirOnLoading === $dirName;
     }
 
     /**
