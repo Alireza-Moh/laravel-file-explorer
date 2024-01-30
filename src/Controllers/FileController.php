@@ -44,7 +44,6 @@ class FileController extends Controller
     public function deleteFile(string $diskName, DeleteItemRequest $request, FileService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
-
         $result = $fileService->delete($diskName, $validatedData);
 
         return response()->json($result);
@@ -97,18 +96,29 @@ class FileController extends Controller
         $validatedData = $request->validated();
 
         if (count($validatedData["files"]) === 1) {
-            try {
-                return $fileService->download($diskName, $validatedData);
-            } catch (Exception $e) {
-                return response()->json([
-                    "result" => [
-                        "status" => "failed",
-                        "message" => "Failed to download files"
-                    ]
-                ], 404);
-            }
+            return $this->downloadSingleItem($fileService, $diskName, $validatedData);
         }
 
         return $fileService->downloadAsZip($diskName, $validatedData);
+    }
+
+    /**
+     * @param FileService $fileService
+     * @param string $diskName
+     * @param mixed $validatedData
+     * @return JsonResponse|StreamedResponse
+     */
+    public function downloadSingleItem(FileService $fileService, string $diskName, mixed $validatedData): JsonResponse|StreamedResponse
+    {
+        try {
+            return $fileService->download($diskName, $validatedData);
+        } catch (Exception $e) {
+            return response()->json([
+                "result" => [
+                    "status" => "failed",
+                    "message" => "Failed to download files"
+                ]
+            ], 404);
+        }
     }
 }

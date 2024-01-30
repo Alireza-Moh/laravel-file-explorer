@@ -43,12 +43,11 @@ class DiskController extends Controller
         $diskItems = $dirService->getDiskItems($diskName);
         $selectedDir = "";
         $selectedDirPath = "";
-        if (empty($diskItems)) {
-            if (!empty($dirs)) {
-                $selectedDir = $dirs[0]["name"];
-                $selectedDirPath = $dirs[0]["path"];
-                $diskItems = $dirService->getDirItems($diskName, $selectedDir);
-            }
+
+        if (empty($diskItems) && !empty($dirs)) {
+            $selectedDir = $dirs[0]["name"];
+            $selectedDirPath = $dirs[0]["path"];
+            $diskItems = $dirService->getDirItems($diskName, $selectedDir);
         }
         return array($diskItems, $selectedDir, $selectedDirPath);
     }
