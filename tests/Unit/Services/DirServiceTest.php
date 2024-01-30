@@ -117,8 +117,8 @@ test('should retrieve disk files', function () {
 test('should find directory by name', function () {
     $dirs = createFakeDirs();
     $dirService = new DirService();
-    $foundedDir = $dirService->findDirectoryByName("tests", $dirs[0]["name"]);
 
+    $foundedDir = $dirService->findDirectoryByName("tests", $dirs[0]["name"]);
 
     expect($foundedDir)->toBeArray()
         ->and($foundedDir)->toMatchArray([
@@ -128,6 +128,14 @@ test('should find directory by name', function () {
               "type" => "dir",
               "subDir" => []
             ]);
+});
+
+test('should not find directory by name', function () {
+    $dirService = new DirService();
+
+    $foundedDir = $dirService->findDirectoryByName("tests", "notExistingDir");
+
+    expect($foundedDir)->toBeNull();
 });
 
 test('should delete specified directory', function () {

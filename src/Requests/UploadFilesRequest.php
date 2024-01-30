@@ -29,14 +29,14 @@ class UploadFilesRequest extends FormRequest
     {
         return [
             "ifFileExist.required" => "Choose an action",
-            "ifFileExist.numeric" => "Choose an action",
-            "ifFileExist.in" => "Action not valid",
+            "ifFileExist.numeric" => "Choose a valid action",
+            "ifFileExist.in" => "Invalid action selected",
             "files.*.required" => "Please select a file",
-            "files.*.file" => "It is  not a file",
-            "files.*.max" => "Max file size reached",
+            "files.*.file" => "Invalid file format",
+            "files.*.max" => "File size exceeds the limit",
             "files.*.mimes" => "File extension not allowed",
             "destination.required" => "File destination path is required",
-            "destination.string" => "File destination path is not a string",
+            "destination.string" => "Invalid file destination path format",
         ];
     }
 

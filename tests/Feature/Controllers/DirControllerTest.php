@@ -216,7 +216,7 @@ test('should rename a file', function () {
     );
 });
 
-test('should throw an error when something is missing in form for renaming a file', function () {
+test('should throw an error when oldPath is missing in form for renaming a file', function () {
     $response = $this->putJson(
         route(
             "fx.dir-rename",
@@ -304,7 +304,7 @@ test('should delete multiple files', function () {
     );
 });
 
-test('should throw an error when something is missing in form for deleting a directory', function () {
+test('should throw an error when path is missing in form for deleting a directory', function () {
     $dirs = createFakeDirs();
     $response = $this->deleteJson(
         route(

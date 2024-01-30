@@ -42,7 +42,7 @@ test('should create file and return success response with all file inside the di
     );
 });
 
-test('should throw an error when form data is missing', function () {
+test('should throw an error when path is missing in the form data for creating a file', function () {
     $response = $this->postJson(
         route(
             "fx.file-create",
@@ -116,7 +116,7 @@ test('should upload file or files and return success response with all file insi
     );
 });
 
-test('should throw an error when something is missing in the form while uploading files', function () {
+test('should throw an error when ifFileExist is missing in the form while uploading files', function () {
     $response = $this->postJson(
         route(
             "fx.file-upload",
@@ -150,7 +150,7 @@ test('should throw an error when something is missing in the form while uploadin
 });
 
 test('should download a single image', function () {
-    $images = createFakeImages();
+    $image = createFakeImages();
 
     $response = $this->postJson(
         route(
@@ -160,8 +160,9 @@ test('should download a single image', function () {
         [
             "files" => [
                 [
-                    "path" => "ios/" . $images[0],
-                    "type" => "file"
+                    "name" => $image[0],
+                    "path" => "ios/" . $image[0],
+                    "type" => "file",
                 ]
             ]
         ]
@@ -181,10 +182,12 @@ test('should download multiple files as a ZIP folder', function () {
         [
             "files" => [
                 [
+                    "name" => $images[0],
                     "path" => "ios/" . $images[0],
                     "type" => "file"
                 ],
                 [
+                    "name" => $images[1],
                     "path" => "ios/" . $images[1],
                     "type" => "file"
                 ]
@@ -195,6 +198,34 @@ test('should download multiple files as a ZIP folder', function () {
     $response->assertDownload();
     $response->assertHeader('Content-Type', 'application/zip');
     $response->assertHeader('Content-Disposition', 'attachment; filename=tests_files.zip');
+});
+
+test('should throw validation error when trying to download a directory ', function () {
+    $dir = createFakeDirs();
+
+    $response = $this->postJson(
+        route(
+            "fx.file-download",
+            ["diskName" => "tests"]
+        ),
+        [
+            "files" => [
+                [
+                    "name" => $dir[0]["name"],
+                    "path" => $dir[0]["path"],
+                    "type" => "dir",
+                ]
+            ]
+        ]
+    );
+
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->has('message')
+        ->where('message', 'Invalid data sent')
+        ->has('errors')
+        ->has('errors.' . $dir[0]["name"])
+        ->where('errors.' . $dir[0]["name"]. '.0', 'Invalid file type')
+    );
 });
 
 test('should rename a file', function () {

@@ -34,13 +34,13 @@ class DownloadFileRequest extends FormRequest
         return [
             "files.required" => "Please select a file",
             "files.*.required" => "Please select a file",
-            "files.*.name.string" => "File name is not a string",
-            "files.*.name.required" => "File name is missing",
-            "files.*.type.required" => "File type is missing",
-            "files.*.type.in" => "It is not a file",
-            "files.*.type.string" => "File type is not a string",
-            "files.*.path.required" => "File path is missing",
-            "files.*.path.string" => "File path is not a string",
+            "files.*.name.string" => "Invalid file name format",
+            "files.*.name.required" => "File name is required",
+            "files.*.type.required" => "File type is required",
+            "files.*.type.in" => "Invalid file type",
+            "files.*.type.string" => "Invalid file type format",
+            "files.*.path.required" => "File path is required",
+            "files.*.path.string" => "Invalid file path format",
         ];
     }
 
