@@ -17,7 +17,6 @@ class DownloadFileRequest extends FormRequest
     {
         return [
             "files" => "required|array",
-            "files.*" => "required",
             "files.*.name" => "required|string",
             "files.*.type" => "required|string|in:file",
             "files.*.path" => "required|string"
@@ -33,7 +32,7 @@ class DownloadFileRequest extends FormRequest
     {
         return [
             "files.required" => "Please select a file",
-            "files.*.required" => "Please select a file",
+            "files.array" => "Please select a file",
             "files.*.name.string" => "Invalid file name format",
             "files.*.name.required" => "File name is required",
             "files.*.type.required" => "File type is required",

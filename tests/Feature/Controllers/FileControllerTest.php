@@ -142,8 +142,40 @@ test('should throw an error when ifFileExist is missing in the form while upload
         ->where(
             'errors',
             [
-                "photo1.jpg" => ["Choose an action"],
-                "photo2.jpg" => ["Choose an action"]
+                "ifFileExist" => ["Choose an action"],
+            ]
+        )
+    );
+});
+
+test('should throw an error when files have wrong extension while uploading files', function () {
+    $response = $this->postJson(
+        route(
+            "fx.file-upload",
+            ["diskName" => "tests"]
+        ),
+        [
+            "ifFileExist" => 0,
+            "destination" => "ios",
+            "files" => [
+                UploadedFile::fake()->create('doc1.pdf'),
+                UploadedFile::fake()->create('doc2.pdf')
+            ]
+        ]
+    );
+
+    Storage::disk('tests')->assertMissing(['ios/doc1.pdf', 'ios/doc2.pdf']);
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->hasAll([
+        "message",
+        "errors"
+    ])
+        ->where("message", "Invalid data sent")
+        ->where(
+            'errors',
+            [
+                "doc1.pdf" => ["File extension not allowed"],
+                "doc2.pdf" => ["File extension not allowed"]
             ]
         )
     );

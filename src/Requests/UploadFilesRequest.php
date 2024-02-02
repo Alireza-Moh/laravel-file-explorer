@@ -6,6 +6,7 @@ use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 
 class UploadFilesRequest extends FormRequest
@@ -31,7 +32,8 @@ class UploadFilesRequest extends FormRequest
             "ifFileExist.required" => "Choose an action",
             "ifFileExist.numeric" => "Choose a valid action",
             "ifFileExist.in" => "Invalid action selected",
-            "files.*.required" => "Please select a file",
+            "files.required" => "Please select a file",
+            "files.array" => "Please select a file",
             "files.*.file" => "Invalid file format",
             "files.*.max" => "File size exceeds the limit",
             "files.*.mimes" => "File extension not allowed",
@@ -48,17 +50,9 @@ class UploadFilesRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $errors = [];
-
-        foreach ($validator->errors()->messages() as $message) {
-            foreach ($this->validationData()["files"] as $file) {
-                $errors[$file->getClientOriginalName()] = $message;
-            }
-        }
-
         $response = response()->json([
             'message' => 'Invalid data sent',
-            'errors' => $errors
+            'errors' => $this->makeErrorsFriendly($validator->errors()->messages()),
         ], 422);
 
         throw new HttpResponseException($response);
@@ -76,7 +70,8 @@ class UploadFilesRequest extends FormRequest
 
         $rules = [
             "ifFileExist" => ["required", "numeric", "in:0,1"],
-            "files.*" => ["required", "file"],
+            "files" => ["required", "array"],
+            "files.*" => ["file"],
             "destination" => ["required", "string"],
         ];
 
@@ -89,5 +84,29 @@ class UploadFilesRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * Map errors to corresponding files based on the file index in the input array.
+     *
+     * @param array $errors actual errors
+     *
+     * @return array the modified errors
+     */
+    private function makeErrorsFriendly(array $errors): array
+    {
+        $files = $this->validationData()["files"];
+        $modifiedErrors = [];
+        foreach ($errors as $key => $error) {
+            if (Str::startsWith($key, "files.")){
+                $index = (int)explode('.', $key)[1];
+
+                if (array_key_exists($index, $files)) {
+                    $modifiedErrors[$files[$index]->getClientOriginalName()] = $error;
+                }
+            }
+        }
+
+        return empty($modifiedErrors) ? $errors : $modifiedErrors;
     }
 }
