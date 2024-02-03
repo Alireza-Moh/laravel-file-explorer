@@ -10,9 +10,8 @@ trait DirManager
     /**
      * Check if the directory is the default directory on loading.
      *
-     * @param string|null $defaultDirOnLoading The default directory on loading.
-     * @param string      $dirName             The directory name to check.
-     *
+     * @param string|null $defaultDirOnLoading
+     * @param string $dirName
      * @return bool
      */
     protected function isDefaultDirectory(?string $defaultDirOnLoading, string $dirName): bool
@@ -24,9 +23,8 @@ trait DirManager
      * Get the size of a file in kilobytes.
      *
      * @param string $diskName
-     * @param string $item The file path.
-     *
-     * @return float Size
+     * @param string $item
+     * @return float
      */
     protected function getFileSizeInKB(string $diskName, string $item): float
     {
@@ -38,9 +36,8 @@ trait DirManager
      * Get the last modified time of an item.
      *
      * @param string $diskName
-     * @param string $item The item path.
+     * @param string $item
      * @param string $format
-     *
      * @return string
      */
     protected function getLastModified(string $diskName, string $item, string $format = 'Y-m-d H:i:s'): string
@@ -54,8 +51,7 @@ trait DirManager
     /**
      * Check if the default directory from default disk is present in the given array of directories.
      *
-     * @param array $dirs An array containing directory information.
-     *
+     * @param array $dirs
      * @return bool
      */
     protected function existDefaultDirOnLoadingInArray(array $dirs): bool
@@ -72,6 +68,15 @@ trait DirManager
         return !empty($filteredDirs);
     }
 
+    /**
+     * Retrieves the metadata for items of a specific type (file or directory) within a given directory on a specified disk.
+     *
+     * @param string $diskName
+     * @param string $type
+     * @param bool $getFromDir
+     * @param string $dirName
+     * @return array
+     */
     protected function getDirItemsByType(string $diskName, string $type, bool $getFromDir = true, string $dirName = "",): array
     {
         $items = [];
@@ -82,7 +87,17 @@ trait DirManager
         return $items;
     }
 
-    private function getQuery(string $diskName, string $dirName, string $type, bool $getFromDir) {
+    /**
+     * Generates and retrieves a query result for items of a specific type (file or directory) on a specified disk.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param string $type
+     * @param bool $getFromDir
+     * @return mixed
+     */
+    private function getQuery(string $diskName, string $dirName, string $type, bool $getFromDir): mixed
+    {
         $method = ($type === 'file') ? 'files' : 'directories';
 
         return $getFromDir ? Storage::disk($diskName)->$method($dirName) : Storage::disk($diskName)->$method();

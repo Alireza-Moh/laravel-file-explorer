@@ -14,8 +14,7 @@ class DirService extends BaseItemManager implements ItemOperations
      *
      * @param string $diskName
      * @param string $dirName
-     *
-     * @return array items
+     * @return array
      */
     public function getDirItems(string $diskName, string $dirName): array
     {
@@ -30,8 +29,7 @@ class DirService extends BaseItemManager implements ItemOperations
      *
      * @param string $diskName
      * @param string $dirName
-     *
-     * @return array containing directories on the disk.
+     * @return array
      */
     public function getDiskDirsForTree(string $diskName, string $dirName = ''): array
     {
@@ -71,8 +69,7 @@ class DirService extends BaseItemManager implements ItemOperations
      * @param string $diskName
      * @param string $dirName
      * @param array $dirs
-     *
-     * @return array|null The found directory or null if not found.
+     * @return array|null
      */
     public function findDirectoryByName(string $diskName, string $dirName, array $dirs = []): ?array
     {
@@ -99,8 +96,7 @@ class DirService extends BaseItemManager implements ItemOperations
      * Delete a directory.
      *
      * @param string $diskName
-     * @param array $validatedData dirs to delete
-     *
+     * @param array $validatedData
      * @return array
      */
     public function delete(string $diskName, array $validatedData): array
@@ -123,10 +119,9 @@ class DirService extends BaseItemManager implements ItemOperations
      * Rename a directory.
      *
      * @param string $diskName
-     * @param string $oldName The old name of the directory.
+     * @param string $oldName
      * @param array $validatedData
-     *
-     * @return array The result of the rename operation.
+     * @return array
      */
     public function rename(string $diskName, string $oldName, array $validatedData): array
     {
@@ -150,9 +145,8 @@ class DirService extends BaseItemManager implements ItemOperations
      * Create a directory
      *
      * @param string $diskName
-     * @param array $validatedData Validated data for directory creation.
-     *
-     * @return array Result of the directory creation.
+     * @param array $validatedData
+     * @return array
      */
     public function create(string $diskName, array $validatedData): array
     {
@@ -168,7 +162,7 @@ class DirService extends BaseItemManager implements ItemOperations
      * @param string $diskName
      * @param string $path
      * @param string $type
-     * @return array Metadata information for the item.
+     * @return array
      */
     private function getMetaData(string $diskName, string $path, string $type): array
     {

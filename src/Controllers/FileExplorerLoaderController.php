@@ -47,8 +47,8 @@ class FileExplorerLoaderController extends Controller
     }
 
     /**
-     *
      * Get the directories of the default selected disk
+     *
      * @param DirService $dirService
      * @param string $defaultDisk
      * @return array

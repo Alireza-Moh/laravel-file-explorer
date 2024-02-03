@@ -35,7 +35,6 @@ class DirController extends Controller
      * @param string  $diskName
      * @param DeleteItemRequest $request
      * @param DirService $dirService
-     *
      * @return JsonResponse
      */
     public function deleteDir(string $diskName, DeleteItemRequest $request, DirService $dirService): JsonResponse
@@ -66,11 +65,10 @@ class DirController extends Controller
     /**
      * Load items from a specified directory.
      *
-     * @param string $diskName The name of the disk.
-     * @param string $dirName The directory name.
+     * @param string $diskName
+     * @param string $dirName
      * @param Request $request
      * @param DirService $dirService
-     *
      * @return JsonResponse directory items.
      */
     public function loadDirItems(string $diskName, string $dirName, Request $request, DirService $dirService): JsonResponse

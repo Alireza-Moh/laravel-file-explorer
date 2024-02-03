@@ -35,8 +35,7 @@ class DiskController extends Controller
      * @param string $diskName
      * @param array $dirs
      * @param DirService $dirService
-     *
-     * @return array containing
+     * @return array
      */
     private function getDiskData(string $diskName, array $dirs, DirService $dirService): array
     {

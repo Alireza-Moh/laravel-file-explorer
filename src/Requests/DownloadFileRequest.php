@@ -65,7 +65,6 @@ class DownloadFileRequest extends FormRequest
      * Map errors to corresponding files based on the file index in the input array.
      *
      * @param array $errors actual errors
-     *
      * @return array the modified errors
      */
     private function makeErrorsFriendly(array $errors): array

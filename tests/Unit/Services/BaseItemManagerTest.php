@@ -5,9 +5,9 @@ $targetAbstractClass = null;
 
 beforeEach(function () {
     $this->targetAbstractClass = new class extends BaseItemManager {
-        public function getResponse(bool $result, string $success = "", string $failure = "", array $customData = []): array
+        public function getResponse(bool $result, string $success = "", string $failure = "", array $additionalData = []): array
         {
-            return parent::getResponse($result, $success, $failure, $customData);
+            return parent::getResponse($result, $success, $failure, $additionalData);
         }
     };
 });
@@ -46,7 +46,7 @@ test('should return a response with the custom data', function () {
     $response = $this->targetAbstractClass->getResponse(
         true,
         success: "This is a success message",
-        customData: [
+        additionalData: [
             "items" => [],
         ]
     );

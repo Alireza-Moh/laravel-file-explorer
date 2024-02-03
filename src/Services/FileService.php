@@ -17,9 +17,8 @@ class FileService extends BaseItemManager implements ItemOperations
      *
      * @param string $diskName
      * @param string $oldName
-     * @param array $validatedData Validated data
-     *
-     * @return array Result of the operation
+     * @param array $validatedData
+     * @return array
      */
     public function rename(string $diskName, string $oldName, array $validatedData): array
     {
@@ -32,9 +31,8 @@ class FileService extends BaseItemManager implements ItemOperations
      * Delete a file.
      *
      * @param string $diskName
-     * @param array $validatedData Validated data
-     *
-     * @return array Result of the operation
+     * @param array $validatedData
+     * @return array
      */
     public function delete(string $diskName, array $validatedData): array
     {
@@ -48,9 +46,8 @@ class FileService extends BaseItemManager implements ItemOperations
      * Upload files.
      *
      * @param string $diskName
-     * @param array $validatedData Validated data
-     *
-     * @return array Result of the operation
+     * @param array $validatedData
+     * @return array
      */
     public function upload(string $diskName, array $validatedData): array
     {
@@ -67,7 +64,7 @@ class FileService extends BaseItemManager implements ItemOperations
         return $this->getResponse(
             true,
             success: "File uploaded successfully",
-            customData: [
+            additionalData: [
                 'items' => (new DirService())->getDirItems($diskName, $dirName)
             ]
         );
@@ -77,9 +74,8 @@ class FileService extends BaseItemManager implements ItemOperations
      * Create a file
      *
      * @param string $diskName
-     * @param array $validatedData Validated data for file creation.
-     *
-     * @return array Result of the file creation.
+     * @param array $validatedData
+     * @return array
      */
     public function create(string $diskName, array $validatedData): array
     {
@@ -93,9 +89,8 @@ class FileService extends BaseItemManager implements ItemOperations
      * Download a file.
      *
      * @param string $diskName
-     * @param array $validatedData Validated data
-     *
-     * @return StreamedResponse Streamed response for file download.
+     * @param array $validatedData
+     * @return StreamedResponse
      */
     public function download(string $diskName, array $validatedData): StreamedResponse
     {
@@ -106,8 +101,7 @@ class FileService extends BaseItemManager implements ItemOperations
      * Downloads files as a ZIP archive.
      *
      * @param string $diskName
-     * @param array $validatedData Validated data
-     *
+     * @param array $validatedData
      * @return BinaryFileResponse|JsonResponse
      */
     public function downloadAsZip(string $diskName, array $validatedData): BinaryFileResponse|JsonResponse
@@ -131,8 +125,7 @@ class FileService extends BaseItemManager implements ItemOperations
      *
      * @param string $zipFileName
      * @param string $diskName
-     * @param array $files Files to include in the ZIP archive.
-     *
+     * @param array $files
      * @return bool
      */
     private function createZipArchive(string $zipFileName, string $diskName, array $files): bool
@@ -153,8 +146,7 @@ class FileService extends BaseItemManager implements ItemOperations
      *
      * @param ZipArchive $zip
      * @param string $diskName
-     * @param array $files Files to include in the ZIP archive.
-     *
+     * @param array $files
      * @return void
      */
     private function addFilesToZip(ZipArchive $zip, string $diskName, array $files): void
@@ -170,7 +162,13 @@ class FileService extends BaseItemManager implements ItemOperations
         }
     }
 
-    private function getFileNameToUpload($file)
+    /**
+     * Get file name to upload
+     *
+     * @param $file
+     * @return string
+     */
+    private function getFileNameToUpload($file): string
     {
         if (ConfigRepository::getHashFileWhenUploading()) {
             return $file->hashName();

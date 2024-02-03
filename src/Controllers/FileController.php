@@ -88,7 +88,6 @@ class FileController extends Controller
      * @param string $diskName
      * @param DownloadFileRequest $request
      * @param FileService $fileService
-     *
      * @return BinaryFileResponse|JsonResponse|StreamedResponse
      */
     public function downloadFile(string $diskName, DownloadFileRequest $request, FileService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
@@ -103,6 +102,8 @@ class FileController extends Controller
     }
 
     /**
+     * Download a single file.
+     *
      * @param FileService $fileService
      * @param string $diskName
      * @param mixed $validatedData
