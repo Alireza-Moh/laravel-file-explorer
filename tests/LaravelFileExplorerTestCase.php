@@ -1,9 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\tests;
+namespace Alireza\LaravelFileExplorer\Tests;
 
 use Alireza\LaravelFileExplorer\LaravelFileExplorerServiceProvider;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase;

@@ -11,7 +11,6 @@
 |
 */
 
-// uses(Tests\TestCase::class)->in('Feature');
 use Alireza\LaravelFileExplorer\tests\LaravelFileExplorerTestCase;
 use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Support\Facades\Storage;

@@ -10,7 +10,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Alireza\\LaravelFileExplorer\\tests\\": "tests/"
+            "Alireza\\LaravelFileExplorer\\Tests\\": "tests/"
         }
     },
     "authors": [
