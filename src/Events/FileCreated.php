@@ -44,9 +44,9 @@ class FileCreated
     /**
      * @return string
      */
-    public function getParentDir(): string
+    public function getParentDirName(): string
     {
-        return $this->parentDir;
+        return $this->parentDirName;
     }
 
     /**
