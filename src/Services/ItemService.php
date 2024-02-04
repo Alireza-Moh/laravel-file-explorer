@@ -68,7 +68,7 @@ class ItemService extends BaseItemManager implements ItemOperations
             $fileName = $this->getFileNameToUpload($item);
 
             $itemPath = $dirName . '/' . $fileName;
-            if (!$storage->exists($itemPath) || (int)$validatedData["ifFileExist"] === 1) {
+            if (!$storage->exists($itemPath) || (int)$validatedData["ifItemExist"] === 1) {
                 $result = $storage->putFileAs($dirName, $item, $fileName);
 
                 if ($result) {

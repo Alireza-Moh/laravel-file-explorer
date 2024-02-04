@@ -75,7 +75,7 @@ test('should upload item or items and return success response with all items ins
             ["diskName" => "tests"]
         ),
         [
-            "ifFileExist" => 0,
+            "ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
@@ -116,14 +116,14 @@ test('should upload item or items and return success response with all items ins
     );
 });
 
-test('should throw an error when ifFileExist is missing in the form while uploading items', function () {
+test('should throw an error when ifItemExist is missing in the form while uploading items', function () {
     $response = $this->postJson(
         route(
             "fx.file-upload",
             ["diskName" => "tests"]
         ),
         [
-            //"ifFileExist" => 0,
+            //"ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
@@ -142,7 +142,7 @@ test('should throw an error when ifFileExist is missing in the form while upload
         ->where(
             'errors',
             [
-                "ifFileExist" => ["Choose an action"],
+                "ifItemExist" => ["Choose an action"],
             ]
         )
     );
@@ -155,7 +155,7 @@ test('should throw an error when items have wrong extension while uploading item
             ["diskName" => "tests"]
         ),
         [
-            "ifFileExist" => 0,
+            "ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->create('doc1.pdf'),

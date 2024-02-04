@@ -29,9 +29,9 @@ class UploadItemsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "ifFileExist.required" => "Choose an action",
-            "ifFileExist.numeric" => "Choose a valid action",
-            "ifFileExist.in" => "Invalid action selected",
+            "ifItemExist.required" => "Choose an action",
+            "ifItemExist.numeric" => "Choose a valid action",
+            "ifItemExist.in" => "Invalid action selected",
             "items.required" => "Please select a file",
             "items.array" => "Please select a file",
             "items.*.file" => "Invalid file format",
@@ -69,7 +69,7 @@ class UploadItemsRequest extends FormRequest
         $allowedFileExtensions = ConfigRepository::getAllowedFileExtensions();
 
         $rules = [
-            "ifFileExist" => ["required", "numeric", "in:0,1"],
+            "ifItemExist" => ["required", "numeric", "in:0,1"],
             "items" => ["required", "array"],
             "items.*" => ["file"],
             "destination" => ["required", "string"],
