@@ -8,18 +8,34 @@
             "Alireza\\LaravelFileExplorer\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Alireza\\LaravelFileExplorer\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Alireza Mohammadi"
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+      "ext-zip": "*"
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Alireza\\LaravelFileExplorer\\LaravelFileExplorerServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev",
+        "orchestra/testbench": "9.x-dev"
     }
 }
