@@ -9,7 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 
-class UploadFilesRequest extends FormRequest
+class UploadItemsRequest extends FormRequest
 {
     /**
      * Set validation rule
@@ -32,11 +32,11 @@ class UploadFilesRequest extends FormRequest
             "ifFileExist.required" => "Choose an action",
             "ifFileExist.numeric" => "Choose a valid action",
             "ifFileExist.in" => "Invalid action selected",
-            "files.required" => "Please select a file",
-            "files.array" => "Please select a file",
-            "files.*.file" => "Invalid file format",
-            "files.*.max" => "File size exceeds the limit",
-            "files.*.mimes" => "File extension not allowed",
+            "items.required" => "Please select a file",
+            "items.array" => "Please select a file",
+            "items.*.file" => "Invalid file format",
+            "items.*.max" => "item size exceeds the limit",
+            "items.*.mimes" => "File extension not allowed",
             "destination.required" => "File destination path is required",
             "destination.string" => "Invalid file destination path format",
         ];
@@ -70,17 +70,17 @@ class UploadFilesRequest extends FormRequest
 
         $rules = [
             "ifFileExist" => ["required", "numeric", "in:0,1"],
-            "files" => ["required", "array"],
-            "files.*" => ["file"],
+            "items" => ["required", "array"],
+            "items.*" => ["file"],
             "destination" => ["required", "string"],
         ];
 
         if ($allowedFileExtensions !== null) {
-            $rules['files.*'][] = File::types($allowedFileExtensions);
+            $rules['items.*'][] = File::types($allowedFileExtensions);
         }
 
         if ($maxFileSize !== null) {
-            $rules['files.*'][] = File::max($maxFileSize);
+            $rules['items.*'][] = File::max($maxFileSize);
         }
 
         return $rules;
@@ -94,10 +94,10 @@ class UploadFilesRequest extends FormRequest
      */
     private function makeErrorsFriendly(array $errors): array
     {
-        $files = $this->validationData()["files"];
+        $files = $this->validationData()["items"];
         $modifiedErrors = [];
         foreach ($errors as $key => $error) {
-            if (Str::startsWith($key, "files.")){
+            if (Str::startsWith($key, "items.")){
                 $index = (int)explode('.', $key)[1];
 
                 if (array_key_exists($index, $files)) {

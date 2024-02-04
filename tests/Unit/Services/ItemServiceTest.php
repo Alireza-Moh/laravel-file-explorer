@@ -1,17 +1,18 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Services\FileService;
+use Alireza\LaravelFileExplorer\Services\ItemService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 test('should rename a given file', function () {
     $file = createFakeFiles();
-    $fileService = new FileService();
+    $fileService = new ItemService();
 
     $result = $fileService->rename(
         "tests",
         $file[0],
         [
+            "newName" => "newNamdde.txt",
             "oldPath" => $file[0],
             "newPath" => "ios/newNamdde.txt"
         ]
@@ -21,14 +22,14 @@ test('should rename a given file', function () {
         ->and($result)->toMatchArray([
             "result" => [
                 "status" => "success",
-                "message" => "File renamed successfully"
+                "message" => "Item renamed successfully"
 
             ]
         ]);
 });
 
 test('should delete a given file', function () {
-    $fileService = new FileService();
+    $fileService = new ItemService();
     Storage::disk("tests")->put("ios/test.txt", "");
 
     $result = $fileService->delete("tests", [
@@ -50,15 +51,15 @@ test('should delete a given file', function () {
         ]);
 });
 
-test('should upload a given file', function () {
-    $fileService = new FileService();
+test('should upload a single item', function () {
+    $fileService = new ItemService();
 
     $fileService->upload(
         "tests",
         [
             "ifFileExist" => 0,
             "destination" => "ios",
-            "files" => [
+            "items" => [
                 UploadedFile::fake()->image('photo1.jpg')
             ]
         ]
@@ -67,15 +68,15 @@ test('should upload a given file', function () {
     Storage::disk('tests')->assertExists('ios/photo1.jpg');
 });
 
-test('should upload multiple files', function () {
-    $fileService = new FileService();
+test('should upload multiple items', function () {
+    $fileService = new ItemService();
 
     $result = $fileService->upload(
         "tests",
         [
             "ifFileExist" => 0,
             "destination" => "ios",
-            "files" => [
+            "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
                 UploadedFile::fake()->image('photo2.jpg'),
                 UploadedFile::fake()->image('photo3.jpg'),
@@ -93,7 +94,7 @@ test('should upload multiple files', function () {
             [
                 "result" => [
                     "status" => "success",
-                    "message" => "File uploaded successfully",
+                    "message" => "Items uploaded successfully",
                     "items" => [
                         [
                             "diskName" => "tests",
@@ -134,7 +135,7 @@ test('should upload multiple files', function () {
 });
 
 test('should create a file', function () {
-    $fileService = new FileService();
+    $fileService = new ItemService();
 
     $result = $fileService->create("tests", [
         "destination" => "ios",

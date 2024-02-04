@@ -16,10 +16,10 @@ class DownloadFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "files" => "required|array",
-            "files.*.name" => "required|string",
-            "files.*.type" => "required|string|in:file",
-            "files.*.path" => "required|string"
+            "items" => "required|array",
+            "items.*.name" => "required|string",
+            "items.*.type" => "required|string|in:file",
+            "items.*.path" => "required|string"
         ];
     }
 
@@ -31,15 +31,15 @@ class DownloadFileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "files.required" => "Please select a file",
-            "files.array" => "Please select a file",
-            "files.*.name.string" => "Invalid file name format",
-            "files.*.name.required" => "File name is required",
-            "files.*.type.required" => "File type is required",
-            "files.*.type.in" => "Invalid file type",
-            "files.*.type.string" => "Invalid file type format",
-            "files.*.path.required" => "File path is required",
-            "files.*.path.string" => "Invalid file path format",
+            "items.required" => "Please select a file",
+            "items.array" => "Please select a file",
+            "items.*.name.string" => "Invalid file name format",
+            "items.*.name.required" => "File name is required",
+            "items.*.type.required" => "File type is required",
+            "items.*.type.in" => "Invalid file type",
+            "items.*.type.string" => "Invalid file type format",
+            "items.*.path.required" => "File path is required",
+            "items.*.path.string" => "Invalid file path format",
         ];
     }
 
@@ -69,11 +69,11 @@ class DownloadFileRequest extends FormRequest
      */
     private function makeErrorsFriendly(array $errors): array
     {
-        $files = $this->input('files');
+        $files = $this->input('items');
         $fileErrorsMap = [];
 
         foreach ($errors as $errorKey => $errorMessages) {
-            if (preg_match('/files\.(\d+)\.(\w+)/', $errorKey, $matches) && count($matches) > 2) {
+            if (preg_match('/items\.(\d+)\.(\w+)/', $errorKey, $matches) && count($matches) > 2) {
                 $fileIndex = $matches[1];
 
                 if (isset($files[$fileIndex])) {

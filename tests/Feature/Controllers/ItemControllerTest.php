@@ -68,7 +68,7 @@ test('should throw an error when path is missing in the form data for creating a
     );
 });
 
-test('should upload file or files and return success response with all file inside the directory', function () {
+test('should upload item or items and return success response with all items inside the directory', function () {
     $response = $this->postJson(
         route(
             "fx.file-upload",
@@ -77,7 +77,7 @@ test('should upload file or files and return success response with all file insi
         [
             "ifFileExist" => 0,
             "destination" => "ios",
-            "files" => [
+            "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
                 UploadedFile::fake()->image('photo2.jpg')
             ]
@@ -93,7 +93,7 @@ test('should upload file or files and return success response with all file insi
             "result.items"
         ])
         ->where("result.status", "success")
-        ->where("result.message", "File uploaded successfully")
+        ->where("result.message", "Items uploaded successfully")
         ->has('result.items')
         ->has('result.items.0', fn(AssertableJson $json) =>
         $json->where("diskName", "tests")
@@ -116,7 +116,7 @@ test('should upload file or files and return success response with all file insi
     );
 });
 
-test('should throw an error when ifFileExist is missing in the form while uploading files', function () {
+test('should throw an error when ifFileExist is missing in the form while uploading items', function () {
     $response = $this->postJson(
         route(
             "fx.file-upload",
@@ -125,7 +125,7 @@ test('should throw an error when ifFileExist is missing in the form while upload
         [
             //"ifFileExist" => 0,
             "destination" => "ios",
-            "files" => [
+            "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
                 UploadedFile::fake()->image('photo2.jpg')
             ]
@@ -148,7 +148,7 @@ test('should throw an error when ifFileExist is missing in the form while upload
     );
 });
 
-test('should throw an error when files have wrong extension while uploading files', function () {
+test('should throw an error when items have wrong extension while uploading items', function () {
     $response = $this->postJson(
         route(
             "fx.file-upload",
@@ -157,7 +157,7 @@ test('should throw an error when files have wrong extension while uploading file
         [
             "ifFileExist" => 0,
             "destination" => "ios",
-            "files" => [
+            "items" => [
                 UploadedFile::fake()->create('doc1.pdf'),
                 UploadedFile::fake()->create('doc2.pdf')
             ]
@@ -181,7 +181,7 @@ test('should throw an error when files have wrong extension while uploading file
     );
 });
 
-test('should download a single image', function () {
+test('should download a single item', function () {
     $image = createFakeImages();
 
     $response = $this->postJson(
@@ -190,7 +190,7 @@ test('should download a single image', function () {
             ["diskName" => "tests"]
         ),
         [
-            "files" => [
+            "items" => [
                 [
                     "name" => $image[0],
                     "path" => "ios/" . $image[0],
@@ -203,7 +203,7 @@ test('should download a single image', function () {
     $response->assertDownload();
 });
 
-test('should download multiple files as a ZIP folder', function () {
+test('should download multiple items as a ZIP folder', function () {
     $images = createFakeImages(2);
 
     $response = $this->postJson(
@@ -212,7 +212,7 @@ test('should download multiple files as a ZIP folder', function () {
             ["diskName" => "tests"]
         ),
         [
-            "files" => [
+            "items" => [
                 [
                     "name" => $images[0],
                     "path" => "ios/" . $images[0],
@@ -241,7 +241,7 @@ test('should throw validation error when trying to download a directory ', funct
             ["diskName" => "tests"]
         ),
         [
-            "files" => [
+            "items" => [
                 [
                     "name" => $dir[0]["name"],
                     "path" => $dir[0]["path"],
@@ -268,6 +268,7 @@ test('should rename a file', function () {
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
+            "newName" => "newName.png",
             "newPath" => "ios/newName.png",
             "oldPath" => "ios/" . $images[0],
         ]
@@ -281,7 +282,7 @@ test('should rename a file', function () {
             "result.message"
         ])
         ->where("result.status", "success")
-        ->where("result.message", "File renamed successfully")
+        ->where("result.message", "Item renamed successfully")
     );
 });
 

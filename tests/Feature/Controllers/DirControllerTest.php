@@ -191,7 +191,7 @@ test('should throw an error when directory path is missing in form', function ()
     );
 });
 
-test('should rename a file', function () {
+test('should rename a directory', function () {
     Storage::disk("tests")->makeDirectory("ios/oldName");
     $response = $this->putJson(
         route(
@@ -199,6 +199,7 @@ test('should rename a file', function () {
             ["diskName" => "tests", "dirName" => "oldName"]
         ),
         [
+            "newName" => "newName",
             "newPath" => "ios/newName",
             "oldPath" => "ios/oldName",
         ]
