@@ -1,6 +1,8 @@
 <?php
 namespace Alireza\LaravelFileExplorer\Services;
 
+use Alireza\LaravelFileExplorer\Events\DirCreated;
+use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
 use Alireza\LaravelFileExplorer\Utilities\DirManager;
 use Illuminate\Support\Facades\Storage;
@@ -109,7 +111,10 @@ class DirService extends BaseItemManager implements ItemOperations
         }
         $storage = Storage::disk($diskName);
         foreach ($validatedData["items"] as $dir) {
-            $storage->deleteDirectory($dir["path"]);
+            $result = $storage->deleteDirectory($dir["path"]);
+            if ($result) {
+                $this->fireDeleteEvent($diskName, $dir);
+            }
         }
 
         return $this->getResponse(true, success: "Directory deleted successfully");
@@ -134,6 +139,10 @@ class DirService extends BaseItemManager implements ItemOperations
         }
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
+        if ($result) {
+            event(new ItemRenamed($diskName, $oldName, $validatedData));
+        }
+
         return $this->getResponse(
             $result,
             'Directory renamed successfully',
@@ -152,6 +161,10 @@ class DirService extends BaseItemManager implements ItemOperations
     {
         $result = Storage::disk($diskName)->makeDirectory($validatedData["path"]);
         $message = $result ? "Directory created successfully" : "Failed to create directory";
+
+        if ($result) {
+            event(new DirCreated($diskName, $validatedData["destination"], $validatedData["path"]));
+        }
 
         return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
     }

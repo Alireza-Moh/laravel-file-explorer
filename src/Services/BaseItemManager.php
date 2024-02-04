@@ -2,6 +2,8 @@
 
 namespace Alireza\LaravelFileExplorer\Services;
 
+use Alireza\LaravelFileExplorer\Events\ItemDeleted;
+
 abstract class BaseItemManager
 {
     /**
@@ -53,5 +55,10 @@ abstract class BaseItemManager
                 "dirs" => $dirService->getDiskDirsForTree($diskName)
             ]
         );
+    }
+
+    protected function fireDeleteEvent(string $diskName, array $item): void
+    {
+        event(new ItemDeleted($diskName, $item["name"], $item["path"]));
     }
 }

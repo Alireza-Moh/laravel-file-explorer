@@ -2,6 +2,9 @@
 
 namespace Alireza\LaravelFileExplorer\Services;
 
+use Alireza\LaravelFileExplorer\Events\FileCreated;
+use Alireza\LaravelFileExplorer\Events\ItemRenamed;
+use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
@@ -10,7 +13,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 
-class FileService extends BaseItemManager implements ItemOperations
+class ItemService extends BaseItemManager implements ItemOperations
 {
     /**
      * Rename a file.
@@ -24,7 +27,10 @@ class FileService extends BaseItemManager implements ItemOperations
     {
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
-        return $this->getResponse($result, "File renamed successfully", "Failed to rename file");
+        if ($result) {
+            event(new ItemRenamed($diskName, $oldName, $validatedData));
+        }
+        return $this->getResponse($result, "Item renamed successfully", "Failed to rename item");
     }
 
     /**
@@ -39,6 +45,11 @@ class FileService extends BaseItemManager implements ItemOperations
         $itemToDelete = collect($validatedData["items"])->pluck("path")->toArray();
         $result = Storage::disk($diskName)->delete($itemToDelete);
 
+        if ($result) {
+            foreach ($validatedData["items"] as $item) {
+                $this->fireDeleteEvent($diskName, $item);
+            }
+        }
         return $this->getResponse($result, "File deleted successfully", "Failed to delete file");
     }
 
@@ -53,17 +64,22 @@ class FileService extends BaseItemManager implements ItemOperations
     {
         $storage = Storage::disk($diskName);
         $dirName = $validatedData["destination"];
-        foreach ($validatedData["files"] as $file) {
-            $fileName = $this->getFileNameToUpload($file);
+        foreach ($validatedData["items"] as $item) {
+            $fileName = $this->getFileNameToUpload($item);
 
-            if (!$storage->exists($dirName . '/' . $fileName) || (int)$validatedData["ifFileExist"] === 1) {
-                $storage->putFileAs($dirName, $file, $fileName);
+            $itemPath = $dirName . '/' . $fileName;
+            if (!$storage->exists($itemPath) || (int)$validatedData["ifFileExist"] === 1) {
+                $result = $storage->putFileAs($dirName, $item, $fileName);
+
+                if ($result) {
+                    event(new ItemUploaded($diskName, $dirName, $fileName, $itemPath));
+                }
             }
         }
 
         return $this->getResponse(
             true,
-            success: "File uploaded successfully",
+            success: "Items uploaded successfully",
             additionalData: [
                 'items' => (new DirService())->getDirItems($diskName, $dirName)
             ]
@@ -82,6 +98,10 @@ class FileService extends BaseItemManager implements ItemOperations
         $result = Storage::disk($diskName)->put($validatedData["path"], "");
         $message = $result ? "File created successfully" : "Failed to create file";
 
+        if ($result) {
+            event(new FileCreated($diskName, $validatedData["destination"], $validatedData["path"]));
+        }
+
         return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
     }
 
@@ -94,7 +114,7 @@ class FileService extends BaseItemManager implements ItemOperations
      */
     public function download(string $diskName, array $validatedData): StreamedResponse
     {
-        return Storage::disk($diskName)->download($validatedData["files"][0]["path"]);
+        return Storage::disk($diskName)->download($validatedData["items"][0]["path"]);
     }
 
     /**
@@ -107,7 +127,7 @@ class FileService extends BaseItemManager implements ItemOperations
     public function downloadAsZip(string $diskName, array $validatedData): BinaryFileResponse|JsonResponse
     {
         $zipFileName = $diskName . '_files.zip';
-        $filteredFiles = array_filter($validatedData["files"], function($file) {
+        $filteredFiles = array_filter($validatedData["items"], function($file) {
             return $file["type"] === "file";
         });
 
@@ -116,7 +136,7 @@ class FileService extends BaseItemManager implements ItemOperations
             return Response::download(storage_path($zipFileName))->deleteFileAfterSend();
         }
         return response()->json(
-            $this->getResponse(false, failure: "Failed to download files")
+            $this->getResponse(false, failure: "Failed to download items")
         );
     }
 
