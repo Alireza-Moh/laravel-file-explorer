@@ -4,6 +4,7 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Requests\CreateDirRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
+use Alireza\LaravelFileExplorer\Requests\LoadDirItemsRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
@@ -67,20 +68,18 @@ class DirController extends Controller
      *
      * @param string $diskName
      * @param string $dirName
-     * @param Request $request
+     * @param LoadDirItemsRequest $request
      * @param DirService $dirService
      * @return JsonResponse directory items.
      */
-    public function loadDirItems(string $diskName, string $dirName, Request $request, DirService $dirService): JsonResponse
+    public function loadDirItems(string $diskName, string $dirName, LoadDirItemsRequest $request, DirService $dirService): JsonResponse
     {
-        $validatedData = $request->validate([
-            "path" => "required|string",
-        ]);
-
-        $dirByLabel = $dirService->findDirectoryByName($diskName, $dirName);
+        $validatedData = $request->validated();
+        $matchedDir = $dirService->findDirectoryByName($diskName, $dirName);
         $selectedDirPath = null;
-        if ($dirByLabel !== null) {
-            $selectedDirPath = $dirByLabel['path'];
+
+        if ($matchedDir !== null) {
+            $selectedDirPath = $matchedDir['path'];
         }
 
         return response()->json([

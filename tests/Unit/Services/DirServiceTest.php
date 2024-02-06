@@ -94,7 +94,7 @@ test('should retrieve disk files', function () {
         ->and($items[0]['type'])->toBe('file')
         ->and($items[0]['extension'])->toBe('txt')
         ->and($items[0]['url'])->toBe('/storage/fake_file_0.txt')
-        ->and($items[0]['size'])->toBeFloat()
+        ->and($items[0]['size'])->toBe("-")
         ->and($items[0]['lastModified'])->toBeString()
         ->and($items[1])->toBeArray()
         ->and($items[1])->toHaveKeys([
@@ -113,7 +113,7 @@ test('should retrieve disk files', function () {
         ->and($items[1]['type'])->toBe('file')
         ->and($items[1]['extension'])->toBe('txt')
         ->and($items[1]['url'])->toBe('/storage/fake_file_1.txt')
-        ->and($items[1]['size'])->toBeFloat()
+        ->and($items[1]['size'])->toBe("-")
         ->and($items[1]['lastModified'])->toBeString();
 });
 

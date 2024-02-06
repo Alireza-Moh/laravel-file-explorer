@@ -8,16 +8,21 @@ use Illuminate\Support\Facades\Storage;
 trait DirManager
 {
     /**
-     * Get the size of a file in kilobytes.
+     * Format file size
      *
-     * @param string $diskName
-     * @param string $item
-     * @return float
+     * @param float $size
+     * @return string
      */
-    protected function getFileSizeInKB(string $diskName, string $item): float
+    protected function formatItemSize(float $size): string
     {
-        $fileSizeBytes = Storage::disk($diskName)->size($item);
-        return round($fileSizeBytes / 1024, 2);
+        $formattedSize = "-";
+        if ($size > 0) {
+            $units = array('B', 'KB', 'MB', 'GB', 'TB');
+            $i = floor(log($size, 1024));
+            $formattedSize = number_format($size / pow(1024, $i), 2) . ' ' . $units[$i];
+        }
+
+        return $formattedSize;
     }
 
     /**

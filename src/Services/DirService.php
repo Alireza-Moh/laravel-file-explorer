@@ -166,22 +166,30 @@ class DirService extends BaseItemManager implements ItemOperations
      */
     private function getMetaData(string $diskName, string $path, string $type): array
     {
-        $url = Storage::disk($diskName)->url($path);
+        $storage = Storage::disk($diskName);
+        $url = $storage->url($path);
         $commonMetaData = [
             'diskName' => $diskName,
             'name' => basename($path),
             'path' => $path,
             'type' => $type,
-            'size' => "-",
             'lastModified' => "-",
             'extension' => null,
             'url' => $url,
         ];
 
         if ($type === 'file') {
-            $commonMetaData['size'] = $this->getFileSizeInKB($diskName, $path);
+            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
             $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
             $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
+        }
+
+        if ($type === 'dir') {
+            $size = 0;
+            foreach ($storage->allFiles($path) as $filePath) {
+                $size += $storage->size($filePath);
+            }
+            $commonMetaData['size'] = $this->formatItemSize($size);
         }
 
         return $commonMetaData;

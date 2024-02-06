@@ -34,7 +34,7 @@ test('should create file and return success response with all file inside the di
                 ->where('name', 'config.txt')
                 ->where('path', 'ios/config.txt')
                 ->where('type', 'file')
-                ->where('size', 0)
+                ->where('size', "-")
                 ->where('extension', 'txt')
                 ->where('url', '/storage/ios/config.txt')
                 ->etc()
