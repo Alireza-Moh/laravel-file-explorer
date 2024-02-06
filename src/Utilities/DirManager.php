@@ -8,18 +8,6 @@ use Illuminate\Support\Facades\Storage;
 trait DirManager
 {
     /**
-     * Check if the directory is the default directory on loading.
-     *
-     * @param string|null $defaultDirOnLoading
-     * @param string $dirName
-     * @return bool
-     */
-    protected function isDefaultDirectory(?string $defaultDirOnLoading, string $dirName): bool
-    {
-        return $defaultDirOnLoading && $defaultDirOnLoading === $dirName;
-    }
-
-    /**
      * Get the size of a file in kilobytes.
      *
      * @param string $diskName
@@ -49,27 +37,8 @@ trait DirManager
     }
 
     /**
-     * Check if the default directory from default disk is present in the given array of directories.
-     *
-     * @param array $dirs
-     * @return bool
-     */
-    protected function existDefaultDirOnLoadingInArray(array $dirs): bool
-    {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
-
-        if ($defaultDirOnLoading === null) {
-            return false;
-        }
-        $filteredDirs = array_filter($dirs, function ($dir) use ($defaultDirOnLoading) {
-            return $dir['name'] === $defaultDirOnLoading;
-        });
-
-        return !empty($filteredDirs);
-    }
-
-    /**
-     * Retrieves the metadata for items of a specific type (file or directory) within a given directory on a specified disk.
+     * Retrieves the metadata for items of a specific type (file or dir)
+     * within a given directory on a specified disk.
      *
      * @param string $diskName
      * @param string $type
@@ -88,7 +57,8 @@ trait DirManager
     }
 
     /**
-     * Generates and retrieves a query result for items of a specific type (file or directory) on a specified disk.
+     * Generates and retrieves a query result for items
+     * of a specific type (file or dir) on a specified disk.
      *
      * @param string $diskName
      * @param string $dirName

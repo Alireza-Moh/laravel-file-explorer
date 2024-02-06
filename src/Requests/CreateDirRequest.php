@@ -16,8 +16,8 @@ class CreateDirRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "path" => "required|string",
-            "destination" => "required|string"
+            "path" => ["required", "string"],
+            "destination" => ["required", "string"]
         ];
     }
 

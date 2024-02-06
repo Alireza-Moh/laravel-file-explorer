@@ -103,12 +103,6 @@ class DirService extends BaseItemManager implements ItemOperations
      */
     public function delete(string $diskName, array $validatedData): array
     {
-        if ($this->existDefaultDirOnLoadingInArray($validatedData["items"])) {
-            return [
-                "status" => "failed",
-                "message" => "You cannot delete the default directory because it's needed for initiation"
-            ];
-        }
         $storage = Storage::disk($diskName);
         foreach ($validatedData["items"] as $dir) {
             $result = $storage->deleteDirectory($dir["path"]);
@@ -130,13 +124,6 @@ class DirService extends BaseItemManager implements ItemOperations
      */
     public function rename(string $diskName, string $oldName, array $validatedData): array
     {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
-        if ($this->isDefaultDirectory($defaultDirOnLoading, $oldName)) {
-            return $this->getResponse(
-                false,
-                failure: "You cannot rename the default directory because it's needed for initiation."
-            );
-        }
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
         if ($result) {

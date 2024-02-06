@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
+use Alireza\LaravelFileExplorer\Rules\MatchDefaultDir;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -16,9 +17,10 @@ class RenameItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "newName" => "required|string",
-            "oldPath" => "required|string",
-            "newPath" => "required|string",
+            "oldName" => ["required", "string", new MatchDefaultDir],
+            "newName" => ["required", "string"],
+            "oldPath" => ["required", "string"],
+            "newPath" => ["required", "string"]
         ];
     }
 

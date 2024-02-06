@@ -16,10 +16,10 @@ class DownloadFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "items" => "required|array",
-            "items.*.name" => "required|string",
-            "items.*.type" => "required|string|in:file",
-            "items.*.path" => "required|string"
+            "items" => ["required", "array"],
+            "items.*.name" => ["required", "string"],
+            "items.*.type" => ["required", "string", "in:file"],
+            "items.*.path" => ["required", "string"]
         ];
     }
 

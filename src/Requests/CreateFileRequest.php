@@ -2,7 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
-use Alireza\LaravelFileExplorer\Rules\FileExtensionRule;
+use Alireza\LaravelFileExplorer\Rules\FileExtension;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -17,12 +17,8 @@ class CreateFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "path" => [
-                "required",
-                "string",
-                new FileExtensionRule()
-            ],
-            "destination" => "required|string"
+            "path" => ["required", "string", new FileExtension],
+            "destination" => ["required", "string"]
         ];
     }
 
