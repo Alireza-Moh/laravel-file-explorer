@@ -1,9 +1,17 @@
 <?php
 
+use Alireza\LaravelFileExplorer\Events\FileCreated;
+use Alireza\LaravelFileExplorer\Events\ItemDeleted;
+use Alireza\LaravelFileExplorer\Events\ItemRenamed;
+use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
+beforeEach(function () {
+    Event::fake();
+});
 test('should rename a given file', function () {
     $file = createFakeFiles();
     $fileService = new ItemService();
@@ -26,6 +34,7 @@ test('should rename a given file', function () {
 
             ]
         ]);
+    Event::assertDispatched(ItemRenamed::class);
 });
 
 test('should delete a given file', function () {
@@ -49,6 +58,7 @@ test('should delete a given file', function () {
                 "message" => "File deleted successfully"
             ]
         ]);
+    Event::assertDispatched(ItemDeleted::class);
 });
 
 test('should upload a single item', function () {
@@ -66,6 +76,7 @@ test('should upload a single item', function () {
     );
 
     Storage::disk('tests')->assertExists('ios/photo1.jpg');
+    Event::assertDispatched(ItemUploaded::class);
 });
 
 test('should upload multiple items', function () {
@@ -132,6 +143,7 @@ test('should upload multiple items', function () {
                 ]
             ]
         );
+    Event::assertDispatched(ItemUploaded::class);
 });
 
 test('should create a file', function () {
@@ -176,4 +188,5 @@ test('should create a file', function () {
                 ]
             ]
         );
+    Event::assertDispatched(FileCreated::class);
 });

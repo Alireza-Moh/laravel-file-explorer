@@ -1,9 +1,12 @@
 <?php
 
+use Alireza\LaravelFileExplorer\Events\DirCreated;
+use Alireza\LaravelFileExplorer\Events\ItemDeleted;
 use Alireza\LaravelFileExplorer\Services\DirService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
-function assertItemValues(array $item, array $expectedValues)
+function assertItemValues(array $item, array $expectedValues): void
 {
     foreach ($expectedValues as $key => $value) {
         test()->expect($item[$key])->toBe($value);
@@ -139,6 +142,7 @@ test('should not find directory by name', function () {
 });
 
 test('should delete specified directory', function () {
+    Event::fake();
     $dirService = new DirService();
     $dir = createFakeDirs();
 
@@ -159,9 +163,11 @@ test('should delete specified directory', function () {
                "message" => "Directory deleted successfully"
            ]
         ]);
+    Event::assertDispatched(ItemDeleted::class);
 });
 
 test('should create a directory', function () {
+    Event::fake();
     $dirService = new DirService();
 
     $result = $dirService->create("tests", [
@@ -209,4 +215,5 @@ test('should create a directory', function () {
                 ]
             ]
         );
+    Event::assertDispatched(DirCreated::class);
 });

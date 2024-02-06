@@ -268,6 +268,7 @@ test('should rename a file', function () {
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
+            "oldName" => $images[0],
             "newName" => "newName.png",
             "newPath" => "ios/newName.png",
             "oldPath" => "ios/" . $images[0],

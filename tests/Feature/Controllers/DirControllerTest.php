@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -199,6 +200,7 @@ test('should rename a directory', function () {
             ["diskName" => "tests", "dirName" => "oldName"]
         ),
         [
+            "oldName" => "oldName",
             "newName" => "newName",
             "newPath" => "ios/newName",
             "oldPath" => "ios/oldName",
