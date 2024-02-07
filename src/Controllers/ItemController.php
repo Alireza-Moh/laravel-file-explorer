@@ -25,7 +25,7 @@ class ItemController extends Controller
      * @param ItemService $fileService
      * @return JsonResponse
      */
-    public function renameFile(string $diskName, string $fileName, RenameItemRequest $request, ItemService $fileService): JsonResponse
+    public function renameItem(string $diskName, string $fileName, RenameItemRequest $request, ItemService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
         $result = $fileService->rename($diskName, $fileName, $validatedData);
@@ -41,7 +41,7 @@ class ItemController extends Controller
      * @param ItemService $fileService
      * @return JsonResponse
      */
-    public function deleteFile(string $diskName, DeleteItemRequest $request, ItemService $fileService): JsonResponse
+    public function deleteItems(string $diskName, DeleteItemRequest $request, ItemService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
         $result = $fileService->delete($diskName, $validatedData);
@@ -74,7 +74,7 @@ class ItemController extends Controller
      * @param ItemService $fileService
      * @return JsonResponse
      */
-    public function uploadFiles(string $diskName, UploadItemsRequest $request, ItemService $fileService): JsonResponse
+    public function uploadItems(string $diskName, UploadItemsRequest $request, ItemService $fileService): JsonResponse
     {
         $validatedData = $request->validated();
         $result = $fileService->upload($diskName, $validatedData);
@@ -89,37 +89,15 @@ class ItemController extends Controller
      * @param DownloadFileRequest $request
      * @param ItemService $fileService
      * @return BinaryFileResponse|JsonResponse|StreamedResponse
+     * @throws Exception
      */
-    public function downloadFile(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
+    public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
         $validatedData = $request->validated();
 
         if (count($validatedData["items"]) === 1) {
-            return $this->downloadSingleItem($fileService, $diskName, $validatedData);
-        }
-
-        return $fileService->downloadAsZip($diskName, $validatedData);
-    }
-
-    /**
-     * Download a single file.
-     *
-     * @param ItemService $fileService
-     * @param string $diskName
-     * @param array $validatedData
-     * @return JsonResponse|StreamedResponse
-     */
-    public function downloadSingleItem(ItemService $fileService, string $diskName, array $validatedData): JsonResponse|StreamedResponse
-    {
-        try {
             return $fileService->download($diskName, $validatedData);
-        } catch (Exception $e) {
-            return response()->json([
-                "result" => [
-                    "status" => "failed",
-                    "message" => "Failed to download files"
-                ]
-            ], 404);
         }
+        return $fileService->downloadAsZip($diskName, $validatedData);
     }
 }

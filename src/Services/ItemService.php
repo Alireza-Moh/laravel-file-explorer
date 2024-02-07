@@ -6,6 +6,7 @@ use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -110,10 +111,15 @@ class ItemService extends BaseItemManager implements ItemOperations
      *
      * @param string $diskName
      * @param array $validatedData
-     * @return StreamedResponse
+     * @return JsonResponse|BinaryFileResponse|StreamedResponse
+     * @throws Exception
      */
-    public function download(string $diskName, array $validatedData): StreamedResponse
+    public function download(string $diskName, array $validatedData): JsonResponse|BinaryFileResponse|StreamedResponse
     {
+        $dir = $validatedData["items"][0];
+        if ($dir["type"] === "dir") {
+            return $this->downloadDir($diskName, $dir["path"]);
+        }
         return Storage::disk($diskName)->download($validatedData["items"][0]["path"]);
     }
 
@@ -123,20 +129,47 @@ class ItemService extends BaseItemManager implements ItemOperations
      * @param string $diskName
      * @param array $validatedData
      * @return BinaryFileResponse|JsonResponse
+     * @throws Exception
      */
     public function downloadAsZip(string $diskName, array $validatedData): BinaryFileResponse|JsonResponse
     {
         $zipFileName = $diskName . '_files.zip';
-        $filteredFiles = array_filter($validatedData["items"], function($file) {
-            return $file["type"] === "file";
-        });
-
-        $zipArchiveCreated = $this->createZipArchive($zipFileName, $diskName, $filteredFiles);
+        $zipArchiveCreated = $this->createZipArchive($zipFileName, $diskName, $validatedData["items"]);
         if ($zipArchiveCreated) {
             return Response::download(storage_path($zipFileName))->deleteFileAfterSend();
         }
+
         return response()->json(
-            $this->getResponse(false, failure: "Failed to download items")
+            $this->getResponse(false, failure: "Failed to download items"),
+            404
+        );
+    }
+
+    /**
+     * download all items of a directory as zip
+     * @param string $diskName
+     * @param string $dirPath
+     * @return BinaryFileResponse|JsonResponse
+     * @throws Exception
+     */
+    private function downloadDir(string $diskName, string $dirPath): BinaryFileResponse|JsonResponse
+    {
+        $dirItems = Storage::disk($diskName)->allFiles($dirPath);
+        if (count($dirItems) > 0) {
+            $items = [];
+            foreach ($dirItems as $item) {
+                $items[] = [
+                    "name" => basename($item),
+                    "path" => $item,
+                    "type" => "file",
+                ];
+            }
+
+            return $this->downloadAsZip($diskName, ["items" => $items]);
+        }
+        return response()->json(
+            $this->getResponse(false, failure: "Can not download an empty directory"),
+            404
         );
     }
 
@@ -147,10 +180,11 @@ class ItemService extends BaseItemManager implements ItemOperations
      * @param string $diskName
      * @param array $files
      * @return bool
+     * @throws Exception
      */
     private function createZipArchive(string $zipFileName, string $diskName, array $files): bool
     {
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
         if ($zip->open(storage_path($zipFileName), ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             $this->addFilesToZip($zip, $diskName, $files);
             $zip->close();
