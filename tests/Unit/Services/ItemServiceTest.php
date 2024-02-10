@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 beforeEach(function () {
     Event::fake();
 });
+
 test('should rename a given file', function () {
     $file = createFakeFiles();
     $fileService = new ItemService();

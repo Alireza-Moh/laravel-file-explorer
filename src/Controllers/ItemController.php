@@ -83,7 +83,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Download a file.
+     * Download item/items.
      *
      * @param string $diskName
      * @param DownloadFileRequest $request
@@ -93,11 +93,6 @@ class ItemController extends Controller
      */
     public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
-        $validatedData = $request->validated();
-
-        if (count($validatedData["items"]) === 1) {
-            return $fileService->download($diskName, $validatedData);
-        }
-        return $fileService->downloadAsZip($diskName, $validatedData);
+        return $fileService->download($diskName, $request->validated());
     }
 }

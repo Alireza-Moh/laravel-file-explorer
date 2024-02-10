@@ -203,7 +203,7 @@ test('should download a single item', function () {
     $response->assertDownload();
 });
 
-test('should download multiple items as a ZIP folder', function () {
+test('should download multiple items as a ZIP file', function () {
     $images = createFakeImages(2);
 
     $response = $this->postJson(
@@ -229,7 +229,7 @@ test('should download multiple items as a ZIP folder', function () {
 
     $response->assertDownload();
     $response->assertHeader('Content-Type', 'application/zip');
-    $response->assertHeader('Content-Disposition', 'attachment; filename=tests_files.zip');
+    $response->assertHeader('Content-Disposition', 'attachment; filename=tests.zip');
 });
 
 test('should rename a file', function () {
