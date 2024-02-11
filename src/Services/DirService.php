@@ -42,6 +42,7 @@ class DirService extends BaseItemManager implements ItemOperations
             $subDirs = $this->getDiskDirsForTree($diskName, $dir);
             $allDirs[] = [
                 "diskName" => $diskName,
+                "dirName" => $dirName,
                 "name" => basename($dir),
                 "path" => $dir,
                 "type" => "dir",
@@ -115,29 +116,6 @@ class DirService extends BaseItemManager implements ItemOperations
     }
 
     /**
-     * Rename a directory.
-     *
-     * @param string $diskName
-     * @param string $oldName
-     * @param array $validatedData
-     * @return array
-     */
-    public function rename(string $diskName, string $oldName, array $validatedData): array
-    {
-        $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
-
-        if ($result) {
-            event(new ItemRenamed($diskName, $oldName, $validatedData));
-        }
-
-        return $this->getResponse(
-            $result,
-            'Directory renamed successfully',
-            'Failed to rename directory'
-        );
-    }
-
-    /**
      * Create a directory
      *
      * @param string $diskName
@@ -160,16 +138,18 @@ class DirService extends BaseItemManager implements ItemOperations
      * Retrieve metadata for a specific item.
      *
      * @param string $diskName
+     * @param string $dirName
      * @param string $path
      * @param string $type
      * @return array
      */
-    private function getMetaData(string $diskName, string $path, string $type): array
+    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
     {
         $storage = Storage::disk($diskName);
         $url = $storage->url($path);
         $commonMetaData = [
             'diskName' => $diskName,
+            'dirName' => $dirName,
             'name' => basename($path),
             'path' => $path,
             'type' => $type,

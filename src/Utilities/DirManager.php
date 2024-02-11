@@ -51,11 +51,11 @@ trait DirManager
      * @param string $dirName
      * @return array
      */
-    protected function getDirItemsByType(string $diskName, string $type, bool $getFromDir = true, string $dirName = "",): array
+    protected function getDirItemsByType(string $diskName, string $type, bool $getFromDir = true, string $dirName = ""): array
     {
         $items = [];
         foreach ($this->getQuery($diskName, $dirName, $type, $getFromDir) as $item) {
-            $items[] = $this->getMetaData($diskName, $item, $type);
+            $items[] = $this->getMetaData($diskName, $dirName, $item, $type);
         }
 
         return $items;

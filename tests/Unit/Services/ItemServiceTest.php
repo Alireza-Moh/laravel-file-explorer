@@ -110,6 +110,7 @@ test('should upload multiple items', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo1.jpg",
                             "path" => "ios/photo1.jpg",
                             "type" => "file",
@@ -118,6 +119,7 @@ test('should upload multiple items', function () {
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo2.jpg",
                             "path" => "ios/photo2.jpg",
                             "type" => "file",
@@ -126,6 +128,7 @@ test('should upload multiple items', function () {
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo3.jpg",
                             "path" => "ios/photo3.jpg",
                             "type" => "file",
@@ -134,6 +137,7 @@ test('should upload multiple items', function () {
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo4.jpg",
                             "path" => "ios/photo4.jpg",
                             "type" => "file",
@@ -169,6 +173,7 @@ test('should create a file', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "zjztj.txt",
                             "path" => "ios/zjztj.txt",
                             "type" => "file",
@@ -179,6 +184,7 @@ test('should create a file', function () {
                     "dirs" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "",
                             "name" => "ios",
                             "path" => "ios",
                             "type" => "dir",

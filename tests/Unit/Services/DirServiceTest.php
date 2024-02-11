@@ -60,6 +60,7 @@ test('should retrieve disk directories', function () {
             [
                 [
                     "diskName" => "tests",
+                    "dirName" => "",
                     "name" => "fake_dir_0",
                     "path" => "fake_dir_0",
                     "type" => "dir",
@@ -185,6 +186,7 @@ test('should create a directory', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "zjztj",
                             "path" => "ios/zjztj",
                             "type" => "dir",
@@ -197,12 +199,14 @@ test('should create a directory', function () {
                     "dirs" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "",
                             "name" => "ios",
                             "path" => "ios",
                             "type" => "dir",
                             "subDir" => [
                                 [
                                     "diskName" => "tests",
+                                    "dirName" => "ios",
                                     "name" => "zjztj",
                                     "path" => "ios/zjztj",
                                     "type" => "dir",

@@ -5,31 +5,12 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 use Alireza\LaravelFileExplorer\Requests\CreateDirRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Requests\LoadDirItemsRequest;
-use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class DirController extends Controller
 {
-    /**
-     * Rename a directory.
-     *
-     * @param string $diskName The name of the disk.
-     * @param string $dirName the old name of the directory
-     * @param RenameItemRequest $request http request
-     * @param DirService $dirService
-     * @return JsonResponse successful/failed
-     */
-    public function renameDir(string $diskName, string $dirName, RenameItemRequest $request, DirService $dirService): JsonResponse
-    {
-        $validatedData = $request->validated();
-        $result = $dirService->rename($diskName, $dirName, $validatedData);
-
-        return response()->json($result);
-    }
-
     /**
      * Delete a directory.
      *
