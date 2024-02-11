@@ -156,6 +156,7 @@ class DirService extends BaseItemManager implements ItemOperations
             'lastModified' => "-",
             'extension' => null,
             'url' => $url,
+            'isChecked' => false,
         ];
 
         if ($type === 'file') {
