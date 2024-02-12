@@ -23,7 +23,6 @@ Route::group([
     Route::post('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems'])->name("fx.load-dir-items");
 
     Route::put('disks/{diskName}/items/{dirName}', [ItemController::class, 'renameItem'])->name("fx.item-rename");
-    Route::put('disks/{diskName}/dirs/{dirName}', [DirController::class, 'renameDir'])->name("fx.dir-rename");
 
     Route::delete('disks/{diskName}/items/delete', [ItemController::class, 'deleteItems'])->name("fx.items-delete");
     Route::delete('disks/{diskName}/dirs/delete', [DirController::class, 'deleteDir'])->name("fx.dir-delete");
