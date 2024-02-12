@@ -2,11 +2,10 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoadDirItemsRequest extends FormRequest
+class LoadDirItemsRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -41,13 +40,7 @@ class LoadDirItemsRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $errors = $validator->errors();
-
-        $response = response()->json([
-            'message' => 'Invalid data sent',
-            'errors' => $errors->messages(),
-        ], 422);
-
+        $response = $this->getFailureResponse();
         throw new HttpResponseException($response);
     }
 }

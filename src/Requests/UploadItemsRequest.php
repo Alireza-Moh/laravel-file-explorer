@@ -4,12 +4,11 @@ namespace Alireza\LaravelFileExplorer\Requests;
 
 use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 
-class UploadItemsRequest extends FormRequest
+class UploadItemsRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -50,10 +49,8 @@ class UploadItemsRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $response = response()->json([
-            'message' => 'Invalid data sent',
-            'errors' => $this->makeErrorsFriendly($validator->errors()->messages()),
-        ], 422);
+        $errors = $this->makeErrorsFriendly();
+        $response = $this->getFailureResponse($errors);
 
         throw new HttpResponseException($response);
     }
@@ -89,13 +86,13 @@ class UploadItemsRequest extends FormRequest
     /**
      * Map errors to corresponding files based on the file index in the input array.
      *
-     * @param array $errors actual errors
      * @return array the modified errors
      */
-    private function makeErrorsFriendly(array $errors): array
+    private function makeErrorsFriendly(): array
     {
         $files = $this->validationData()["items"];
         $modifiedErrors = [];
+        $errors = $this->validator->errors()->messages();
         foreach ($errors as $key => $error) {
             if (Str::startsWith($key, "items.")){
                 $index = (int)explode('.', $key)[1];

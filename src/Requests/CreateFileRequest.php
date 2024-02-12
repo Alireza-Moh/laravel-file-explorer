@@ -4,10 +4,9 @@ namespace Alireza\LaravelFileExplorer\Requests;
 
 use Alireza\LaravelFileExplorer\Rules\FileExtension;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CreateFileRequest extends FormRequest
+class CreateFileRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -30,13 +29,7 @@ class CreateFileRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $errors = $validator->errors();
-
-        $response = response()->json([
-            'message' => 'Invalid data sent',
-            'errors' => $errors->messages(),
-        ], 422);
-
+        $response = $this->getFailureResponse();
         throw new HttpResponseException($response);
     }
 }
