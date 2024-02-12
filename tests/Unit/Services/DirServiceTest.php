@@ -194,6 +194,7 @@ test('should create a directory', function () {
                             "lastModified" => "-",
                             "extension" => null,
                             "url" => "/storage/ios/zjztj",
+                            "isChecked" => false
                         ]
                     ],
                     "dirs" => [

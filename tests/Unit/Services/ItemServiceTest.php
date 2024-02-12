@@ -116,6 +116,7 @@ test('should upload multiple items', function () {
                             "type" => "file",
                             "extension" => "jpg",
                             "url" => "/storage/ios/photo1.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
@@ -124,7 +125,8 @@ test('should upload multiple items', function () {
                             "path" => "ios/photo2.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo2.jpg"
+                            "url" => "/storage/ios/photo2.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
@@ -133,7 +135,8 @@ test('should upload multiple items', function () {
                             "path" => "ios/photo3.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo3.jpg"
+                            "url" => "/storage/ios/photo3.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
@@ -142,7 +145,8 @@ test('should upload multiple items', function () {
                             "path" => "ios/photo4.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo4.jpg"
+                            "url" => "/storage/ios/photo4.jpg",
+                            "isChecked" => false
                         ]
                     ]
                 ]
@@ -179,6 +183,7 @@ test('should create a file', function () {
                             "type" => "file",
                             "extension" => "txt",
                             "url" => "/storage/ios/zjztj.txt",
+                            "isChecked" => false
                         ]
                     ],
                     "dirs" => [
@@ -189,7 +194,6 @@ test('should create a file', function () {
                             "path" => "ios",
                             "type" => "dir",
                             "subDir" => []
-
                         ]
                     ]
                 ]

@@ -38,6 +38,7 @@ test('should create directory and return success response with all file inside t
                 ->where('lastModified', '-')
                 ->where('extension', null)
                 ->where('url', '/storage/ios/configDir')
+                ->where('isChecked', false)
             )
             ->has('result.dirs.0', fn(AssertableJson $json) =>
                 $json->where("diskName", "tests")
