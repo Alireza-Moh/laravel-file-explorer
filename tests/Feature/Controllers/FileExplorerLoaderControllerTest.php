@@ -29,12 +29,14 @@ test('should load file explorer initial data', function () {
             ->where("result.data.dirsForSelectedDisk.diskName", "tests")
             ->has('result.data.dirsForSelectedDisk.dirs.0', fn(AssertableJson $json) =>
                 $json->where("diskName", "tests")
+                    ->where('dirName', '')
                     ->where('name', 'ios')
                     ->where('path', 'ios')
                     ->where('type', 'dir')
                     ->has('subDir')
                     ->where('subDir.0', [
                         "diskName" => "tests",
+                        "dirName" => "ios",
                         "name" => "fake_dir_1",
                         "path" => "ios/fake_dir_1",
                         "type" => "dir",
@@ -42,6 +44,7 @@ test('should load file explorer initial data', function () {
                     ])
                     ->where('subDir.1', [
                         "diskName" => "tests",
+                        "dirName" => "ios",
                         "name" => "fake_dir_0",
                         "path" => "ios/fake_dir_0",
                         "type" => "dir",

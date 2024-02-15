@@ -80,7 +80,7 @@ final class ConfigRepository
     }
 
     /**
-     * Get the hash file name when uploading
+     * Should hash file name when uploading new items
      *
      * @return bool
      */

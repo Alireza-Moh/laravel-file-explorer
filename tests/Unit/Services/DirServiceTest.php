@@ -1,9 +1,12 @@
 <?php
 
+use Alireza\LaravelFileExplorer\Events\DirCreated;
+use Alireza\LaravelFileExplorer\Events\ItemDeleted;
 use Alireza\LaravelFileExplorer\Services\DirService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
-function assertItemValues(array $item, array $expectedValues)
+function assertItemValues(array $item, array $expectedValues): void
 {
     foreach ($expectedValues as $key => $value) {
         test()->expect($item[$key])->toBe($value);
@@ -57,6 +60,7 @@ test('should retrieve disk directories', function () {
             [
                 [
                     "diskName" => "tests",
+                    "dirName" => "",
                     "name" => "fake_dir_0",
                     "path" => "fake_dir_0",
                     "type" => "dir",
@@ -91,7 +95,7 @@ test('should retrieve disk files', function () {
         ->and($items[0]['type'])->toBe('file')
         ->and($items[0]['extension'])->toBe('txt')
         ->and($items[0]['url'])->toBe('/storage/fake_file_0.txt')
-        ->and($items[0]['size'])->toBeFloat()
+        ->and($items[0]['size'])->toBe("-")
         ->and($items[0]['lastModified'])->toBeString()
         ->and($items[1])->toBeArray()
         ->and($items[1])->toHaveKeys([
@@ -110,7 +114,7 @@ test('should retrieve disk files', function () {
         ->and($items[1]['type'])->toBe('file')
         ->and($items[1]['extension'])->toBe('txt')
         ->and($items[1]['url'])->toBe('/storage/fake_file_1.txt')
-        ->and($items[1]['size'])->toBeFloat()
+        ->and($items[1]['size'])->toBe("-")
         ->and($items[1]['lastModified'])->toBeString();
 });
 
@@ -139,6 +143,7 @@ test('should not find directory by name', function () {
 });
 
 test('should delete specified directory', function () {
+    Event::fake();
     $dirService = new DirService();
     $dir = createFakeDirs();
 
@@ -159,9 +164,11 @@ test('should delete specified directory', function () {
                "message" => "Directory deleted successfully"
            ]
         ]);
+    Event::assertDispatched(ItemDeleted::class);
 });
 
 test('should create a directory', function () {
+    Event::fake();
     $dirService = new DirService();
 
     $result = $dirService->create("tests", [
@@ -179,6 +186,7 @@ test('should create a directory', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "zjztj",
                             "path" => "ios/zjztj",
                             "type" => "dir",
@@ -186,17 +194,20 @@ test('should create a directory', function () {
                             "lastModified" => "-",
                             "extension" => null,
                             "url" => "/storage/ios/zjztj",
+                            "isChecked" => false
                         ]
                     ],
                     "dirs" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "",
                             "name" => "ios",
                             "path" => "ios",
                             "type" => "dir",
                             "subDir" => [
                                 [
                                     "diskName" => "tests",
+                                    "dirName" => "ios",
                                     "name" => "zjztj",
                                     "path" => "ios/zjztj",
                                     "type" => "dir",
@@ -209,4 +220,5 @@ test('should create a directory', function () {
                 ]
             ]
         );
+    Event::assertDispatched(DirCreated::class);
 });

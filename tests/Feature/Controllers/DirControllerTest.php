@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -29,6 +30,7 @@ test('should create directory and return success response with all file inside t
         ->has('result.dirs')
         ->has('result.items.0', fn(AssertableJson $json) =>
             $json->where("diskName", "tests")
+                ->where('dirName', 'ios')
                 ->where('name', 'configDir')
                 ->where('path', 'ios/configDir')
                 ->where('type', 'dir')
@@ -36,9 +38,11 @@ test('should create directory and return success response with all file inside t
                 ->where('lastModified', '-')
                 ->where('extension', null)
                 ->where('url', '/storage/ios/configDir')
+                ->where('isChecked', false)
             )
             ->has('result.dirs.0', fn(AssertableJson $json) =>
                 $json->where("diskName", "tests")
+                    ->where('dirName', '')
                     ->where('name', 'ios')
                     ->where('path', 'ios')
                     ->where('type', 'dir')
@@ -46,6 +50,7 @@ test('should create directory and return success response with all file inside t
                 )
         ->where('result.dirs.0.subDir.0', [
             "diskName" => "tests",
+            "dirName" => "ios",
             "name" => "configDir",
             "path" => "ios/configDir",
             "type" => "dir",
@@ -106,7 +111,7 @@ test('should get all items from a specified directory', function () {
             ->where('name', 'fake_file_0.txt')
             ->where('path', 'ios/fake_file_0.txt')
             ->where('type', 'file')
-            ->where('size', 0)
+            ->where('size', "-")
             ->where('extension', 'txt')
             ->where('url', '/storage/ios/fake_file_0.txt')
             ->etc()
@@ -116,7 +121,7 @@ test('should get all items from a specified directory', function () {
             ->where('name', 'fake_file_1.txt')
             ->where('path', 'ios/fake_file_1.txt')
             ->where('type', 'file')
-            ->where('size', 0)
+            ->where('size', "-")
             ->where('extension', 'txt')
             ->where('url', '/storage/ios/fake_file_1.txt')
             ->etc()
@@ -126,7 +131,7 @@ test('should get all items from a specified directory', function () {
             ->where('name', 'fake_file_2.txt')
             ->where('path', 'ios/fake_file_2.txt')
             ->where('type', 'file')
-            ->where('size', 0)
+            ->where('size', "-")
             ->where('extension', 'txt')
             ->where('url', '/storage/ios/fake_file_2.txt')
             ->etc()
@@ -136,7 +141,7 @@ test('should get all items from a specified directory', function () {
             ->where('name', 'fake_file_3.txt')
             ->where('path', 'ios/fake_file_3.txt')
             ->where('type', 'file')
-            ->where('size', 0)
+            ->where('size', "-")
             ->where('extension', 'txt')
             ->where('url', '/storage/ios/fake_file_3.txt')
             ->etc()
@@ -146,7 +151,7 @@ test('should get all items from a specified directory', function () {
             ->where('name', 'fake_file_4.txt')
             ->where('path', 'ios/fake_file_4.txt')
             ->where('type', 'file')
-            ->where('size', 0)
+            ->where('size', "-")
             ->where('extension', 'txt')
             ->where('url', '/storage/ios/fake_file_4.txt')
             ->etc()
@@ -184,61 +189,10 @@ test('should throw an error when directory path is missing in form', function ()
             "message",
             "errors"
         ])
-        ->where("message", "The path field is required.")
-        ->has('errors')
-        ->has('errors.path')
-        ->where('errors.path.0', 'The path field is required.')
-    );
-});
-
-test('should rename a directory', function () {
-    Storage::disk("tests")->makeDirectory("ios/oldName");
-    $response = $this->putJson(
-        route(
-            "fx.dir-rename",
-            ["diskName" => "tests", "dirName" => "oldName"]
-        ),
-        [
-            "newName" => "newName",
-            "newPath" => "ios/newName",
-            "oldPath" => "ios/oldName",
-        ]
-    );
-
-    Storage::disk('tests')->assertExists("ios/newName");
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "Directory renamed successfully")
-    );
-});
-
-test('should throw an error when oldPath is missing in form for renaming a file', function () {
-    $response = $this->putJson(
-        route(
-            "fx.dir-rename",
-            ["diskName" => "tests", "dirName" => "oldName"]
-        ),
-        [
-            "newPath" => "ios/newName",
-            //"oldPath" => "ios/oldName",
-        ]
-    );
-
-    Storage::disk('tests')->assertMissing('ios/newName');
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        "message",
-        "errors"
-    ])
         ->where("message", "Invalid data sent")
         ->has('errors')
-        ->has('errors.oldPath')
-        ->where('errors.oldPath.0', 'The old path field is required.')
+        ->has('errors.path')
+        ->where('errors.path.0', 'Directory path is required')
     );
 });
 

@@ -20,7 +20,10 @@
     ],
     "minimum-stability": "dev",
     "require": {
-      "ext-zip": "*"
+        "php": "^8.2",
+        "laravel/framework": "^10.0",
+        "league/flysystem": "^3.0",
+        "ext-zip": "*"
     },
     "extra": {
         "laravel": {

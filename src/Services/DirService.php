@@ -2,7 +2,6 @@
 namespace Alireza\LaravelFileExplorer\Services;
 
 use Alireza\LaravelFileExplorer\Events\DirCreated;
-use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
 use Alireza\LaravelFileExplorer\Utilities\DirManager;
 use Illuminate\Support\Facades\Storage;
@@ -42,6 +41,7 @@ class DirService extends BaseItemManager implements ItemOperations
             $subDirs = $this->getDiskDirsForTree($diskName, $dir);
             $allDirs[] = [
                 "diskName" => $diskName,
+                "dirName" => $dirName,
                 "name" => basename($dir),
                 "path" => $dir,
                 "type" => "dir",
@@ -103,12 +103,6 @@ class DirService extends BaseItemManager implements ItemOperations
      */
     public function delete(string $diskName, array $validatedData): array
     {
-        if ($this->existDefaultDirOnLoadingInArray($validatedData["items"])) {
-            return [
-                "status" => "failed",
-                "message" => "You cannot delete the default directory because it's needed for initiation"
-            ];
-        }
         $storage = Storage::disk($diskName);
         foreach ($validatedData["items"] as $dir) {
             $result = $storage->deleteDirectory($dir["path"]);
@@ -118,36 +112,6 @@ class DirService extends BaseItemManager implements ItemOperations
         }
 
         return $this->getResponse(true, success: "Directory deleted successfully");
-    }
-
-    /**
-     * Rename a directory.
-     *
-     * @param string $diskName
-     * @param string $oldName
-     * @param array $validatedData
-     * @return array
-     */
-    public function rename(string $diskName, string $oldName, array $validatedData): array
-    {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
-        if ($this->isDefaultDirectory($defaultDirOnLoading, $oldName)) {
-            return $this->getResponse(
-                false,
-                failure: "You cannot rename the default directory because it's needed for initiation."
-            );
-        }
-        $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
-
-        if ($result) {
-            event(new ItemRenamed($diskName, $oldName, $validatedData));
-        }
-
-        return $this->getResponse(
-            $result,
-            'Directory renamed successfully',
-            'Failed to rename directory'
-        );
     }
 
     /**
@@ -167,36 +131,5 @@ class DirService extends BaseItemManager implements ItemOperations
         }
 
         return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
-    }
-
-    /**
-     * Retrieve metadata for a specific item.
-     *
-     * @param string $diskName
-     * @param string $path
-     * @param string $type
-     * @return array
-     */
-    private function getMetaData(string $diskName, string $path, string $type): array
-    {
-        $url = Storage::disk($diskName)->url($path);
-        $commonMetaData = [
-            'diskName' => $diskName,
-            'name' => basename($path),
-            'path' => $path,
-            'type' => $type,
-            'size' => "-",
-            'lastModified' => "-",
-            'extension' => null,
-            'url' => $url,
-        ];
-
-        if ($type === 'file') {
-            $commonMetaData['size'] = $this->getFileSizeInKB($diskName, $path);
-            $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
-            $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
-        }
-
-        return $commonMetaData;
     }
 }

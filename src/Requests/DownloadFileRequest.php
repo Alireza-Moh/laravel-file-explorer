@@ -3,10 +3,9 @@
 namespace Alireza\LaravelFileExplorer\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class DownloadFileRequest extends FormRequest
+class DownloadFileRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -16,10 +15,10 @@ class DownloadFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "items" => "required|array",
-            "items.*.name" => "required|string",
-            "items.*.type" => "required|string|in:file",
-            "items.*.path" => "required|string"
+            "items" => ["required", "array"],
+            "items.*.name" => ["required", "string"],
+            "items.*.type" => ["required", "string", "in:file,dir"],
+            "items.*.path" => ["required", "string"]
         ];
     }
 
@@ -36,7 +35,7 @@ class DownloadFileRequest extends FormRequest
             "items.*.name.string" => "Invalid file name format",
             "items.*.name.required" => "File name is required",
             "items.*.type.required" => "File type is required",
-            "items.*.type.in" => "Invalid file type",
+            "items.*.type.in" => "Invalid item type",
             "items.*.type.string" => "Invalid file type format",
             "items.*.path.required" => "File path is required",
             "items.*.path.string" => "Invalid file path format",
@@ -51,12 +50,8 @@ class DownloadFileRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $errors = $validator->errors();
-
-        $response = response()->json([
-            'message' => 'Invalid data sent',
-            "errors" => $this->makeErrorsFriendly($errors->messages())
-        ], 422);
+        $errors = $this->makeErrorsFriendly();
+        $response = $this->getFailureResponse($errors);
 
         throw new HttpResponseException($response);
     }
@@ -64,14 +59,14 @@ class DownloadFileRequest extends FormRequest
     /**
      * Map errors to corresponding files based on the file index in the input array.
      *
-     * @param array $errors actual errors
      * @return array the modified errors
      */
-    private function makeErrorsFriendly(array $errors): array
+    private function makeErrorsFriendly(): array
     {
         $files = $this->input('items');
         $fileErrorsMap = [];
 
+        $errors = $this->validator->errors()->messages();
         foreach ($errors as $errorKey => $errorMessages) {
             if (preg_match('/items\.(\d+)\.(\w+)/', $errorKey, $matches) && count($matches) > 2) {
                 $fileIndex = $matches[1];

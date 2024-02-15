@@ -18,13 +18,12 @@ Route::group([
 
     Route::post('disks/{diskName}/dirs/{dirName}/new-file', [ItemController::class, 'createFile'])->name("fx.file-create");
     Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir'])->name("fx.dir-create");
-    Route::post('disks/{diskName}/files/upload', [ItemController::class, 'uploadFiles'])->name("fx.file-upload");
-    Route::post('disks/{diskName}/files/download', [ItemController::class, 'downloadFile'])->name("fx.file-download");
+    Route::post('disks/{diskName}/items/upload', [ItemController::class, 'uploadItems'])->name("fx.items-upload");
+    Route::post('disks/{diskName}/items/download', [ItemController::class, 'downloadItems'])->name("fx.items-download");
     Route::post('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirItems'])->name("fx.load-dir-items");
 
-    Route::put('disks/{diskName}/files/{dirName}', [ItemController::class, 'renameFile'])->name("fx.file-rename");
-    Route::put('disks/{diskName}/dirs/{dirName}', [DirController::class, 'renameDir'])->name("fx.dir-rename");
+    Route::put('disks/{diskName}/items/{dirName}', [ItemController::class, 'renameItem'])->name("fx.item-rename");
 
-    Route::delete('disks/{diskName}/files/delete', [ItemController::class, 'deleteFile'])->name("fx.file-delete");
+    Route::delete('disks/{diskName}/items/delete', [ItemController::class, 'deleteItems'])->name("fx.items-delete");
     Route::delete('disks/{diskName}/dirs/delete', [DirController::class, 'deleteDir'])->name("fx.dir-delete");
 });

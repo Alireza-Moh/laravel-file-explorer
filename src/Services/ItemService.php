@@ -6,12 +6,12 @@ use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
+use Alireza\LaravelFileExplorer\Services\Supports\Downloader;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipArchive;
 
 class ItemService extends BaseItemManager implements ItemOperations
 {
@@ -68,7 +68,7 @@ class ItemService extends BaseItemManager implements ItemOperations
             $fileName = $this->getFileNameToUpload($item);
 
             $itemPath = $dirName . '/' . $fileName;
-            if (!$storage->exists($itemPath) || (int)$validatedData["ifFileExist"] === 1) {
+            if (!$storage->exists($itemPath) || (int)$validatedData["ifItemExist"] === 1) {
                 $result = $storage->putFileAs($dirName, $item, $fileName);
 
                 if ($result) {
@@ -95,91 +95,30 @@ class ItemService extends BaseItemManager implements ItemOperations
      */
     public function create(string $diskName, array $validatedData): array
     {
-        $result = Storage::disk($diskName)->put($validatedData["path"], "");
+        $filePath = $validatedData["path"];
+        $destination =$validatedData["destination"];
+        $result = Storage::disk($diskName)->put($filePath, "");
         $message = $result ? "File created successfully" : "Failed to create file";
 
         if ($result) {
-            event(new FileCreated($diskName, $validatedData["destination"], $validatedData["path"]));
+            event(new FileCreated($diskName, $destination, $filePath));
         }
 
-        return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
+        return $this->getCreationResponse($diskName, $result, $message, $destination);
     }
 
     /**
-     * Download a file.
+     * Download item/items
      *
      * @param string $diskName
      * @param array $validatedData
-     * @return StreamedResponse
+     * @return BinaryFileResponse|JsonResponse|StreamedResponse
+     * @throws Exception
      */
-    public function download(string $diskName, array $validatedData): StreamedResponse
+    public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        return Storage::disk($diskName)->download($validatedData["items"][0]["path"]);
-    }
-
-    /**
-     * Downloads files as a ZIP archive.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return BinaryFileResponse|JsonResponse
-     */
-    public function downloadAsZip(string $diskName, array $validatedData): BinaryFileResponse|JsonResponse
-    {
-        $zipFileName = $diskName . '_files.zip';
-        $filteredFiles = array_filter($validatedData["items"], function($file) {
-            return $file["type"] === "file";
-        });
-
-        $zipArchiveCreated = $this->createZipArchive($zipFileName, $diskName, $filteredFiles);
-        if ($zipArchiveCreated) {
-            return Response::download(storage_path($zipFileName))->deleteFileAfterSend();
-        }
-        return response()->json(
-            $this->getResponse(false, failure: "Failed to download items")
-        );
-    }
-
-    /**
-     * Creates a ZIP archive.
-     *
-     * @param string $zipFileName
-     * @param string $diskName
-     * @param array $files
-     * @return bool
-     */
-    private function createZipArchive(string $zipFileName, string $diskName, array $files): bool
-    {
-        $zip = new ZipArchive;
-        if ($zip->open(storage_path($zipFileName), ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            $this->addFilesToZip($zip, $diskName, $files);
-            $zip->close();
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Adds files to ZIP archive.
-     *
-     * @param ZipArchive $zip
-     * @param string $diskName
-     * @param array $files
-     * @return void
-     */
-    private function addFilesToZip(ZipArchive $zip, string $diskName, array $files): void
-    {
-        $storage = Storage::disk($diskName);
-
-        foreach ($files as $file) {
-            $filePath = $file["path"];
-            if ($storage->exists($filePath)) {
-                $fileContent = $storage->get($filePath);
-                $zip->addFromString(basename($filePath), $fileContent);
-            }
-        }
+        $downloadFactory = new Downloader($diskName, $validatedData["items"]);
+        return $downloadFactory->download();
     }
 
     /**

@@ -1,8 +1,17 @@
 <?php
 
+use Alireza\LaravelFileExplorer\Events\FileCreated;
+use Alireza\LaravelFileExplorer\Events\ItemDeleted;
+use Alireza\LaravelFileExplorer\Events\ItemRenamed;
+use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+
+beforeEach(function () {
+    Event::fake();
+});
 
 test('should rename a given file', function () {
     $file = createFakeFiles();
@@ -26,6 +35,7 @@ test('should rename a given file', function () {
 
             ]
         ]);
+    Event::assertDispatched(ItemRenamed::class);
 });
 
 test('should delete a given file', function () {
@@ -49,6 +59,7 @@ test('should delete a given file', function () {
                 "message" => "File deleted successfully"
             ]
         ]);
+    Event::assertDispatched(ItemDeleted::class);
 });
 
 test('should upload a single item', function () {
@@ -66,6 +77,7 @@ test('should upload a single item', function () {
     );
 
     Storage::disk('tests')->assertExists('ios/photo1.jpg');
+    Event::assertDispatched(ItemUploaded::class);
 });
 
 test('should upload multiple items', function () {
@@ -98,40 +110,49 @@ test('should upload multiple items', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo1.jpg",
                             "path" => "ios/photo1.jpg",
                             "type" => "file",
                             "extension" => "jpg",
                             "url" => "/storage/ios/photo1.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo2.jpg",
                             "path" => "ios/photo2.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo2.jpg"
+                            "url" => "/storage/ios/photo2.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo3.jpg",
                             "path" => "ios/photo3.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo3.jpg"
+                            "url" => "/storage/ios/photo3.jpg",
+                            "isChecked" => false
                         ],
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "photo4.jpg",
                             "path" => "ios/photo4.jpg",
                             "type" => "file",
                             "extension" => "jpg",
-                            "url" => "/storage/ios/photo4.jpg"
+                            "url" => "/storage/ios/photo4.jpg",
+                            "isChecked" => false
                         ]
                     ]
                 ]
             ]
         );
+    Event::assertDispatched(ItemUploaded::class);
 });
 
 test('should create a file', function () {
@@ -156,24 +177,27 @@ test('should create a file', function () {
                     "items" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "ios",
                             "name" => "zjztj.txt",
                             "path" => "ios/zjztj.txt",
                             "type" => "file",
                             "extension" => "txt",
                             "url" => "/storage/ios/zjztj.txt",
+                            "isChecked" => false
                         ]
                     ],
                     "dirs" => [
                         [
                             "diskName" => "tests",
+                            "dirName" => "",
                             "name" => "ios",
                             "path" => "ios",
                             "type" => "dir",
                             "subDir" => []
-
                         ]
                     ]
                 ]
             ]
         );
+    Event::assertDispatched(FileCreated::class);
 });

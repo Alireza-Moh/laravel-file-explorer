@@ -2,11 +2,11 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
+use Alireza\LaravelFileExplorer\Rules\MatchDefaultDir;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class RenameItemRequest extends FormRequest
+class RenameItemRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -16,9 +16,10 @@ class RenameItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "newName" => "required|string",
-            "oldPath" => "required|string",
-            "newPath" => "required|string",
+            "oldName" => ["required", "string", new MatchDefaultDir],
+            "newName" => ["required", "string"],
+            "oldPath" => ["required", "string"],
+            "newPath" => ["required", "string"]
         ];
     }
 
@@ -30,13 +31,7 @@ class RenameItemRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $errors = $validator->errors();
-
-        $response = response()->json([
-            'message' => 'Invalid data sent',
-            'errors' => $errors->messages(),
-        ], 422);
-
+        $response = $this->getFailureResponse();
         throw new HttpResponseException($response);
     }
 }

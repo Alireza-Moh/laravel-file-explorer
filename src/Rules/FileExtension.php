@@ -6,7 +6,7 @@ use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class FileExtensionRule implements ValidationRule
+class FileExtension implements ValidationRule
 {
     /**
      * Validate the file extension.

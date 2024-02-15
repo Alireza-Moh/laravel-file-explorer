@@ -34,7 +34,7 @@ test('should create file and return success response with all file inside the di
                 ->where('name', 'config.txt')
                 ->where('path', 'ios/config.txt')
                 ->where('type', 'file')
-                ->where('size', 0)
+                ->where('size', "-")
                 ->where('extension', 'txt')
                 ->where('url', '/storage/ios/config.txt')
                 ->etc()
@@ -71,11 +71,11 @@ test('should throw an error when path is missing in the form data for creating a
 test('should upload item or items and return success response with all items inside the directory', function () {
     $response = $this->postJson(
         route(
-            "fx.file-upload",
+            "fx.items-upload",
             ["diskName" => "tests"]
         ),
         [
-            "ifFileExist" => 0,
+            "ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
@@ -116,14 +116,14 @@ test('should upload item or items and return success response with all items ins
     );
 });
 
-test('should throw an error when ifFileExist is missing in the form while uploading items', function () {
+test('should throw an error when ifItemExist is missing in the form while uploading items', function () {
     $response = $this->postJson(
         route(
-            "fx.file-upload",
+            "fx.items-upload",
             ["diskName" => "tests"]
         ),
         [
-            //"ifFileExist" => 0,
+            //"ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->image('photo1.jpg'),
@@ -142,7 +142,7 @@ test('should throw an error when ifFileExist is missing in the form while upload
         ->where(
             'errors',
             [
-                "ifFileExist" => ["Choose an action"],
+                "ifItemExist" => ["Choose an action"],
             ]
         )
     );
@@ -151,11 +151,11 @@ test('should throw an error when ifFileExist is missing in the form while upload
 test('should throw an error when items have wrong extension while uploading items', function () {
     $response = $this->postJson(
         route(
-            "fx.file-upload",
+            "fx.items-upload",
             ["diskName" => "tests"]
         ),
         [
-            "ifFileExist" => 0,
+            "ifItemExist" => 0,
             "destination" => "ios",
             "items" => [
                 UploadedFile::fake()->create('doc1.pdf'),
@@ -186,7 +186,7 @@ test('should download a single item', function () {
 
     $response = $this->postJson(
         route(
-            "fx.file-download",
+            "fx.items-download",
             ["diskName" => "tests"]
         ),
         [
@@ -203,12 +203,12 @@ test('should download a single item', function () {
     $response->assertDownload();
 });
 
-test('should download multiple items as a ZIP folder', function () {
+test('should download multiple items as a ZIP file', function () {
     $images = createFakeImages(2);
 
     $response = $this->postJson(
         route(
-            "fx.file-download",
+            "fx.items-download",
             ["diskName" => "tests"]
         ),
         [
@@ -229,45 +229,18 @@ test('should download multiple items as a ZIP folder', function () {
 
     $response->assertDownload();
     $response->assertHeader('Content-Type', 'application/zip');
-    $response->assertHeader('Content-Disposition', 'attachment; filename=tests_files.zip');
-});
-
-test('should throw validation error when trying to download a directory ', function () {
-    $dir = createFakeDirs();
-
-    $response = $this->postJson(
-        route(
-            "fx.file-download",
-            ["diskName" => "tests"]
-        ),
-        [
-            "items" => [
-                [
-                    "name" => $dir[0]["name"],
-                    "path" => $dir[0]["path"],
-                    "type" => "dir",
-                ]
-            ]
-        ]
-    );
-
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('message')
-        ->where('message', 'Invalid data sent')
-        ->has('errors')
-        ->has('errors.' . $dir[0]["name"])
-        ->where('errors.' . $dir[0]["name"]. '.0', 'Invalid file type')
-    );
+    $response->assertHeader('Content-Disposition', 'attachment; filename=tests.zip');
 });
 
 test('should rename a file', function () {
     $images = createFakeImages();
     $response = $this->putJson(
         route(
-            "fx.file-rename",
+            "fx.item-rename",
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
+            "oldName" => $images[0],
             "newName" => "newName.png",
             "newPath" => "ios/newName.png",
             "oldPath" => "ios/" . $images[0],
@@ -289,7 +262,7 @@ test('should rename a file', function () {
 test('should throw an error when something is missing in form for renaming a file', function () {
     $response = $this->putJson(
         route(
-            "fx.file-rename",
+            "fx.item-rename",
             ["diskName" => "tests", "dirName" => "ios"]
         ),
         [
@@ -316,7 +289,7 @@ test('should delete one file', function () {
 
     $response = $this->deleteJson(
         route(
-            "fx.file-delete",
+            "fx.items-delete",
             ["diskName" => "tests"]
         ),
         [
@@ -354,7 +327,7 @@ test('should delete multiple files', function () {
     }
     $response = $this->deleteJson(
         route(
-            "fx.file-delete",
+            "fx.items-delete",
             ["diskName" => "tests"]
         ),
         [
@@ -380,7 +353,7 @@ test('should throw an error when something is missing in form for deleting a fil
 
     $response = $this->deleteJson(
         route(
-            "fx.file-delete",
+            "fx.items-delete",
             ["diskName" => "tests"]
         ),
         [

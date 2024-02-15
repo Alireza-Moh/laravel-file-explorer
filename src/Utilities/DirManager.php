@@ -8,28 +8,21 @@ use Illuminate\Support\Facades\Storage;
 trait DirManager
 {
     /**
-     * Check if the directory is the default directory on loading.
+     * Format file size
      *
-     * @param string|null $defaultDirOnLoading
-     * @param string $dirName
-     * @return bool
+     * @param float $size
+     * @return string
      */
-    protected function isDefaultDirectory(?string $defaultDirOnLoading, string $dirName): bool
+    protected function formatItemSize(float $size): string
     {
-        return $defaultDirOnLoading && $defaultDirOnLoading === $dirName;
-    }
+        $formattedSize = "-";
+        if ($size > 0) {
+            $units = array('B', 'KB', 'MB', 'GB', 'TB');
+            $i = floor(log($size, 1024));
+            $formattedSize = number_format($size / pow(1024, $i), 2) . ' ' . $units[$i];
+        }
 
-    /**
-     * Get the size of a file in kilobytes.
-     *
-     * @param string $diskName
-     * @param string $item
-     * @return float
-     */
-    protected function getFileSizeInKB(string $diskName, string $item): float
-    {
-        $fileSizeBytes = Storage::disk($diskName)->size($item);
-        return round($fileSizeBytes / 1024, 2);
+        return $formattedSize;
     }
 
     /**
@@ -49,27 +42,8 @@ trait DirManager
     }
 
     /**
-     * Check if the default directory from default disk is present in the given array of directories.
-     *
-     * @param array $dirs
-     * @return bool
-     */
-    protected function existDefaultDirOnLoadingInArray(array $dirs): bool
-    {
-        $defaultDirOnLoading = config('laravel-file-explorer.default_directory_on_loading');
-
-        if ($defaultDirOnLoading === null) {
-            return false;
-        }
-        $filteredDirs = array_filter($dirs, function ($dir) use ($defaultDirOnLoading) {
-            return $dir['name'] === $defaultDirOnLoading;
-        });
-
-        return !empty($filteredDirs);
-    }
-
-    /**
-     * Retrieves the metadata for items of a specific type (file or directory) within a given directory on a specified disk.
+     * Retrieves the metadata for items of a specific type (file or dir)
+     * within a given directory on a specified disk.
      *
      * @param string $diskName
      * @param string $type
@@ -77,18 +51,19 @@ trait DirManager
      * @param string $dirName
      * @return array
      */
-    protected function getDirItemsByType(string $diskName, string $type, bool $getFromDir = true, string $dirName = "",): array
+    protected function getDirItemsByType(string $diskName, string $type, bool $getFromDir = true, string $dirName = ""): array
     {
         $items = [];
         foreach ($this->getQuery($diskName, $dirName, $type, $getFromDir) as $item) {
-            $items[] = $this->getMetaData($diskName, $item, $type);
+            $items[] = $this->getMetaData($diskName, $dirName, $item, $type);
         }
 
         return $items;
     }
 
     /**
-     * Generates and retrieves a query result for items of a specific type (file or directory) on a specified disk.
+     * Generates and retrieves a query result for items
+     * of a specific type (file or dir) on a specified disk.
      *
      * @param string $diskName
      * @param string $dirName
@@ -101,5 +76,47 @@ trait DirManager
         $method = ($type === 'file') ? 'files' : 'directories';
 
         return $getFromDir ? Storage::disk($diskName)->$method($dirName) : Storage::disk($diskName)->$method();
+    }
+
+    /**
+     * Retrieve metadata for a specific item.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param string $path
+     * @param string $type
+     * @return array
+     */
+    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
+    {
+        $storage = Storage::disk($diskName);
+        $url = $storage->url($path);
+        $commonMetaData = [
+            'diskName' => $diskName,
+            'dirName' => $dirName,
+            'name' => basename($path),
+            'path' => $path,
+            'type' => $type,
+            'lastModified' => "-",
+            'extension' => null,
+            'url' => $url,
+            'isChecked' => false,
+        ];
+
+        if ($type === 'file') {
+            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
+            $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
+            $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
+        }
+
+        if ($type === 'dir') {
+            $size = 0;
+            foreach ($storage->allFiles($path) as $filePath) {
+                $size += $storage->size($filePath);
+            }
+            $commonMetaData['size'] = $this->formatItemSize($size);
+        }
+
+        return $commonMetaData;
     }
 }
