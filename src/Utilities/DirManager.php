@@ -77,4 +77,46 @@ trait DirManager
 
         return $getFromDir ? Storage::disk($diskName)->$method($dirName) : Storage::disk($diskName)->$method();
     }
+
+    /**
+     * Retrieve metadata for a specific item.
+     *
+     * @param string $diskName
+     * @param string $dirName
+     * @param string $path
+     * @param string $type
+     * @return array
+     */
+    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
+    {
+        $storage = Storage::disk($diskName);
+        $url = $storage->url($path);
+        $commonMetaData = [
+            'diskName' => $diskName,
+            'dirName' => $dirName,
+            'name' => basename($path),
+            'path' => $path,
+            'type' => $type,
+            'lastModified' => "-",
+            'extension' => null,
+            'url' => $url,
+            'isChecked' => false,
+        ];
+
+        if ($type === 'file') {
+            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
+            $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
+            $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
+        }
+
+        if ($type === 'dir') {
+            $size = 0;
+            foreach ($storage->allFiles($path) as $filePath) {
+                $size += $storage->size($filePath);
+            }
+            $commonMetaData['size'] = $this->formatItemSize($size);
+        }
+
+        return $commonMetaData;
+    }
 }

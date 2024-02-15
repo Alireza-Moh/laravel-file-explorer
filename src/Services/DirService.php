@@ -2,7 +2,6 @@
 namespace Alireza\LaravelFileExplorer\Services;
 
 use Alireza\LaravelFileExplorer\Events\DirCreated;
-use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
 use Alireza\LaravelFileExplorer\Utilities\DirManager;
 use Illuminate\Support\Facades\Storage;
@@ -132,47 +131,5 @@ class DirService extends BaseItemManager implements ItemOperations
         }
 
         return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
-    }
-
-    /**
-     * Retrieve metadata for a specific item.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @param string $path
-     * @param string $type
-     * @return array
-     */
-    private function getMetaData(string $diskName, string $dirName, string $path, string $type): array
-    {
-        $storage = Storage::disk($diskName);
-        $url = $storage->url($path);
-        $commonMetaData = [
-            'diskName' => $diskName,
-            'dirName' => $dirName,
-            'name' => basename($path),
-            'path' => $path,
-            'type' => $type,
-            'lastModified' => "-",
-            'extension' => null,
-            'url' => $url,
-            'isChecked' => false,
-        ];
-
-        if ($type === 'file') {
-            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
-            $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
-            $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
-        }
-
-        if ($type === 'dir') {
-            $size = 0;
-            foreach ($storage->allFiles($path) as $filePath) {
-                $size += $storage->size($filePath);
-            }
-            $commonMetaData['size'] = $this->formatItemSize($size);
-        }
-
-        return $commonMetaData;
     }
 }
