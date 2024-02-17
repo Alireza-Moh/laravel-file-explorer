@@ -15,9 +15,9 @@ beforeEach(function () {
 
 test('should rename a given file', function () {
     $file = createFakeFiles();
-    $fileService = new ItemService();
+    $itemService = new ItemService();
 
-    $result = $fileService->rename(
+    $result = $itemService->rename(
         "tests",
         $file[0],
         [
@@ -39,10 +39,10 @@ test('should rename a given file', function () {
 });
 
 test('should delete a given file', function () {
-    $fileService = new ItemService();
+    $itemService = new ItemService();
     Storage::disk("tests")->put("ios/test.txt", "");
 
-    $result = $fileService->delete("tests", [
+    $result = $itemService->delete("tests", [
         'items' => [
             [
                 "name" => "test.txt",
@@ -63,9 +63,9 @@ test('should delete a given file', function () {
 });
 
 test('should upload a single item', function () {
-    $fileService = new ItemService();
+    $itemService = new ItemService();
 
-    $fileService->upload(
+    $itemService->upload(
         "tests",
         [
             "ifFileExist" => 0,
@@ -81,9 +81,9 @@ test('should upload a single item', function () {
 });
 
 test('should upload multiple items', function () {
-    $fileService = new ItemService();
+    $itemService = new ItemService();
 
-    $result = $fileService->upload(
+    $result = $itemService->upload(
         "tests",
         [
             "ifFileExist" => 0,
@@ -156,9 +156,9 @@ test('should upload multiple items', function () {
 });
 
 test('should create a file', function () {
-    $fileService = new ItemService();
+    $itemService = new ItemService();
 
-    $result = $fileService->create("tests", [
+    $result = $itemService->create("tests", [
         "destination" => "ios",
         "path" => "ios/zjztj.txt"
     ]);
@@ -200,4 +200,41 @@ test('should create a file', function () {
             ]
         );
     Event::assertDispatched(FileCreated::class);
+});
+
+test('should return item content', function () {
+    $item = createFakeFiles();
+    $itemService = new ItemService();
+
+    $result = $itemService->getItemContent(
+        "tests",
+        [
+            "path" => $item[0]
+        ]
+    );
+
+    expect($result)->toBeString()
+        ->and($result)->toBeEmpty();
+});
+
+test('should set new item content', function () {
+    $item = createFakeFiles();
+    $newtItemContent = "new content";
+    $itemService = new ItemService();
+
+    $result = $itemService->updateItemContent(
+        "tests",
+        [
+            "path" => $item[0],
+            "content" => $newtItemContent
+        ]
+    );
+
+    expect($result)->toBeArray()
+        ->and($result)->toMatchArray([
+            "result" => [
+                "status" => "success",
+                "message" => "Changes saved successfully"
+            ]
+        ]);
 });

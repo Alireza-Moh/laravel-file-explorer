@@ -122,6 +122,32 @@ class ItemService extends BaseItemManager implements ItemOperations
     }
 
     /**
+     * Get item content
+     *
+     * @param string $diskName
+     * @param array $validatedData
+     * @return string|null
+     */
+    public function getItemContent(string $diskName, array $validatedData): ?string
+    {
+        return Storage::disk($diskName)->get($validatedData["path"]);
+    }
+
+    /**
+     * Get item content
+     *
+     * @param string $diskName
+     * @param array $validatedData
+     * @return array
+     */
+    public function updateItemContent(string $diskName, array $validatedData): array
+    {
+        $result = Storage::disk($diskName)->put($validatedData["path"], $validatedData["content"]);
+
+        return $this->getResponse($result, "Changes saved successfully", "Failed to save chnages");
+    }
+
+    /**
      * Get file name to upload
      *
      * @param $file

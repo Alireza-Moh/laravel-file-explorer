@@ -5,7 +5,9 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
+use Alireza\LaravelFileExplorer\Requests\ItemContentRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
+use Alireza\LaravelFileExplorer\Requests\UpdateItemContentRequest;
 use Alireza\LaravelFileExplorer\Requests\UploadItemsRequest;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Exception;
@@ -94,5 +96,20 @@ class ItemController extends Controller
     public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
         return $fileService->download($diskName, $request->validated());
+    }
+
+    public function getContent(string $diskName, string $itemName, ItemContentRequest $itemContentRequest, ItemService $itemService): JsonResponse
+    {
+        return response()->json([
+            "result" => [
+                "content" => $itemService->getItemContent($diskName, $itemContentRequest->validated())
+            ]
+        ]);
+    }
+
+    public function updateContent(string $diskName, string $itemName, UpdateItemContentRequest $updateItemContentRequest, ItemService $itemService): JsonResponse
+    {
+        $result = $itemService->updateItemContent($diskName, $updateItemContentRequest->validated());
+        return response()->json($result);
     }
 }

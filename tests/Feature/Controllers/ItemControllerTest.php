@@ -375,3 +375,74 @@ test('should throw an error when something is missing in form for deleting a fil
         ->where("message", "Invalid data sent")
     );
 });
+
+test('should get item content', function () {
+    $item = createFakeFiles();
+
+    $response = $this->postJson(
+        route(
+            "fx.get-item-content",
+            ["diskName" => "tests", "itemName", $item[0]]
+        ),
+        [
+            "path" => $item[0]
+        ]
+    );
+
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->has('result')
+        ->hasAll([
+            "result.content"
+        ])
+        ->where("result.content", "")
+    );
+});
+
+test('should throw error when item path is missing', function () {
+    $item = createFakeFiles();
+
+    $response = $this->postJson(
+        route(
+            "fx.get-item-content",
+            ["diskName" => "tests", "itemName", $item[0]]
+        ),
+        [
+            //"path" => $item[0]
+        ]
+    );
+
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->hasAll([
+        "message",
+        "errors"
+    ])
+        ->where("message", "Invalid data sent")
+    );
+});
+
+test('should update item content', function () {
+    $item = createFakeFiles();
+    $newtItemContent = "new content";
+    $response = $this->putJson(
+        route(
+            "fx.update-item-content",
+            ["diskName" => "tests", "itemName", $item[0]]
+        ),
+        [
+            "path" => $item[0],
+            "content" => $newtItemContent
+        ]
+    );
+
+    $itemContent = Storage::disk("tests")->get($item[0]);
+    expect($itemContent)->toBe($newtItemContent);
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->has('result')
+        ->hasAll([
+            "result.status",
+            "result.message"
+        ])
+        ->where("result.status", "success")
+        ->where("result.message", "Changes saved successfully")
+    );
+});
