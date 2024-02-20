@@ -208,9 +208,7 @@ test('should return item content', function () {
 
     $result = $itemService->getItemContent(
         "tests",
-        [
-            "path" => $item[0]
-        ]
+        $item[0]
     );
 
     expect($result)->toBeString()
@@ -226,11 +224,16 @@ test('should set new item content', function () {
         "tests",
         [
             "path" => $item[0],
-            "content" => $newtItemContent
+            "item" => UploadedFile::fake()->createWithContent($item[0], $newtItemContent),
         ]
     );
 
-    expect($result)->toBeArray()
+    Storage::disk("tests")->assertExists($item[0]);
+    $itemContent = Storage::disk("tests")->get($item[0]);
+
+    expect($itemContent)->toBeString()
+        ->and($itemContent)->toBe($newtItemContent)
+        ->and($result)->toBeArray()
         ->and($result)->toMatchArray([
             "result" => [
                 "status" => "success",

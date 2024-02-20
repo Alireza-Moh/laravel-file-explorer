@@ -234,7 +234,7 @@ test('should download multiple items as a ZIP file', function () {
 
 test('should rename a file', function () {
     $images = createFakeImages();
-    $response = $this->putJson(
+    $response = $this->postJson(
         route(
             "fx.item-rename",
             ["diskName" => "tests", "dirName" => "ios"]
@@ -260,7 +260,7 @@ test('should rename a file', function () {
 });
 
 test('should throw an error when something is missing in form for renaming a file', function () {
-    $response = $this->putJson(
+    $response = $this->postJson(
         route(
             "fx.item-rename",
             ["diskName" => "tests", "dirName" => "ios"]
@@ -379,15 +379,7 @@ test('should throw an error when something is missing in form for deleting a fil
 test('should get item content', function () {
     $item = createFakeFiles();
 
-    $response = $this->postJson(
-        route(
-            "fx.get-item-content",
-            ["diskName" => "tests", "itemName", $item[0]]
-        ),
-        [
-            "path" => $item[0]
-        ]
-    );
+    $response = $this->getJson("disks/tests/items/fake_file_0?path=" . urlencode($item[0]));
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('result')
@@ -401,15 +393,7 @@ test('should get item content', function () {
 test('should throw error when item path is missing', function () {
     $item = createFakeFiles();
 
-    $response = $this->postJson(
-        route(
-            "fx.get-item-content",
-            ["diskName" => "tests", "itemName", $item[0]]
-        ),
-        [
-            //"path" => $item[0]
-        ]
-    );
+    $response = $this->getJson("disks/tests/items/fake_file_0");
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->hasAll([
@@ -417,20 +401,24 @@ test('should throw error when item path is missing', function () {
         "errors"
     ])
         ->where("message", "Invalid data sent")
+        ->where("errors.0.path", "File path is missing")
     );
 });
 
 test('should update item content', function () {
     $item = createFakeFiles();
     $newtItemContent = "new content";
-    $response = $this->putJson(
+    $response = $this->postJson(
         route(
             "fx.update-item-content",
-            ["diskName" => "tests", "itemName", $item[0]]
+            [
+                "diskName" => "tests",
+                "itemName", $item[0]
+            ]
         ),
         [
             "path" => $item[0],
-            "content" => $newtItemContent
+            "item" => UploadedFile::fake()->createWithContent($item[0], $newtItemContent),
         ]
     );
 

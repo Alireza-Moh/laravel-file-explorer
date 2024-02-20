@@ -125,16 +125,16 @@ class ItemService extends BaseItemManager implements ItemOperations
      * Get item content
      *
      * @param string $diskName
-     * @param array $validatedData
+     * @param string $path
      * @return string|null
      */
-    public function getItemContent(string $diskName, array $validatedData): ?string
+    public function getItemContent(string $diskName, string $path): ?string
     {
-        return Storage::disk($diskName)->get($validatedData["path"]);
+        return Storage::disk($diskName)->get($path);
     }
 
     /**
-     * Get item content
+     * Update item content
      *
      * @param string $diskName
      * @param array $validatedData
@@ -142,7 +142,7 @@ class ItemService extends BaseItemManager implements ItemOperations
      */
     public function updateItemContent(string $diskName, array $validatedData): array
     {
-        $result = Storage::disk($diskName)->put($validatedData["path"], $validatedData["content"]);
+        $result = Storage::disk($diskName)->put($validatedData["path"], $validatedData["item"]->get());
 
         return $this->getResponse($result, "Changes saved successfully", "Failed to save chnages");
     }
