@@ -6,7 +6,7 @@ use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
-use Alireza\LaravelFileExplorer\Services\Supports\Downloader;
+use Alireza\LaravelFileExplorer\Supports\Downloader;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;

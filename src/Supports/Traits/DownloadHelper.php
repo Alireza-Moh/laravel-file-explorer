@@ -1,9 +1,9 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Services\Supports\Traits;
+namespace Alireza\LaravelFileExplorer\Supports\Traits;
 
 use Alireza\LaravelFileExplorer\Exceptions\ZipperException;
-use Alireza\LaravelFileExplorer\Services\Supports\Zipper;
+use Alireza\LaravelFileExplorer\Supports\Zipper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

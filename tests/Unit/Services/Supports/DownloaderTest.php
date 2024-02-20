@@ -1,6 +1,6 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Services\Supports\Downloader;
+use Alireza\LaravelFileExplorer\Supports\Downloader;
 
 test('should download a single item', function () {
     $image = createFakeImages();
