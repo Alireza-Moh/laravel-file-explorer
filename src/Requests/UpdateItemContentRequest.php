@@ -28,10 +28,8 @@ class UpdateItemContentRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "destination.required" => "Directory name is required",
-            "destination.string" => "Directory name must be string",
-            "path.required" => "Item path is required",
-            "path.string" => "Item path must be string",
+            "path.required" => "File path is required",
+            "path.string" => "File path must be string",
             "item.required" => "File is required",
             "item.file" => "Incorrect file type"
         ];

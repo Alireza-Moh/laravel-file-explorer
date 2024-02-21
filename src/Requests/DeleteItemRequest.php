@@ -23,17 +23,22 @@ class DeleteItemRequest extends BaseRequest
         ];
     }
 
+    /**
+     * Set validation error message
+     *
+     * @return array
+     */
     public function messages(): array
     {
         return [
-            'items.required' => 'Select at least one item',
-            'items.array' => 'Items must be in list format',
-            'items.min' => 'Select at least 1 item',
-            'items.max' => 'Select at most 10 items',
-            'items.*.name.required' => 'Item name is required for all selected items',
-            'items.*.name.string' => 'Item names must be strings',
-            'items.*.path.required' => 'Item path is required for all selected items',
-            'items.*.path.string' => 'Item paths must be string'
+            'files.required' => 'Select at least one file',
+            'files.array' => 'Files must be in list format',
+            'files.min' => 'Select at least 1 file',
+            'files.max' => 'Limit selection to a maximum of 10 files',
+            'files.*.name.required' => 'File name is required',
+            'files.*.name.string' => 'File name must be string',
+            'files.*.path.required' => 'File path is required',
+            'files.*.path.string' => 'File path must be string'
         ];
     }
 

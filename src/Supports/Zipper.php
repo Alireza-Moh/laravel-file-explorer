@@ -19,7 +19,7 @@ class Zipper extends ZipArchive
     private string $zipName;
 
     /**
-     * @var string
+     * @var array
      */
     private array $items;
 
