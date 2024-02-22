@@ -6,7 +6,7 @@ use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
-use Alireza\LaravelFileExplorer\Supports\Downloader;
+use Alireza\LaravelFileExplorer\Supports\Download;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -117,7 +117,7 @@ class ItemService extends BaseItemManager implements ItemOperations
      */
     public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        $downloadFactory = new Downloader($diskName, $validatedData["items"]);
+        $downloadFactory = new Download($diskName, $validatedData["items"]);
         return $downloadFactory->download();
     }
 

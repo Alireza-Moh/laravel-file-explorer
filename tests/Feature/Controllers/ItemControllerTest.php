@@ -400,7 +400,16 @@ test('should throw an error when something is missing in form for deleting a fil
 test('should get item content', function () {
     $item = createFakeFiles();
 
-    $response = $this->getJson("disks/tests/items/fake_file_0?path=" . urlencode($item[0]));
+    $response = $this->getJson(
+        route(
+            "fx.get-item-content",
+            [
+                "diskName" => "tests",
+                "itemName" => "ios"
+            ]
+        )
+        . "?path=" . urlencode($item[0])
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('result')
@@ -414,7 +423,15 @@ test('should get item content', function () {
 test('should throw error when item path is missing', function () {
     createFakeFiles();
 
-    $response = $this->getJson("disks/tests/items/fake_file_0");
+    $response = $this->getJson(
+        route(
+            "fx.get-item-content",
+            [
+                "diskName" => "tests",
+                "itemName" => "ios"
+            ]
+        )
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([

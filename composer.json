@@ -13,6 +13,9 @@
             "Alireza\\LaravelFileExplorer\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "test": "vendor/bin/pest"
+    },
     "authors": [
         {
             "name": "Alireza Mohammadi"

@@ -3,9 +3,10 @@
 namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Services\DirService;
+use Illuminate\Routing\Controller;
 use Illuminate\Http\JsonResponse;
 
-class DiskController extends BaseController
+class DiskController extends Controller
 {
     /**
      * Load directories for a specified disk.

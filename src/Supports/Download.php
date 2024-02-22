@@ -2,16 +2,16 @@
 
 namespace Alireza\LaravelFileExplorer\Supports;
 
-use Alireza\LaravelFileExplorer\Supports\Traits\DownloadHelper;
+use Alireza\LaravelFileExplorer\Supports\Traits\DownloadManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class Downloader
+class Download
 {
-    use DownloadHelper;
+    use DownloadManager;
 
     /**
      * @var string

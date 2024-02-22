@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-trait DownloadHelper
+trait DownloadManager
 {
     /**
      * Sorts items by type into files and directories

@@ -109,7 +109,16 @@ test('should get all items from a specified directory', function () {
     createFakeFiles(5);
     createFakeDirs();
 
-    $response = $this->getJson("disks/tests/dirs/ios?path=" . "ios");
+    $response = $this->getJson(
+        route(
+            "fx.load-dir-items",
+            [
+                "diskName" => "tests",
+                "dirName" => "ios"
+            ]
+        )
+        . "?path=ios",
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->hasAll([
@@ -187,7 +196,15 @@ test('should throw an error when directory path is missing in form', function ()
     createFakeFiles(5);
     createFakeDirs();
 
-    $response = $this->getJson("disks/tests/dirs/ios");
+    $response = $this->getJson(
+        route(
+            "fx.load-dir-items",
+            [
+                "diskName" => "tests",
+                "dirName" => "ios"
+            ]
+        )
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([

@@ -1,10 +1,10 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Supports\Downloader;
+use Alireza\LaravelFileExplorer\Supports\Download;
 
 test('should download a single item', function () {
     $image = createFakeImages();
-    $downloader = new Downloader(
+    $downloader = new Download(
         "tests",
         [
             [
@@ -24,7 +24,7 @@ test('should download a single item', function () {
 
 test('should download multiple items as a ZIP file', function () {
     $images = createFakeImages(2);
-    $downloader = new Downloader(
+    $downloader = new Download(
         "tests",
         [
             [
