@@ -4,10 +4,11 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Requests\CreateDirRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
-use Alireza\LaravelFileExplorer\Requests\LoadDirItemsRequest;
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DirController extends Controller
 {
@@ -49,13 +50,21 @@ class DirController extends Controller
      *
      * @param string $diskName
      * @param string $dirName
-     * @param LoadDirItemsRequest $request
+     * @param Request $request
      * @param DirService $dirService
      * @return JsonResponse directory items.
      */
-    public function loadDirItems(string $diskName, string $dirName, LoadDirItemsRequest $request, DirService $dirService): JsonResponse
+    public function loadDirItems(string $diskName, string $dirName, Request $request, DirService $dirService): JsonResponse
     {
-        $validatedData = $request->validated();
+        if (!$request->has("path")) {
+            return response()->json([
+                "message" => "Invalid data sent",
+                "errors" => [
+                    ["path" => "Directory path is missing"]
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $matchedDir = $dirService->findDirectoryByName($diskName, $dirName);
         $selectedDirPath = null;
 
@@ -63,9 +72,13 @@ class DirController extends Controller
             $selectedDirPath = $matchedDir['path'];
         }
 
+        $dirPath = urldecode(
+            $request->query("path")
+        );
+
         return response()->json([
             "dirName" => $dirName,
-            "items" => $dirService->getDirItems($diskName, $validatedData["path"]),
+            "items" => $dirService->getDirItems($diskName, $dirPath),
             "selectedDirPath" => $selectedDirPath,
         ]);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Services\Supports;
+namespace Alireza\LaravelFileExplorer\Supports;
 
 use Alireza\LaravelFileExplorer\Exceptions\ZipperException;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +19,7 @@ class Zipper extends ZipArchive
     private string $zipName;
 
     /**
-     * @var string
+     * @var array
      */
     private array $items;
 

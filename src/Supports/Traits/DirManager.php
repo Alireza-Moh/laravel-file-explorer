@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Utilities;
+namespace Alireza\LaravelFileExplorer\Supports\Traits;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;

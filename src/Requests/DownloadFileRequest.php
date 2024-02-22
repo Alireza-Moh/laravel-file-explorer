@@ -30,13 +30,13 @@ class DownloadFileRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "items.required" => "Please select a file",
-            "items.array" => "Please select a file",
+            "items.required" => "Select a file",
+            "items.array" => "Select a file",
             "items.*.name.string" => "Invalid file name format",
             "items.*.name.required" => "File name is required",
             "items.*.type.required" => "File type is required",
-            "items.*.type.in" => "Invalid item type",
-            "items.*.type.string" => "Invalid file type format",
+            "items.*.type.in" => "Invalid file type",
+            "items.*.type.string" => "File type is not a string",
             "items.*.path.required" => "File path is required",
             "items.*.path.string" => "Invalid file path format",
         ];

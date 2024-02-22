@@ -6,6 +6,8 @@ use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
+use Alireza\LaravelFileExplorer\Requests\UpdateItemContentRequest;
+use Illuminate\Http\Request;
 use Alireza\LaravelFileExplorer\Requests\UploadItemsRequest;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Exception;
@@ -13,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ItemController extends Controller
 {
@@ -94,5 +97,32 @@ class ItemController extends Controller
     public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
         return $fileService->download($diskName, $request->validated());
+    }
+
+    public function getContent(string $diskName, string $itemName, Request $request, ItemService $itemService): JsonResponse
+    {
+        if (!$request->has("path")) {
+            return response()->json([
+                "message" => "Invalid data sent",
+                "errors" => [
+                    ["path" => "File path is missing"]
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $itemPath = urldecode(
+            $request->query("path")
+        );
+        return response()->json([
+            "result" => [
+                "content" => $itemService->getItemContent($diskName, $itemPath),
+            ]
+        ]);
+    }
+
+    public function updateContent(string $diskName, string $itemName, UpdateItemContentRequest $updateItemContentRequest, ItemService $itemService): JsonResponse
+    {
+        $result = $itemService->updateItemContent($diskName, $updateItemContentRequest->validated());
+        return response()->json($result);
     }
 }

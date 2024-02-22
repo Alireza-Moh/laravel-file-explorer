@@ -3,7 +3,7 @@ namespace Alireza\LaravelFileExplorer\Services;
 
 use Alireza\LaravelFileExplorer\Events\DirCreated;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
-use Alireza\LaravelFileExplorer\Utilities\DirManager;
+use Alireza\LaravelFileExplorer\Supports\Traits\DirManager;
 use Illuminate\Support\Facades\Storage;
 
 class DirService extends BaseItemManager implements ItemOperations

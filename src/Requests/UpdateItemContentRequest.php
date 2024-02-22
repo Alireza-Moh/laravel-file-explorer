@@ -5,7 +5,7 @@ namespace Alireza\LaravelFileExplorer\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoadDirItemsRequest extends BaseRequest
+class UpdateItemContentRequest extends BaseRequest
 {
     /**
      * Set validation rule
@@ -15,7 +15,8 @@ class LoadDirItemsRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            "path" => ["required", "string"]
+            "path" => ["required", "string"],
+            "item" => ["required", "file"]
         ];
     }
 
@@ -27,8 +28,10 @@ class LoadDirItemsRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "path.required" => "Directory path is required",
-            "path.string" => "Directory path must be string"
+            "path.required" => "File path is required",
+            "path.string" => "File path must be string",
+            "item.required" => "File is required",
+            "item.file" => "Incorrect file type"
         ];
     }
 

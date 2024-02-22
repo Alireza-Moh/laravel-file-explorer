@@ -28,16 +28,16 @@ class UploadItemsRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "ifItemExist.required" => "Choose an action",
-            "ifItemExist.numeric" => "Choose a valid action",
+            "ifItemExist.required" => "Choose an action overwrite/skip",
+            "ifItemExist.numeric" => "Action is not valid",
             "ifItemExist.in" => "Invalid action selected",
-            "items.required" => "Please select a file",
-            "items.array" => "Please select a file",
+            "items.required" => "Select a file",
+            "items.array" => "Select a file",
             "items.*.file" => "Invalid file format",
-            "items.*.max" => "item size exceeds the limit",
+            "items.*.max" => "File size exceeds the limit",
             "items.*.mimes" => "File extension not allowed",
             "destination.required" => "File destination path is required",
-            "destination.string" => "Invalid file destination path format",
+            "destination.string" => "File destination path must be a string",
         ];
     }
 

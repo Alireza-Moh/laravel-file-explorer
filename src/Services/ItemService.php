@@ -6,7 +6,7 @@ use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
-use Alireza\LaravelFileExplorer\Services\Supports\Downloader;
+use Alireza\LaravelFileExplorer\Supports\Downloader;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -119,6 +119,32 @@ class ItemService extends BaseItemManager implements ItemOperations
     {
         $downloadFactory = new Downloader($diskName, $validatedData["items"]);
         return $downloadFactory->download();
+    }
+
+    /**
+     * Get item content
+     *
+     * @param string $diskName
+     * @param string $path
+     * @return string|null
+     */
+    public function getItemContent(string $diskName, string $path): ?string
+    {
+        return Storage::disk($diskName)->get($path);
+    }
+
+    /**
+     * Update item content
+     *
+     * @param string $diskName
+     * @param array $validatedData
+     * @return array
+     */
+    public function updateItemContent(string $diskName, array $validatedData): array
+    {
+        $result = Storage::disk($diskName)->put($validatedData["path"], $validatedData["item"]->get());
+
+        return $this->getResponse($result, "Changes saved successfully", "Failed to save chnages");
     }
 
     /**
