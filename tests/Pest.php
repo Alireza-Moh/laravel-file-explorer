@@ -11,7 +11,7 @@
 |
 */
 
-use Alireza\LaravelFileExplorer\tests\LaravelFileExplorerTestCase;
+use Alireza\LaravelFileExplorer\Tests\LaravelFileExplorerTestCase;
 use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Support\Facades\Storage;
 

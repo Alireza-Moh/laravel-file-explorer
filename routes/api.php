@@ -7,11 +7,9 @@ use Alireza\LaravelFileExplorer\Controllers\FileExplorerLoaderController;
 use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Facades\Route;
 
-$configService = resolve(ConfigRepository::class);
-
 Route::group([
-    'middleware' => $configService::getMiddlewares(),
-    'prefix'     => $configService::getRoutePrefix()
+    'middleware' => ConfigRepository::getMiddlewares(),
+    'prefix' => ConfigRepository::getRoutePrefix()
 ], function () {
     Route::get('load-file-explorer', [FileExplorerLoaderController::class, 'initFileExplorer'])->name("fx.init-file-explorer");
     Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs'])->name("fx.disks");
@@ -22,7 +20,6 @@ Route::group([
     Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir'])->name("fx.dir-create");
     Route::post('disks/{diskName}/items/upload', [ItemController::class, 'uploadItems'])->name("fx.items-upload");
     Route::post('disks/{diskName}/items/download', [ItemController::class, 'downloadItems'])->name("fx.items-download");
-
     Route::post('disks/{diskName}/dirs/{dirName}', [ItemController::class, 'renameItem'])->name("fx.item-rename");
     Route::post('disks/{diskName}/items/{itemName}', [ItemController::class, 'updateContent'])->name("fx.update-item-content");
 

@@ -4,9 +4,8 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 
 use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 
-class DiskController extends Controller
+class DiskController extends BaseController
 {
     /**
      * Load directories for a specified disk.
@@ -22,10 +21,12 @@ class DiskController extends Controller
         list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs, $dirService);
 
         return response()->json([
-            "dirs" => $dirs,
-            "selectedDir" => $selectedDir,
-            "selectedDirPath" => $selectedDirPath,
-            "selectedDirItems" => $diskItems
+            "result" => [
+                "dirs" => $dirs,
+                "selectedDir" => $selectedDir,
+                "selectedDirPath" => $selectedDirPath,
+                "selectedDirItems" => $diskItems
+            ]
         ]);
     }
 

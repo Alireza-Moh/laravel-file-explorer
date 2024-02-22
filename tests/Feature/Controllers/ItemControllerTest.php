@@ -4,6 +4,27 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
+test('should throw an error when disk does not exist', function () {
+    $response = $this->postJson(
+        route(
+            "fx.file-create",
+            ["diskName" => "aa", "dirName" => "ios"]
+        ),
+        [
+            "destination" => "ios",
+            "path" => "ios/config.txt"
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->has('message')
+        ->has("errors")
+        ->where('message', "Invalid data sent")
+        ->where('errors.0.diskName', "Disk 'aa' does not exist")
+    );
+});
+
 test('should create file and return success response with all file inside the directory', function () {
     $response = $this->postJson(
         route(
@@ -63,7 +84,7 @@ test('should throw an error when path is missing in the form data for creating a
         ])->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.path')
-        ->where('errors.path.0', 'The path field is required.')
+        ->where('errors.path.0', 'File path is required')
         ->etc()
     );
 });
@@ -142,7 +163,7 @@ test('should throw an error when ifItemExist is missing in the form while upload
         ->where(
             'errors',
             [
-                "ifItemExist" => ["Choose an action"],
+                "ifItemExist" => ["Choose an action overwrite/skip"],
             ]
         )
     );
@@ -280,7 +301,7 @@ test('should throw an error when something is missing in form for renaming a fil
         ->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.oldPath')
-        ->where('errors.oldPath.0', 'The old path field is required.')
+        ->where('errors.oldPath.0', 'Old file/directory path is required')
     );
 });
 
@@ -391,15 +412,15 @@ test('should get item content', function () {
 });
 
 test('should throw error when item path is missing', function () {
-    $item = createFakeFiles();
+    createFakeFiles();
 
     $response = $this->getJson("disks/tests/items/fake_file_0");
 
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        "message",
-        "errors"
-    ])
+        $json->hasAll([
+            "message",
+            "errors"
+        ])
         ->where("message", "Invalid data sent")
         ->where("errors.0.path", "File path is missing")
     );

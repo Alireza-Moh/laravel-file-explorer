@@ -1,0 +1,31 @@
+<?php
+
+namespace Alireza\LaravelFileExplorer\Middleware;
+
+use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class ValidateDisk
+{
+    public function handle(Request $request, Closure $next)
+    {
+        $disks = config("laravel-file-explorer.disks");
+        $diskName = $request->route('diskName');
+
+        return in_array($diskName, $disks) ? $next($request) : $this->denyAccess($diskName);
+    }
+
+    private function denyAccess(string $diskName): JsonResponse
+    {
+        return response()->json([
+            "message" => "Invalid data sent",
+            "errors" => [
+                [
+                    "diskName" => "Disk '$diskName' does not exist"
+                ]
+            ]
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+}

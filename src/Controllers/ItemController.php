@@ -12,12 +12,11 @@ use Alireza\LaravelFileExplorer\Requests\UploadItemsRequest;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ItemController extends Controller
+class ItemController extends BaseController
 {
     /**
      * Rename a file.
