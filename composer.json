@@ -1,6 +1,38 @@
 {
     "name": "alireza/laravel-file-explorer",
-    "description": "A laravel file manager",
+    "description": "Laravel File Explorer is a package for easy file management in Laravel apps, offering features like browsing, uploading, and deleting files. Ideal for content management systems and file storage solutions",
+    "keywords": [
+        "laravel",
+        "file",
+        "manager",
+        "explorer",
+        "laravel",
+        "file",
+        "manager",
+        "filesystem",
+        "laravel filesystem",
+        "file handling",
+        "file upload",
+        "file download",
+        "directory management",
+        "storage",
+        "laravel package",
+        "laravel utilities",
+        "laravel tools",
+        "laravel extensions",
+        "laravel ecosystem",
+        "laravel file manager",
+        "laravel file explorer",
+        "laravel filesystem",
+        "laravel file storage"
+    ],
+    "authors": [
+        {
+            "name": "Alireza Mohammadi",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/Alireza-Moh/laravel-file-explorer",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -16,17 +48,16 @@
     "scripts": {
         "test": "vendor/bin/pest"
     },
-    "authors": [
-        {
-            "name": "Alireza Mohammadi"
-        }
-    ],
     "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
         "laravel/framework": "^10.0",
         "league/flysystem": "^3.0",
         "ext-zip": "*"
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev",
+        "orchestra/testbench": "9.x-dev"
     },
     "extra": {
         "laravel": {
@@ -39,9 +70,5 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    },
-    "require-dev": {
-        "pestphp/pest": "3.x-dev",
-        "orchestra/testbench": "9.x-dev"
     }
 }
