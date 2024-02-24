@@ -12,9 +12,9 @@ class ExplorerInitDataController extends Controller
     /**
      * Initialize the file explorer
      *
-     * @return JsonResponse initialization data.
+     * @return JsonResponse
      */
-    public function initFileExplorer(): JsonResponse
+    public function initExplorer(): JsonResponse
     {
         return response()->json(
             [
@@ -29,7 +29,7 @@ class ExplorerInitDataController extends Controller
     /**
      * Get default explorer data on initialization.
      *
-     * @return array default explorer data.
+     * @return array
      */
     private function getDefaultExplorerDataOnInitialization(): array
     {

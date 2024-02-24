@@ -11,7 +11,9 @@ Route::group([
     'middleware' => ConfigRepository::getMiddlewares(),
     'prefix' => ConfigRepository::getRoutePrefix()
 ], function () {
-    Route::get('load-file-explorer', [ExplorerInitDataController::class, 'initFileExplorer'])->name("fx.init-file-explorer");
+
+    Route::get('init-explorer', [ExplorerInitDataController::class, 'initExplorer'])->name("fx.init-explorer");
+
     Route::middleware("validate.disk")->group(function () {
         Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs'])->name("fx.disks");
         Route::get('disks/{diskName}/items/{itemName}', [ItemController::class, 'getContent'])->name("fx.get-item-content");
@@ -27,4 +29,5 @@ Route::group([
         Route::delete('disks/{diskName}/items/delete', [ItemController::class, 'deleteItems'])->name("fx.items-delete");
         Route::delete('disks/{diskName}/dirs/delete', [DirController::class, 'deleteDir'])->name("fx.dir-delete");
     });
+
 });
