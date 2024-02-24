@@ -439,7 +439,7 @@ test('should throw error when item path is missing', function () {
             "errors"
         ])
         ->where("message", "Invalid data sent")
-        ->where("errors.0.path", "File path is missing")
+        ->where("errors.path.0", "File or Directory path is missing")
     );
 });
 

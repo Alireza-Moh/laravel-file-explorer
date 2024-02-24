@@ -5,7 +5,7 @@ namespace Alireza\LaravelFileExplorer\Services;
 use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
-use Alireza\LaravelFileExplorer\Services\Contracts\ItemOperations;
+use Alireza\LaravelFileExplorer\Services\Contracts\ItemUtil;
 use Alireza\LaravelFileExplorer\Supports\Download;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ItemService extends BaseItemManager implements ItemOperations
+class ItemService extends BaseItemManager implements ItemUtil
 {
     /**
      * Rename a file.
@@ -125,12 +125,12 @@ class ItemService extends BaseItemManager implements ItemOperations
      * Get item content
      *
      * @param string $diskName
-     * @param string $path
+     * @param array $validatedData
      * @return string|null
      */
-    public function getItemContent(string $diskName, string $path): ?string
+    public function getItemContent(string $diskName, array $validatedData): ?string
     {
-        return Storage::disk($diskName)->get($path);
+        return Storage::disk($diskName)->get($validatedData["path"]);
     }
 
     /**

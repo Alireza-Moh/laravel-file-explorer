@@ -62,7 +62,7 @@ class Zipper extends ZipArchive
     }
 
     /**
-     * Returns the path of the zip file
+     * Get the path of the zip file
      *
      * @return string
      */

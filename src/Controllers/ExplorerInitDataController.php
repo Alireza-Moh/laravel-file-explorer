@@ -7,7 +7,7 @@ use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
-class FileExplorerLoaderController extends Controller
+class ExplorerInitDataController extends Controller
 {
     /**
      * Initialize the file explorer

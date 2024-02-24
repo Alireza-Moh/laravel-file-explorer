@@ -213,7 +213,7 @@ test('should throw an error when directory path is missing in form', function ()
         ])
         ->where("message", "Invalid data sent")
         ->has('errors')
-        ->where('errors.0.path', 'Directory path is missing')
+        ->where('errors.path.0', 'File or Directory path is missing')
     );
 });
 

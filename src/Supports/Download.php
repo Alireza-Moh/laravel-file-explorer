@@ -42,7 +42,7 @@ class Download
     }
 
     /**
-     * Download all items and return the download stream
+     * Download all items
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */
@@ -55,7 +55,7 @@ class Download
     }
 
     /**
-     * Download a single item and return the download stream
+     * Download a single item
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */
@@ -70,7 +70,7 @@ class Download
     }
 
     /**
-     * Download a multiple items and return the download stream
+     * Download a multiple items
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */

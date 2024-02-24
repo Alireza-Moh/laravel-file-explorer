@@ -3,7 +3,7 @@
 use Alireza\LaravelFileExplorer\Controllers\DirController;
 use Alireza\LaravelFileExplorer\Controllers\DiskController;
 use Alireza\LaravelFileExplorer\Controllers\ItemController;
-use Alireza\LaravelFileExplorer\Controllers\FileExplorerLoaderController;
+use Alireza\LaravelFileExplorer\Controllers\ExplorerInitDataController;
 use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +11,7 @@ Route::group([
     'middleware' => ConfigRepository::getMiddlewares(),
     'prefix' => ConfigRepository::getRoutePrefix()
 ], function () {
-    Route::get('load-file-explorer', [FileExplorerLoaderController::class, 'initFileExplorer'])->name("fx.init-file-explorer");
+    Route::get('load-file-explorer', [ExplorerInitDataController::class, 'initFileExplorer'])->name("fx.init-file-explorer");
     Route::middleware("validate.disk")->group(function () {
         Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs'])->name("fx.disks");
         Route::get('disks/{diskName}/items/{itemName}', [ItemController::class, 'getContent'])->name("fx.get-item-content");
