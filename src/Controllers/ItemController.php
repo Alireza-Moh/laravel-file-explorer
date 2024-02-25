@@ -5,6 +5,7 @@ namespace Alireza\LaravelFileExplorer\Controllers;
 use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
 use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
 use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
+use Alireza\LaravelFileExplorer\Requests\PathRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Requests\UpdateItemContentRequest;
 use Illuminate\Http\Request;
@@ -25,13 +26,13 @@ class ItemController extends Controller
      * @param string $diskName
      * @param string $fileName
      * @param RenameItemRequest $request
-     * @param ItemService $fileService
+     * @param ItemService $itemService
      * @return JsonResponse
      */
-    public function renameItem(string $diskName, string $fileName, RenameItemRequest $request, ItemService $fileService): JsonResponse
+    public function renameItem(string $diskName, string $fileName, RenameItemRequest $request, ItemService $itemService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileService->rename($diskName, $fileName, $validatedData);
+        $result = $itemService->rename($diskName, $fileName, $validatedData);
 
         return response()->json($result);
     }
@@ -41,13 +42,13 @@ class ItemController extends Controller
      *
      * @param string $diskName
      * @param DeleteItemRequest $request
-     * @param ItemService $fileService
+     * @param ItemService $itemService
      * @return JsonResponse
      */
-    public function deleteItems(string $diskName, DeleteItemRequest $request, ItemService $fileService): JsonResponse
+    public function deleteItems(string $diskName, DeleteItemRequest $request, ItemService $itemService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileService->delete($diskName, $validatedData);
+        $result = $itemService->delete($diskName, $validatedData);
 
         return response()->json($result);
     }
@@ -58,13 +59,13 @@ class ItemController extends Controller
      * @param string $diskName
      * @param string $dirName
      * @param CreateFileRequest $request
-     * @param ItemService $fileService
+     * @param ItemService $itemService
      * @return JsonResponse
      */
-    public function createFile(string $diskName, string $dirName, CreateFileRequest $request, ItemService $fileService): JsonResponse
+    public function createFile(string $diskName, string $dirName, CreateFileRequest $request, ItemService $itemService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileService->create($diskName, $validatedData);
+        $result = $itemService->create($diskName, $validatedData);
 
         return response()->json($result);
     }
@@ -74,13 +75,13 @@ class ItemController extends Controller
      *
      * @param string $diskName
      * @param UploadItemsRequest $request
-     * @param ItemService $fileService
+     * @param ItemService $itemService
      * @return JsonResponse
      */
-    public function uploadItems(string $diskName, UploadItemsRequest $request, ItemService $fileService): JsonResponse
+    public function uploadItems(string $diskName, UploadItemsRequest $request, ItemService $itemService): JsonResponse
     {
         $validatedData = $request->validated();
-        $result = $fileService->upload($diskName, $validatedData);
+        $result = $itemService->upload($diskName, $validatedData);
 
         return response()->json($result);
     }
@@ -90,32 +91,29 @@ class ItemController extends Controller
      *
      * @param string $diskName
      * @param DownloadFileRequest $request
-     * @param ItemService $fileService
+     * @param ItemService $itemService
      * @return BinaryFileResponse|JsonResponse|StreamedResponse
      * @throws Exception
      */
-    public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $fileService): BinaryFileResponse|JsonResponse|StreamedResponse
+    public function downloadItems(string $diskName, DownloadFileRequest $request, ItemService $itemService): BinaryFileResponse|JsonResponse|StreamedResponse
     {
-        return $fileService->download($diskName, $request->validated());
+        return $itemService->download($diskName, $request->validated());
     }
 
-    public function getContent(string $diskName, string $itemName, Request $request, ItemService $itemService): JsonResponse
+    /**
+     * Get File content for editor
+     *
+     * @param string $diskName
+     * @param string $itemName
+     * @param PathRequest $pathRequest
+     * @param ItemService $itemService
+     * @return JsonResponse
+     */
+    public function getContent(string $diskName, string $itemName, PathRequest $pathRequest, ItemService $itemService): JsonResponse
     {
-        if (!$request->has("path")) {
-            return response()->json([
-                "message" => "Invalid data sent",
-                "errors" => [
-                    ["path" => "File path is missing"]
-                ]
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $itemPath = urldecode(
-            $request->query("path")
-        );
         return response()->json([
             "result" => [
-                "content" => $itemService->getItemContent($diskName, $itemPath),
+                "content" => $itemService->getItemContent($diskName, $pathRequest->validated()),
             ]
         ]);
     }

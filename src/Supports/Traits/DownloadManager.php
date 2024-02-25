@@ -8,14 +8,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-trait DownloadHelper
+trait DownloadManager
 {
     /**
      * Sorts items by type into files and directories
      *
-     * @return array An array containing two arrays:
-     *               - First array contains sorted files
-     *               - Second array contains sorted directories
+     * @return array
      */
     private function sortByType(): array
     {
@@ -34,7 +32,7 @@ trait DownloadHelper
     }
 
     /**
-     * Zip all items and return the download stream
+     * Zip all items
      *
      * @return JsonResponse|BinaryFileResponse
      */
@@ -52,7 +50,7 @@ trait DownloadHelper
     }
 
     /**
-     * Return a json response with the exception message when it can not create a zip file
+     * Return a json response with the exception message
      *
      * @param ZipperException $zipperException
      * @return JsonResponse

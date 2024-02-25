@@ -3,6 +3,27 @@
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
+test('should throw an error when disk does not exist', function () {
+    $response = $this->postJson(
+        route(
+            "fx.dir-create",
+            ["diskName" => "aa", "dirName" => "ios"]
+        ),
+        [
+            "destination" => "ios",
+            "path" => "ios/configDir"
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJson(fn (AssertableJson $json) =>
+    $json->has('message')
+        ->has("errors")
+        ->where('message', "Invalid data sent")
+        ->where('errors.0.diskName', "Disk 'aa' does not exist")
+    );
+});
+
 test('should create directory and return success response with all file inside the directory', function () {
     $response = $this->postJson(
         route(
@@ -79,7 +100,7 @@ test('should throw an error when form data is missing', function () {
     ])->where("message", "Invalid data sent")
         ->has('errors')
         ->has('errors.path')
-        ->where('errors.path.0', 'The path field is required.')
+        ->where('errors.path.0', 'Directory path is required')
         ->etc()
     );
 });
@@ -88,7 +109,16 @@ test('should get all items from a specified directory', function () {
     createFakeFiles(5);
     createFakeDirs();
 
-    $response = $this->getJson("disks/tests/dirs/ios?path=" . "ios");
+    $response = $this->getJson(
+        route(
+            "fx.load-dir-items",
+            [
+                "diskName" => "tests",
+                "dirName" => "ios"
+            ]
+        )
+        . "?path=ios",
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->hasAll([
@@ -166,7 +196,15 @@ test('should throw an error when directory path is missing in form', function ()
     createFakeFiles(5);
     createFakeDirs();
 
-    $response = $this->getJson("disks/tests/dirs/ios");
+    $response = $this->getJson(
+        route(
+            "fx.load-dir-items",
+            [
+                "diskName" => "tests",
+                "dirName" => "ios"
+            ]
+        )
+    );
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
@@ -175,7 +213,7 @@ test('should throw an error when directory path is missing in form', function ()
         ])
         ->where("message", "Invalid data sent")
         ->has('errors')
-        ->where('errors.0.path', 'Directory path is missing')
+        ->where('errors.path.0', 'File or Directory path is missing')
     );
 });
 

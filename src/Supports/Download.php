@@ -2,16 +2,16 @@
 
 namespace Alireza\LaravelFileExplorer\Supports;
 
-use Alireza\LaravelFileExplorer\Supports\Traits\DownloadHelper;
+use Alireza\LaravelFileExplorer\Supports\Traits\DownloadManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class Downloader
+class Download
 {
-    use DownloadHelper;
+    use DownloadManager;
 
     /**
      * @var string
@@ -42,7 +42,7 @@ class Downloader
     }
 
     /**
-     * Download all items and return the download stream
+     * Download all items
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */
@@ -55,7 +55,7 @@ class Downloader
     }
 
     /**
-     * Download a single item and return the download stream
+     * Download a single item
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */
@@ -70,7 +70,7 @@ class Downloader
     }
 
     /**
-     * Download a multiple items and return the download stream
+     * Download a multiple items
      *
      * @return BinaryFileResponse|StreamedResponse|JsonResponse
      */

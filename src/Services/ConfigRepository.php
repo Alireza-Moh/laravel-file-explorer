@@ -64,7 +64,7 @@ final class ConfigRepository
      *
      * @return array|null The list of middleware names
      */
-    final public static function getMiddlewares(): array|null
+    final public static function getMiddlewares(): ?array
     {
         return config("laravel-file-explorer.middlewares");
     }

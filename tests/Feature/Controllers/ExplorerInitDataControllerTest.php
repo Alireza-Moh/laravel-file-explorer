@@ -7,7 +7,7 @@ test('should load file explorer initial data', function () {
     createFakeImages(2);
     createFakeFiles(2);
     createFakeDirs(2);
-    $response = $this->getJson(route("fx.init-file-explorer"));
+    $response = $this->getJson(route("fx.init-explorer"));
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->has('result')
@@ -76,7 +76,7 @@ test('should load file explorer initial data', function () {
 test('should load File Explorer initial data with no items and no directories on selected disk "tests"', function () {
     Storage::fake('tests');
 
-    $response = $this->getJson(route("fx.init-file-explorer"));
+    $response = $this->getJson(route("fx.init-explorer"));
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('result')

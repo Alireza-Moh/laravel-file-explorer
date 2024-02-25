@@ -208,7 +208,7 @@ test('should return item content', function () {
 
     $result = $itemService->getItemContent(
         "tests",
-        $item[0]
+        ["path" => $item[0]]
     );
 
     expect($result)->toBeString()

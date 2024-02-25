@@ -62,8 +62,7 @@ trait DirManager
     }
 
     /**
-     * Generates and retrieves a query result for items
-     * of a specific type (file or dir) on a specified disk.
+     * Generates a query fpr retrieving items
      *
      * @param string $diskName
      * @param string $dirName

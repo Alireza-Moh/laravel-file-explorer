@@ -7,14 +7,14 @@ use Alireza\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
-class FileExplorerLoaderController extends Controller
+class ExplorerInitDataController extends Controller
 {
     /**
      * Initialize the file explorer
      *
-     * @return JsonResponse initialization data.
+     * @return JsonResponse
      */
-    public function initFileExplorer(): JsonResponse
+    public function initExplorer(): JsonResponse
     {
         return response()->json(
             [
@@ -29,7 +29,7 @@ class FileExplorerLoaderController extends Controller
     /**
      * Get default explorer data on initialization.
      *
-     * @return array default explorer data.
+     * @return array
      */
     private function getDefaultExplorerDataOnInitialization(): array
     {
