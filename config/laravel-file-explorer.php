@@ -96,4 +96,15 @@ return [
      | Type: boolean
      */
     "hash_file_name_when_uploading" => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     | Timezone
+     |--------------------------------------------------------------------------
+     |
+     | You may want to set your timezone for the file timestamp
+     |
+     | Type: string
+     */
+    "timezone" => "Europe/Vienna",
 ];

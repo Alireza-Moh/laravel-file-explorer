@@ -88,4 +88,14 @@ final class ConfigRepository
     {
         return config("laravel-file-explorer.hash_file_name_when_uploading");
     }
+
+    /**
+     * Should hash file name when uploading new items
+     *
+     * @return string
+     */
+    final public static function getTimezone(): string
+    {
+        return config("laravel-file-explorer.timezone");
+    }
 }
