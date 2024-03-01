@@ -56,7 +56,7 @@ class UploadItemsRequest extends BaseRequest
     }
 
     /**
-     * Get validation rules based on the settings in the repo config file
+     * Get validation rules
      *
      * @return array
      */

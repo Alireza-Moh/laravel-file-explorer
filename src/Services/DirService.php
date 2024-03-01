@@ -10,8 +10,6 @@ class DirService extends BaseItemManager implements ItemUtil
 {
     use DirManager;
 
-    private const CARBON_TIME_FORMAT = "Y-m-d H:i:s";
-
     /**
      * Retrieve items within a directory.
      *

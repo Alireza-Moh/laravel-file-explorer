@@ -258,13 +258,15 @@ test('should rename a file', function () {
     $response = $this->postJson(
         route(
             "fx.item-rename",
-            ["diskName" => "tests", "dirName" => "ios"]
+            ["diskName" => "tests"]
         ),
         [
             "oldName" => $images[0],
             "newName" => "newName.png",
             "newPath" => "ios/newName.png",
             "oldPath" => "ios/" . $images[0],
+            "type" => "file",
+            "dirName" => "ios"
         ]
     );
 

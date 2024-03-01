@@ -6,6 +6,8 @@ use Alireza\LaravelFileExplorer\Events\ItemDeleted;
 
 abstract class BaseItemManager
 {
+    protected const CARBON_TIME_FORMAT = "Y-m-d H:i:s";
+
     /**
      * Get the response based on the operation result
      *
