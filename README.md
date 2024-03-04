@@ -50,4 +50,15 @@ Download the frontend into your project
 
 ```bash
   npm install alireza/laravel-file-explorer-frontend
-```  
+```
+Add the FileExplorer component to the vue app
+```javascript
+import LaravelFileExplorer from "laravel-file-explorer";
+import "laravel-file-explorer/dist/style.css";
+
+app.use(LaravelFileExplorer);
+```
+Use the component inside your vue component
+```javascript
+  <LaravelFileExplorer setting="{baseUrl: 'http://laravel-wrapper.localhost:8084/api/laravel-file-explorer/'}"/>
+```
