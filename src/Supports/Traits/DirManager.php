@@ -104,7 +104,8 @@ trait DirManager
         ];
 
         if ($type === 'file') {
-            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
+            $fileSize = $storage->size($path);
+            $commonMetaData['size'] = ($fileSize === 0) ? $fileSize : $this->formatItemSize($storage->size($path));
             $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
             $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
         }
