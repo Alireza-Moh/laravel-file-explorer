@@ -4,6 +4,7 @@ namespace Alireza\LaravelFileExplorer\Services;
 
 use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
+use Alireza\LaravelFileExplorer\Events\ItemsDownloaded;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemUtil;
 use Alireza\LaravelFileExplorer\Supports\Download;
@@ -126,7 +127,10 @@ class ItemService extends BaseItemManager implements ItemUtil
      */
     public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        $downloadFactory = new Download($diskName, $validatedData["items"]);
+        $items = $validatedData["items"];
+        $downloadFactory = new Download($diskName, $items);
+        event(new ItemsDownloaded($diskName, $items));
+
         return $downloadFactory->download();
     }
 
