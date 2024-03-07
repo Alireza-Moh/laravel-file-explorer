@@ -49,7 +49,7 @@ Publish configuration file
 Download the frontend into your project
 
 ```bash
-  npm install alireza/laravel-file-explorer-frontend
+  npm install laravel-file-explorer
 ```
 Add the FileExplorer component to the vue app
 ```javascript
