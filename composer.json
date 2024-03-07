@@ -1,5 +1,5 @@
 {
-    "name": "alireza/laravel-file-explorer",
+    "name": "alireza-moh/laravel-file-explorer",
     "description": "Laravel File Explorer is a package for easy file management in Laravel apps, offering features like browsing, uploading, and deleting files. Ideal for content management systems and file storage solutions",
     "keywords": [
         "laravel",
