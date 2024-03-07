@@ -33,15 +33,14 @@ class ItemRenamed
      * ItemRenamed constructor
      *
      * @param string $diskName
-     * @param string $oldName
-     * @param array $item
+     * @param array $itemData
      */
-    public function __construct(string $diskName, string $oldName, array $item) {
+    public function __construct(string $diskName, array $itemData) {
         $this->diskName = $diskName;
-        $this->oldName = $oldName;
-        $this->newName = $item["newName"];
-        $this->oldPath = $item["oldPath"];
-        $this->newPath = $item["newPath"];
+        $this->oldName = $itemData["oldName"];
+        $this->newName = $itemData["newName"];
+        $this->oldPath = $itemData["oldPath"];
+        $this->newPath = $itemData["newPath"];
     }
 
     /**

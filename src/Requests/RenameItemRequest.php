@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Requests;
 
+use Alireza\LaravelFileExplorer\Rules\FileExtension;
 use Alireza\LaravelFileExplorer\Rules\MatchDefaultDir;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,12 +16,15 @@ class RenameItemRequest extends BaseRequest
      */
     public function rules(): array
     {
-        return [
-            "oldName" => ["required", "string", new MatchDefaultDir],
-            "newName" => ["required", "string"],
-            "oldPath" => ["required", "string"],
-            "newPath" => ["required", "string"]
-        ];
+        return array_merge(
+            [
+                "type" => ["required", "string"],
+                "dirName" => ["required", "string"],
+                "oldName" => ["required", "string", new MatchDefaultDir],
+                "oldPath" => ["required", "string"]
+            ],
+            $this->getRules()
+        );
     }
 
     /**
@@ -38,7 +42,11 @@ class RenameItemRequest extends BaseRequest
             "oldPath.required" => "Old file/directory path is required",
             "oldPath.string" => "Old file/directory path must be string",
             "newPath.required" => "New file/directory path is required",
-            "newPath.string" => "New file/directory path must be string"
+            "newPath.string" => "New file/directory path must be string",
+            "type.required" => "File type is required",
+            "type.string" => "File type must be string",
+            "dirName.required" => "Directory name is required",
+            "dirName.string" => "Directory name must be string"
         ];
     }
 
@@ -52,5 +60,26 @@ class RenameItemRequest extends BaseRequest
     {
         $response = $this->getFailureResponse();
         throw new HttpResponseException($response);
+    }
+
+    /**
+     * Get validation rules
+     *
+     * @return array
+     */
+    private function getRules(): array
+    {
+        $rules = [
+            "newName" => ["required", "string"],
+            "newPath" => ["required", "string"]
+        ];
+
+        if ($this->type === "file") {
+            foreach ($rules as $key => $value) {
+                $rules[$key][] = new FileExtension();
+            }
+        }
+
+        return $rules;
     }
 }

@@ -7,17 +7,17 @@ class DirCreated
     /**
      * @var string
      */
-    public string $diskName;
+    private string $diskName;
 
     /**
      * @var string
      */
-    public string $parentDirName;
+    private string $parentDirName;
 
     /**
      * @var string
      */
-    public string $path;
+    private string $path;
 
     /**
      * DirCreated constructor

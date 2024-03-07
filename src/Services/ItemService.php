@@ -4,9 +4,11 @@ namespace Alireza\LaravelFileExplorer\Services;
 
 use Alireza\LaravelFileExplorer\Events\FileCreated;
 use Alireza\LaravelFileExplorer\Events\ItemRenamed;
+use Alireza\LaravelFileExplorer\Events\ItemsDownloaded;
 use Alireza\LaravelFileExplorer\Events\ItemUploaded;
 use Alireza\LaravelFileExplorer\Services\Contracts\ItemUtil;
 use Alireza\LaravelFileExplorer\Supports\Download;
+use Alireza\LaravelFileExplorer\Supports\Traits\DirManager;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -15,22 +17,30 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ItemService extends BaseItemManager implements ItemUtil
 {
+    use DirManager;
+
     /**
      * Rename a file.
      *
      * @param string $diskName
-     * @param string $oldName
      * @param array $validatedData
      * @return array
      */
-    public function rename(string $diskName, string $oldName, array $validatedData): array
+    public function rename(string $diskName, array $validatedData): array
     {
         $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
 
+        $additionalData = [];
         if ($result) {
-            event(new ItemRenamed($diskName, $oldName, $validatedData));
+            event(new ItemRenamed($diskName, $validatedData));
+            $additionalData["updatedItem"] = $this->getMetaData(
+                $diskName,
+                $validatedData["dirName"],
+                $validatedData["newPath"],
+                $validatedData["type"]
+            );
         }
-        return $this->getResponse($result, "Item renamed successfully", "Failed to rename item");
+        return $this->getResponse($result, "Item renamed successfully", "Failed to rename item", $additionalData);
     }
 
     /**
@@ -117,7 +127,10 @@ class ItemService extends BaseItemManager implements ItemUtil
      */
     public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        $downloadFactory = new Download($diskName, $validatedData["items"]);
+        $items = $validatedData["items"];
+        $downloadFactory = new Download($diskName, $items);
+        event(new ItemsDownloaded($diskName, $items));
+
         return $downloadFactory->download();
     }
 

@@ -19,22 +19,21 @@ test('should rename a given file', function () {
 
     $result = $itemService->rename(
         "tests",
-        $file[0],
         [
+            "oldName" => "fake_file_0.txt",
             "newName" => "newNamdde.txt",
             "oldPath" => $file[0],
-            "newPath" => "ios/newNamdde.txt"
+            "newPath" => "ios/newNamdde.txt",
+            "type" => "file",
+            "dirName" => "ios"
         ]
     );
 
     expect($result)->toBeArray()
-        ->and($result)->toMatchArray([
-            "result" => [
-                "status" => "success",
-                "message" => "Item renamed successfully"
-
-            ]
-        ]);
+        ->and($result["result"])->toHaveKey('updatedItem')
+        ->and($result["result"]['updatedItem'])->toBeArray()
+        ->and($result["result"]['updatedItem'])->toHaveKey('name')
+        ->and($result["result"]['updatedItem']['name'])->toEqual('newNamdde.txt');
     Event::assertDispatched(ItemRenamed::class);
 });
 

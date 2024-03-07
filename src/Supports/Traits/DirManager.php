@@ -2,6 +2,7 @@
 
 namespace Alireza\LaravelFileExplorer\Supports\Traits;
 
+use Alireza\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,15 +31,15 @@ trait DirManager
      *
      * @param string $diskName
      * @param string $item
-     * @param string $format
      * @return string
      */
-    protected function getLastModified(string $diskName, string $item, string $format = 'Y-m-d H:i:s'): string
+    protected function getLastModified(string $diskName, string $item): string
     {
         $lastModifiedTimestamp = Storage::disk($diskName)->lastModified($item);
-        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)->timezone('Europe/Vienna');
+        $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)
+            ->timezone(ConfigRepository::getTimezone());
 
-        return $lastModified->format($format);
+        return $lastModified->format(self::CARBON_TIME_FORMAT);
     }
 
     /**
@@ -103,7 +104,8 @@ trait DirManager
         ];
 
         if ($type === 'file') {
-            $commonMetaData['size'] = $this->formatItemSize($storage->size($path));
+            $fileSize = $storage->size($path);
+            $commonMetaData['size'] = ($fileSize === 0) ? $fileSize : $this->formatItemSize($storage->size($path));
             $commonMetaData['lastModified'] = $this->getLastModified($diskName, $path);
             $commonMetaData['extension'] = pathinfo($path, PATHINFO_EXTENSION);
         }

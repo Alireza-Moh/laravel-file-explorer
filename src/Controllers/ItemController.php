@@ -8,7 +8,6 @@ use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
 use Alireza\LaravelFileExplorer\Requests\PathRequest;
 use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
 use Alireza\LaravelFileExplorer\Requests\UpdateItemContentRequest;
-use Illuminate\Http\Request;
 use Alireza\LaravelFileExplorer\Requests\UploadItemsRequest;
 use Alireza\LaravelFileExplorer\Services\ItemService;
 use Exception;
@@ -16,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class ItemController extends Controller
 {
@@ -24,16 +22,13 @@ class ItemController extends Controller
      * Rename a file.
      *
      * @param string $diskName
-     * @param string $fileName
      * @param RenameItemRequest $request
      * @param ItemService $itemService
      * @return JsonResponse
      */
-    public function renameItem(string $diskName, string $fileName, RenameItemRequest $request, ItemService $itemService): JsonResponse
+    public function renameItem(string $diskName, RenameItemRequest $request, ItemService $itemService): JsonResponse
     {
-        $validatedData = $request->validated();
-        $result = $itemService->rename($diskName, $fileName, $validatedData);
-
+        $result = $itemService->rename($diskName, $request->validated());
         return response()->json($result);
     }
 
