@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Supports;
+namespace AlirezaMoh\LaravelFileExplorer\Supports;
 
-use Alireza\LaravelFileExplorer\Exceptions\ZipperException;
+use AlirezaMoh\LaravelFileExplorer\Exceptions\ZipperException;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 

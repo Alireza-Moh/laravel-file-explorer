@@ -1,10 +1,10 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Events\FileCreated;
-use Alireza\LaravelFileExplorer\Events\ItemDeleted;
-use Alireza\LaravelFileExplorer\Events\ItemRenamed;
-use Alireza\LaravelFileExplorer\Events\ItemUploaded;
-use Alireza\LaravelFileExplorer\Services\ItemService;
+use AlirezaMoh\LaravelFileExplorer\Events\FileCreated;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemDeleted;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemRenamed;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemUploaded;
+use AlirezaMoh\LaravelFileExplorer\Services\ItemService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;

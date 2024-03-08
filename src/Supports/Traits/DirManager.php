@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Supports\Traits;
+namespace AlirezaMoh\LaravelFileExplorer\Supports\Traits;
 
-use Alireza\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 

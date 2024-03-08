@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Controllers;
+namespace AlirezaMoh\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Services\DirService;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\JsonResponse;
 

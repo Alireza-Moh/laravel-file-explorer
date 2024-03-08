@@ -36,7 +36,7 @@ return [
      |
      | Type: array
      */
-    "disk_list" => ["public"],
+    "disks" => ["public"],
 
     /*
      |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ return [
      |
      | Type: string
      */
-    "route_prefix" => "laravel-file-explorer",
+    "route_prefix" => "api/laravel-file-explorer",
 
     /*
      |--------------------------------------------------------------------------

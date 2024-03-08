@@ -1,6 +1,6 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Services\BaseItemManager;
+use AlirezaMoh\LaravelFileExplorer\Services\BaseItemManager;
 $targetAbstractClass = null;
 
 beforeEach(function () {

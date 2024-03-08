@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a03ae32cdece1c2ee1fd79ce35dbede",
+    "content-hash": "fe2c823d32b4cc22fc5f991bafbfa3b2",
     "packages": [
         {
             "name": "brick/math",
@@ -730,12 +730,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "cebd8d93d722bbf44f75bdecc8c097d2f6701b96"
+                "reference": "6c27ca43dbcfd232813ca5aba8ad3c80405ba9b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/cebd8d93d722bbf44f75bdecc8c097d2f6701b96",
-                "reference": "cebd8d93d722bbf44f75bdecc8c097d2f6701b96",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6c27ca43dbcfd232813ca5aba8ad3c80405ba9b1",
+                "reference": "6c27ca43dbcfd232813ca5aba8ad3c80405ba9b1",
                 "shasum": ""
             },
             "require": {
@@ -929,7 +929,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-03-07T16:58:40+00:00"
+            "time": "2024-03-08T02:31:57+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -9464,7 +9464,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "pestphp/pest": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

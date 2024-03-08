@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Events;
+namespace AlirezaMoh\LaravelFileExplorer\Events;
 
 class ItemRenamed
 {

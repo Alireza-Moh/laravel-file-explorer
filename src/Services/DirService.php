@@ -1,9 +1,9 @@
 <?php
-namespace Alireza\LaravelFileExplorer\Services;
+namespace AlirezaMoh\LaravelFileExplorer\Services;
 
-use Alireza\LaravelFileExplorer\Events\DirCreated;
-use Alireza\LaravelFileExplorer\Services\Contracts\ItemUtil;
-use Alireza\LaravelFileExplorer\Supports\Traits\DirManager;
+use AlirezaMoh\LaravelFileExplorer\Events\DirCreated;
+use AlirezaMoh\LaravelFileExplorer\Services\Contracts\ItemUtil;
+use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DirManager;
 use Illuminate\Support\Facades\Storage;
 
 class DirService extends BaseItemManager implements ItemUtil

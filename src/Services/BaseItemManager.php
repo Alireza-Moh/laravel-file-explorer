@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Services;
+namespace AlirezaMoh\LaravelFileExplorer\Services;
 
-use Alireza\LaravelFileExplorer\Events\ItemDeleted;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemDeleted;
 
 abstract class BaseItemManager
 {

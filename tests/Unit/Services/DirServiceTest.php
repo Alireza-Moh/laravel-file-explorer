@@ -1,8 +1,8 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Events\DirCreated;
-use Alireza\LaravelFileExplorer\Events\ItemDeleted;
-use Alireza\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Events\DirCreated;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemDeleted;
+use AlirezaMoh\LaravelFileExplorer\Services\DirService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 

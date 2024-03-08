@@ -1,15 +1,15 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Controllers;
+namespace AlirezaMoh\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Requests\CreateFileRequest;
-use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
-use Alireza\LaravelFileExplorer\Requests\DownloadFileRequest;
-use Alireza\LaravelFileExplorer\Requests\PathRequest;
-use Alireza\LaravelFileExplorer\Requests\RenameItemRequest;
-use Alireza\LaravelFileExplorer\Requests\UpdateItemContentRequest;
-use Alireza\LaravelFileExplorer\Requests\UploadItemsRequest;
-use Alireza\LaravelFileExplorer\Services\ItemService;
+use AlirezaMoh\LaravelFileExplorer\Requests\CreateFileRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\DeleteItemRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\DownloadFileRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\PathRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\RenameItemRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\UpdateItemContentRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\UploadItemsRequest;
+use AlirezaMoh\LaravelFileExplorer\Services\ItemService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
