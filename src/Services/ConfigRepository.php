@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Services;
+namespace AlirezaMoh\LaravelFileExplorer\Services;
 
 final class ConfigRepository
 {
@@ -31,12 +31,7 @@ final class ConfigRepository
      */
     final public static function getDisks(): array
     {
-        $disks = config("laravel-file-explorer.disks");
-
-        if (empty($disks)) {
-            return ["public"];
-        }
-        return $disks;
+        return config("laravel-file-explorer.disks");
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Supports;
+namespace AlirezaMoh\LaravelFileExplorer\Supports;
 
-use Alireza\LaravelFileExplorer\Supports\Traits\DownloadManager;
+use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DownloadManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;

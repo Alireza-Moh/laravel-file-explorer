@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Requests;
 
-use Alireza\LaravelFileExplorer\Rules\FileExtension;
+use AlirezaMoh\LaravelFileExplorer\Rules\FileExtension;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 

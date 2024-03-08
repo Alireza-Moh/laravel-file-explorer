@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Services\Contracts;
+namespace AlirezaMoh\LaravelFileExplorer\Services\Contracts;
 
 interface ItemUtil
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Rules;
+namespace AlirezaMoh\LaravelFileExplorer\Rules;
 
-use Alireza\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

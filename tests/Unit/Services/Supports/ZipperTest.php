@@ -1,6 +1,6 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Supports\Zipper;
+use AlirezaMoh\LaravelFileExplorer\Supports\Zipper;
 
 test('should create a zip file successfully', function () {
     $images = createFakeImages(2);

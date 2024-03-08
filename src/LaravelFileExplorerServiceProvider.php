@@ -1,10 +1,12 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer;
+namespace AlirezaMoh\LaravelFileExplorer;
 
-use Alireza\LaravelFileExplorer\Middleware\ValidateDisk;
+use AlirezaMoh\LaravelFileExplorer\Middleware\ValidateDisk;
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class LaravelFileExplorerServiceProvider extends ServiceProvider
 {
@@ -15,14 +17,14 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot(Router $router): void {
-        //load api routes
-        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
-
         //load middleware
         $router->aliasMiddleware('validate.disk', ValidateDisk::class);
 
         //publish config
         $this->publishConfig();
+
+        //register api routes
+        $this->registerApiRoutes();
     }
 
     /**
@@ -42,7 +44,7 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function publishConfig(): void
+    private function publishConfig(): void
     {
         $this->publishes(
             [
@@ -50,5 +52,20 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
             ],
             "lfx.config"
         );
+    }
+
+    private function registerApiRoutes(): void
+    {
+        Route::group($this->getRouteConfiguration(), function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+        });
+    }
+
+    private function getRouteConfiguration(): array
+    {
+        return [
+            'prefix' => ConfigRepository::getRoutePrefix(),
+            'middleware' => ConfigRepository::getMiddlewares(),
+        ];
     }
 }

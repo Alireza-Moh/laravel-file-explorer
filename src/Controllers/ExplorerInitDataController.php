@@ -1,11 +1,12 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Controllers;
+namespace AlirezaMoh\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Services\ConfigRepository;
-use Alireza\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ExplorerInitDataController extends Controller
 {
@@ -35,6 +36,10 @@ class ExplorerInitDataController extends Controller
     {
         $defaultDisk = ConfigRepository::getDefaultDiskOnLoading();
         $dirService = new DirService();
+        $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
+        if (is_null($defaultDir)) {
+            $defaultDir = Storage::disk($defaultDisk)->directories()[0];
+        }
 
         return [
             "disks" => ConfigRepository::getDisks(),
@@ -42,7 +47,7 @@ class ExplorerInitDataController extends Controller
             "selectedDisk" => ConfigRepository::getDefaultDiskOnLoading(),
             "selectedDir" => ConfigRepository::getDefaultDirectoryOnLoading(),
             "selectedDirPath" =>  $this->getSelectedDirPath($dirService, $defaultDisk),
-            "selectedDirItems" => $dirService->getDirItems($defaultDisk, ConfigRepository::getDefaultDirectoryOnLoading())
+            "selectedDirItems" => $dirService->getDirItems($defaultDisk, $defaultDir)
         ];
     }
 
@@ -70,7 +75,11 @@ class ExplorerInitDataController extends Controller
      */
     private function getSelectedDirPath(DirService $dirService, string $defaultDisk): string
     {
-        $dirByLabel = $dirService->findDirectoryByName($defaultDisk, ConfigRepository::getDefaultDirectoryOnLoading());
+        $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
+        if (is_null($defaultDir)) {
+            return "";
+        }
+        $dirByLabel = $dirService->findDirectoryByName($defaultDisk, $defaultDir);
         $selectedDirPath = "";
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];

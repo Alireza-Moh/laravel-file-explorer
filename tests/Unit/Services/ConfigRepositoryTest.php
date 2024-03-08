@@ -1,6 +1,6 @@
 <?php
 
-use Alireza\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Facades\Config;
 
 test('returns the default disk on loading', function () {

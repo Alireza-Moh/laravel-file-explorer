@@ -1,6 +1,6 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Exceptions;
+namespace AlirezaMoh\LaravelFileExplorer\Exceptions;
 
 use Exception;
 use ZipArchive;

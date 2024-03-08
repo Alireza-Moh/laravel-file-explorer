@@ -1,7 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Middleware;
+namespace AlirezaMoh\LaravelFileExplorer\Middleware;
 
+use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ class ValidateDisk
 {
     public function handle(Request $request, Closure $next)
     {
-        $disks = config("laravel-file-explorer.disks");
+        $disks = ConfigRepository::getDisks();
         $diskName = $request->route('diskName');
 
         return in_array($diskName, $disks) ? $next($request) : $this->denyAccess($diskName);

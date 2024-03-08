@@ -1,15 +1,13 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Controllers;
+namespace AlirezaMoh\LaravelFileExplorer\Controllers;
 
-use Alireza\LaravelFileExplorer\Requests\CreateDirRequest;
-use Alireza\LaravelFileExplorer\Requests\DeleteItemRequest;
-use Alireza\LaravelFileExplorer\Requests\PathRequest;
-use Alireza\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Requests\CreateDirRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\DeleteItemRequest;
+use AlirezaMoh\LaravelFileExplorer\Requests\PathRequest;
+use AlirezaMoh\LaravelFileExplorer\Services\DirService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Symfony\Component\HttpFoundation\Response;
 
 class DirController extends Controller
 {

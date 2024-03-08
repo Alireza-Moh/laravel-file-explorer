@@ -1,8 +1,8 @@
 <?php
 
-namespace Alireza\LaravelFileExplorer\Tests;
+namespace AlirezaMoh\LaravelFileExplorer\Tests;
 
-use Alireza\LaravelFileExplorer\LaravelFileExplorerServiceProvider;
+use AlirezaMoh\LaravelFileExplorer\LaravelFileExplorerServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase;

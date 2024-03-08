@@ -37,12 +37,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Alireza\\LaravelFileExplorer\\": "src/"
+            "AlirezaMoh\\LaravelFileExplorer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Alireza\\LaravelFileExplorer\\Tests\\": "tests/"
+            "AlirezaMoh\\LaravelFileExplorer\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -63,7 +63,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Alireza\\LaravelFileExplorer\\LaravelFileExplorerServiceProvider"
+                "AlirezaMoh\\LaravelFileExplorer\\LaravelFileExplorerServiceProvider"
             ]
         }
     },
