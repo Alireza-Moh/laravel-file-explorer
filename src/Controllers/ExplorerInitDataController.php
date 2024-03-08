@@ -37,9 +37,6 @@ class ExplorerInitDataController extends Controller
         $defaultDisk = ConfigRepository::getDefaultDiskOnLoading();
         $dirService = new DirService();
         $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
-        if (is_null($defaultDir)) {
-            $defaultDir = Storage::disk($defaultDisk)->directories()[0];
-        }
 
         return [
             "disks" => ConfigRepository::getDisks(),
@@ -47,7 +44,7 @@ class ExplorerInitDataController extends Controller
             "selectedDisk" => ConfigRepository::getDefaultDiskOnLoading(),
             "selectedDir" => ConfigRepository::getDefaultDirectoryOnLoading(),
             "selectedDirPath" =>  $this->getSelectedDirPath($dirService, $defaultDisk),
-            "selectedDirItems" => $dirService->getDirItems($defaultDisk, $defaultDir)
+            "selectedDirItems" => $defaultDir ? $dirService->getDirItems($defaultDisk, $defaultDir) : []
         ];
     }
 
