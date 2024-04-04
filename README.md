@@ -1,5 +1,5 @@
 
-# Laravel File Explorer -
+# Laravel File Explorer
 
 ![Laravel File Explorer image](docs/laravel-file-explorer-merged-demo.png)
 
