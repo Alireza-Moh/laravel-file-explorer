@@ -77,7 +77,7 @@ class UploadItemsRequest extends BaseRequest
         }
 
         if ($maxFileSize !== null) {
-            $rules['items.*'][] = File::max($maxFileSize);
+            $rules['items.*'][] = File::default()->max($maxFileSize);
         }
 
         return $rules;
