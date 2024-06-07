@@ -50,8 +50,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.2",
-        "laravel/framework": "^10.0",
+        "php": "^8.3",
+        "laravel/framework": "^11.0",
         "league/flysystem": "^3.0",
         "ext-zip": "*"
     },
