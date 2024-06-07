@@ -6,7 +6,6 @@ use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\File;
 
 class UploadItemsRequest extends BaseRequest
 {
@@ -73,11 +72,11 @@ class UploadItemsRequest extends BaseRequest
         ];
 
         if ($allowedFileExtensions !== null) {
-            $rules['items.*'][] = File::types($allowedFileExtensions);
+            $rules['items.*'][] = "mimes:" . implode(',', $allowedFileExtensions);
         }
 
         if ($maxFileSize !== null) {
-            $rules['items.*'][] = File::max($maxFileSize);
+            $rules['items.*'][] = "max:$maxFileSize";
         }
 
         return $rules;
