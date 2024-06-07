@@ -5,7 +5,7 @@
 
 
 
-Laravel File Explorer is a package for easy file management in Laravel apps, offering features like browsing, uploading, and deleting files. Ideal for content management systems and file storage solutions.
+Laravel File Explorer is a package for easy file management in Laravel apps, offering features like browsing, uploading, and deleting files.
 
 
 
@@ -20,16 +20,14 @@ Laravel File Explorer is a package for easy file management in Laravel apps, off
 - Enables selective disk interaction for precise file management
 - Supports File System Operations:
     - Create and manage files with ease
-    - Organize content efficiently through directory creation
-    - Seamlessly rename files and directories
-    - Enable multi-upload functionality for efficient file transfers
-    - Facilitate downloading files
+    - Organize content through directory creation
+    - Rename files and directories
+    - Enable multi-upload functionality
+    - Download files
     - Intuitive image preview feature for quick visual assessment
-    - Enhance image viewing
-    - Integrated video player
-    - Built-in code editor for quick edits and customization
-    - Code editor
-    - Backend events for enhanced monitoring
+    - Video player
+    - Code editor for quick edits and customization
+    - Backend events for monitoring
 
 
 
@@ -47,6 +45,8 @@ Publish configuration file
   php artisan vendor:publish --tag=lfx.config
 ```
 Download the frontend into your project
+
+https://github.com/Alireza-Moh/laravel-file-explorer-frontend
 
 ```bash
   npm i laravel-file-explorer
