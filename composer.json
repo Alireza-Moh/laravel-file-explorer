@@ -56,9 +56,9 @@
         "ext-zip": "*"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.4",
-        "phpunit/phpunit": "^9.6 || ^10.1",
-        "pestphp/pest": "2.x-dev"
+        "orchestra/testbench": "^9.2",
+        "phpunit/phpunit": "^10.5.17",
+        "pestphp/pest": "^2.34"
     },
     "extra": {
         "laravel": {
