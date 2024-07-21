@@ -1,15 +1,15 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Services;
+namespace AlirezaMoh\LaravelFileExplorer\Supports;
 
 final class ConfigRepository
 {
     /**
      * Get the default disk on loading
      *
-     * @return string|null The default disk name
+     * @return string
      */
-    final public static function getDefaultDiskOnLoading(): string|null
+    final public static function getDefaultDiskOnLoading(): string
     {
         return config("laravel-file-explorer.default_disk_on_loading");
     }
@@ -17,7 +17,7 @@ final class ConfigRepository
     /**
      * Get the default directory on loading from the default disk
      *
-     * @return string|null The default directory path
+     * @return string|null
      */
     final public static function getDefaultDirectoryOnLoading(): string|null
     {
@@ -27,7 +27,7 @@ final class ConfigRepository
     /**
      * Get the list of configured disks
      *
-     * @return array The list of disk names
+     * @return array
      */
     final public static function getDisks(): array
     {
@@ -37,9 +37,9 @@ final class ConfigRepository
     /**
      * Get the allowed file extensions
      *
-     * @return array|null The list of allowed file extensions
+     * @return array
      */
-    final public static function getAllowedFileExtensions(): array|null
+    final public static function getAllowedFileExtensions(): array
     {
         return config("laravel-file-explorer.allowed_file_extensions");
     }
@@ -47,7 +47,7 @@ final class ConfigRepository
     /**
      * Get the maximum allowed file size
      *
-     * @return int|null The maximum allowed file size in bytes
+     * @return int|null
      */
     final public static function getMaxAllowedFileSize(): int|null
     {
@@ -57,9 +57,9 @@ final class ConfigRepository
     /**
      * Get the configured middlewares
      *
-     * @return array|null The list of middleware names
+     * @return array
      */
-    final public static function getMiddlewares(): ?array
+    final public static function getMiddlewares(): array
     {
         return config("laravel-file-explorer.middlewares");
     }
@@ -67,9 +67,9 @@ final class ConfigRepository
     /**
      * Get the route prefix.
      *
-     * @return string|null The configured route prefix
+     * @return string
      */
-    final public static function getRoutePrefix(): string|null
+    final public static function getRoutePrefix(): string
     {
         return config("laravel-file-explorer.route_prefix");
     }
@@ -82,15 +82,5 @@ final class ConfigRepository
     final public static function getHashFileWhenUploading(): bool
     {
         return config("laravel-file-explorer.hash_file_name_when_uploading");
-    }
-
-    /**
-     * Should hash file name when uploading new items
-     *
-     * @return string
-     */
-    final public static function getTimezone(): string
-    {
-        return config("laravel-file-explorer.timezone");
     }
 }
