@@ -1,17 +1,12 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class PathRequest extends BaseRequest
 {
-    /**
-     * Set validation rule
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -19,11 +14,6 @@ class PathRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Prepare the data for validation.
-     *
-     * @return void
-     */
     public function prepareForValidation(): void
     {
         $this->merge([
@@ -31,11 +21,6 @@ class PathRequest extends BaseRequest
         ]);
     }
 
-    /**
-     * Set validation error message
-     *
-     * @return array
-     */
     public function messages(): array
     {
         return [
@@ -44,12 +29,6 @@ class PathRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param Validator $validator
-     * @throws HttpResponseException
-     */
     protected function failedValidation(Validator $validator)
     {
         $response = $this->getFailureResponse();

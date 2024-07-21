@@ -7,6 +7,7 @@ use AlirezaMoh\LaravelFileExplorer\Events\ItemRenamed;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemsDownloaded;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemUploaded;
 use AlirezaMoh\LaravelFileExplorer\Services\Contracts\ItemUtil;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use AlirezaMoh\LaravelFileExplorer\Supports\Download;
 use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DirManager;
 use Exception;

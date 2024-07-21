@@ -1,6 +1,6 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;

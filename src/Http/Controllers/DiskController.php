@@ -1,25 +1,31 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Controllers;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Controllers;
 
 use AlirezaMoh\LaravelFileExplorer\Services\DirService;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
 class DiskController extends Controller
 {
+    private DirService $dirService;
+
+    public function __construct(DirService $dirService)
+    {
+        $this->dirService = $dirService;
+    }
+
     /**
      * Load directories for a specified disk.
      *
      * @param string $diskName
-     * @param DirService $dirService
      * @return JsonResponse
      */
-    public function loadDiskDirs(string $diskName, DirService $dirService): JsonResponse
+    public function loadDiskDirs(string $diskName): JsonResponse
     {
-        $dirs = $dirService->getDiskDirsForTree($diskName);
+        $dirs = $this->dirService->getDiskDirsForTree($diskName);
 
-        list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs, $dirService);
+        list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs);
 
         return response()->json([
             "result" => [
@@ -36,19 +42,18 @@ class DiskController extends Controller
      *
      * @param string $diskName
      * @param array $dirs
-     * @param DirService $dirService
      * @return array
      */
-    private function getDiskData(string $diskName, array $dirs, DirService $dirService): array
+    private function getDiskData(string $diskName, array $dirs): array
     {
-        $diskItems = $dirService->getDiskItems($diskName);
+        $diskItems = $this->dirService->getDiskItems($diskName);
         $selectedDir = "";
         $selectedDirPath = "";
 
         if (empty($diskItems) && !empty($dirs)) {
             $selectedDir = $dirs[0]["name"];
             $selectedDirPath = $dirs[0]["path"];
-            $diskItems = $dirService->getDirItems($diskName, $selectedDir);
+            $diskItems = $this->dirService->getDirItems($diskName, $selectedDir);
         }
         return array($diskItems, $selectedDir, $selectedDirPath);
     }

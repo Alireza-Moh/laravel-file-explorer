@@ -2,7 +2,7 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Middleware;
 
-use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

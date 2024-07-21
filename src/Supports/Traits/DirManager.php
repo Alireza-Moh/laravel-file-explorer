@@ -2,7 +2,6 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Supports\Traits;
 
-use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +36,7 @@ trait DirManager
     {
         $lastModifiedTimestamp = Storage::disk($diskName)->lastModified($item);
         $lastModified = Carbon::createFromTimestamp($lastModifiedTimestamp)
-            ->timezone(ConfigRepository::getTimezone());
+            ->timezone(config('app.timezone'));
 
         return $lastModified->format(self::CARBON_TIME_FORMAT);
     }

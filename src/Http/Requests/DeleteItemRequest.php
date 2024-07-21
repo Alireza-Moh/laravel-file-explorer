@@ -1,6 +1,6 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Requests;
 
 use AlirezaMoh\LaravelFileExplorer\Rules\MatchDefaultDir;
 use Illuminate\Contracts\Validation\Validator;
@@ -8,11 +8,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DeleteItemRequest extends BaseRequest
 {
-    /**
-     * Set validation rule
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -23,11 +18,6 @@ class DeleteItemRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Set validation error message
-     *
-     * @return array
-     */
     public function messages(): array
     {
         return [
@@ -42,12 +32,6 @@ class DeleteItemRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param Validator $validator
-     * @throws HttpResponseException
-     */
     protected function failedValidation(Validator $validator)
     {
         $response = $this->getFailureResponse();

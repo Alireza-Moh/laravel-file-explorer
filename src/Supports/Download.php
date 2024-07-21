@@ -13,27 +13,12 @@ class Download
 {
     use DownloadManager;
 
-    /**
-     * @var string
-     */
     private string $diskName;
 
-    /**
-     * @var array
-     */
     private array $items;
 
-    /**
-     * @var Filesystem
-     */
     private Filesystem $storage;
 
-    /**
-     * BaseDownload constructor
-     *
-     * @param string $diskName
-     * @param array $items
-     */
     public function __construct(string $diskName, array $items)
     {
         $this->diskName = $diskName;
@@ -41,11 +26,6 @@ class Download
         $this->storage = Storage::disk($diskName);
     }
 
-    /**
-     * Download all items
-     *
-     * @return BinaryFileResponse|StreamedResponse|JsonResponse
-     */
     public function download(): BinaryFileResponse|StreamedResponse|JsonResponse
     {
         if (count($this->items) > 1) {
@@ -54,11 +34,6 @@ class Download
         return $this->downloadSingle();
     }
 
-    /**
-     * Download a single item
-     *
-     * @return BinaryFileResponse|StreamedResponse|JsonResponse
-     */
     private function downloadSingle(): StreamedResponse|BinaryFileResponse|JsonResponse
     {
         $item = $this->items[0];
@@ -69,11 +44,6 @@ class Download
         return $this->storage->download($item["path"]);
     }
 
-    /**
-     * Download a multiple items
-     *
-     * @return BinaryFileResponse|StreamedResponse|JsonResponse
-     */
     private function downloadMultiple(): BinaryFileResponse|StreamedResponse|JsonResponse
     {
         list($filteredItems, $filteredDirs) = $this->sortByType();
@@ -86,12 +56,6 @@ class Download
         return $this->zipItems();
     }
 
-    /**
-     * Get items from a directory
-     *
-     * @param array $dir
-     * @return array
-     */
     private function getDirItems(array $dir): array
     {
         $dirItems = $this->storage->allFiles($dir["path"]);

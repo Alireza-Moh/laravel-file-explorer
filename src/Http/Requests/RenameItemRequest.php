@@ -1,6 +1,6 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Requests;
 
 use AlirezaMoh\LaravelFileExplorer\Rules\FileExtension;
 use AlirezaMoh\LaravelFileExplorer\Rules\MatchDefaultDir;
@@ -9,11 +9,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RenameItemRequest extends BaseRequest
 {
-    /**
-     * Set validation rule
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return array_merge(
@@ -27,11 +22,6 @@ class RenameItemRequest extends BaseRequest
         );
     }
 
-    /**
-     * Set validation error message
-     *
-     * @return array
-     */
     public function messages(): array
     {
         return [
@@ -50,23 +40,12 @@ class RenameItemRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param Validator $validator
-     * @throws HttpResponseException
-     */
     protected function failedValidation(Validator $validator)
     {
         $response = $this->getFailureResponse();
         throw new HttpResponseException($response);
     }
 
-    /**
-     * Get validation rules
-     *
-     * @return array
-     */
     private function getRules(): array
     {
         $rules = [

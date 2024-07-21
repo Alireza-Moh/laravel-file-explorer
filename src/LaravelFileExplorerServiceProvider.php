@@ -3,19 +3,13 @@
 namespace AlirezaMoh\LaravelFileExplorer;
 
 use AlirezaMoh\LaravelFileExplorer\Middleware\ValidateDisk;
-use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
 class LaravelFileExplorerServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     *
-     * @param Router $router
-     * @return void
-     */
     public function boot(Router $router): void {
         //load middleware
         $router->aliasMiddleware('validate.disk', ValidateDisk::class);
@@ -27,11 +21,6 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
         $this->registerApiRoutes();
     }
 
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
     public function register(): void {
         $this->mergeConfigFrom(
             __DIR__ . '/../config/laravel-file-explorer.php',
@@ -39,11 +28,6 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
         );
     }
 
-    /**
-     * Publish package config file
-     *
-     * @return void
-     */
     private function publishConfig(): void
     {
         $this->publishes(

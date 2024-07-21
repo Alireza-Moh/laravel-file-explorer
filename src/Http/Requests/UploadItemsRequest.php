@@ -1,29 +1,19 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Requests;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Requests;
 
-use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
 
 class UploadItemsRequest extends BaseRequest
 {
-    /**
-     * Set validation rule
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return $this->getRules();
     }
 
-    /**
-     * Set validation error message
-     *
-     * @return array
-     */
     public function messages(): array
     {
         return [
@@ -40,12 +30,6 @@ class UploadItemsRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param Validator $validator
-     * @throws HttpResponseException
-     */
     protected function failedValidation(Validator $validator)
     {
         $errors = $this->makeErrorsFriendly();
@@ -54,11 +38,6 @@ class UploadItemsRequest extends BaseRequest
         throw new HttpResponseException($response);
     }
 
-    /**
-     * Get validation rules
-     *
-     * @return array
-     */
     private function getRules(): array
     {
         $maxFileSize = ConfigRepository::getMaxAllowedFileSize();
@@ -82,11 +61,6 @@ class UploadItemsRequest extends BaseRequest
         return $rules;
     }
 
-    /**
-     * Map errors to corresponding files based on the file index in the input array.
-     *
-     * @return array the modified errors
-     */
     private function makeErrorsFriendly(): array
     {
         $files = $this->validationData()["items"];

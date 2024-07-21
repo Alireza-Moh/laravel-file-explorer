@@ -1,9 +1,9 @@
 <?php
 
-use AlirezaMoh\LaravelFileExplorer\Controllers\DirController;
-use AlirezaMoh\LaravelFileExplorer\Controllers\DiskController;
-use AlirezaMoh\LaravelFileExplorer\Controllers\ItemController;
-use AlirezaMoh\LaravelFileExplorer\Controllers\ExplorerInitDataController;
+use AlirezaMoh\LaravelFileExplorer\Http\Controllers\DirController;
+use AlirezaMoh\LaravelFileExplorer\Http\Controllers\DiskController;
+use AlirezaMoh\LaravelFileExplorer\Http\Controllers\ExplorerInitDataController;
+use AlirezaMoh\LaravelFileExplorer\Http\Controllers\ItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('init-explorer', [ExplorerInitDataController::class, 'initExplorer'])->name("fx.init-explorer");
