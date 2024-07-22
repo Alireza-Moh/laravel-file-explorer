@@ -39,8 +39,8 @@ Install Laravel File Explorer with composer
 ```bash
   composer require alireza-moh/laravel-file-explorer
 ```
-Publish configuration file
-
+Publish configuration file<br>
+More info: [Configuration Guide](docs/CONFIGURATION.md)
 ```bash
   php artisan vendor:publish --tag=lfx.config
 ```
