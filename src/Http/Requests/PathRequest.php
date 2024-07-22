@@ -10,7 +10,7 @@ class PathRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            "path" => ["required", "string"]
+            'path' => ['required', 'string']
         ];
     }
 
@@ -24,8 +24,8 @@ class PathRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "path.required" => "File or Directory path is missing",
-            "path.string" => "File or Directory path must be a string"
+            'path.required' => 'File or Directory path is missing',
+            'path.string' => 'File or Directory path must be a string'
         ];
     }
 

@@ -2,23 +2,11 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Services\Contracts;
 
+use Illuminate\Http\JsonResponse;
+
 interface ItemUtil
 {
-    /**
-     * Create a new item (file or directory) on the specified disk.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return mixed
-     */
-    public function create(string $diskName, array $validatedData): array;
+    public function create(string $diskName, array $validatedData): JsonResponse;
 
-    /**
-     * Delete an item (file or directory) from the specified disk.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return mixed
-     */
-    public function delete(string $diskName, array $validatedData): array;
+    public function delete(string $diskName, array $validatedData): JsonResponse;
 }

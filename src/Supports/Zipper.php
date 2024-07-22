@@ -46,7 +46,7 @@ class Zipper extends ZipArchive
         $storage = Storage::disk($this->diskName);
 
         foreach ($this->items as $item) {
-            $itemPath = $item["path"];
+            $itemPath = $item['path'];
             $this->addFromString(
                 $itemPath,
                 $storage->get($itemPath)

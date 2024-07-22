@@ -10,25 +10,25 @@ class DownloadFileRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            "items" => ["required", "array"],
-            "items.*.name" => ["required", "string"],
-            "items.*.type" => ["required", "string", "in:file,dir"],
-            "items.*.path" => ["required", "string"]
+            'items' => ['required', 'array'],
+            'items.*.name' => ['required', 'string'],
+            'items.*.type' => ['required', 'string', 'in:file,dir'],
+            'items.*.path' => ['required', 'string']
         ];
     }
 
     public function messages(): array
     {
         return [
-            "items.required" => "Select a file",
-            "items.array" => "Select a file",
-            "items.*.name.string" => "Invalid file name format",
-            "items.*.name.required" => "File name is required",
-            "items.*.type.required" => "File type is required",
-            "items.*.type.in" => "Invalid file type",
-            "items.*.type.string" => "File type is not a string",
-            "items.*.path.required" => "File path is required",
-            "items.*.path.string" => "Invalid file path format",
+            'items.required' => 'Select a file',
+            'items.array' => 'Select a file',
+            'items.*.name.string' => 'Invalid file name format',
+            'items.*.name.required' => 'File name is required',
+            'items.*.type.required' => 'File type is required',
+            'items.*.type.in' => 'Invalid file type',
+            'items.*.type.string' => 'File type is not a string',
+            'items.*.path.required' => 'File path is required',
+            'items.*.path.string' => 'Invalid file path format',
         ];
     }
 

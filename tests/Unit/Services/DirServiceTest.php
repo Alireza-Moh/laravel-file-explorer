@@ -5,6 +5,7 @@ use AlirezaMoh\LaravelFileExplorer\Events\ItemDeleted;
 use AlirezaMoh\LaravelFileExplorer\Services\DirService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 function assertItemValues(array $item, array $expectedValues): void
 {
@@ -19,7 +20,7 @@ test('should retrieve directory items', function () {
     createFakeImages();
     $dirService = new DirService();
 
-    $dirItems = $dirService->getDirItems("tests", "ios");
+    $dirItems = $dirService->getDirItems('tests', 'ios');
 
     $this->assertCount(3, $dirItems);
     assertItemValues($dirItems[0], [
@@ -50,21 +51,21 @@ test('should retrieve directory items', function () {
 });
 
 test('should retrieve disk directories', function () {
-    createFakeDirs(dirName: "");
+    createFakeDirs(dirName: '');
     $dirService = new DirService();
 
-    $dirs = $dirService->getDiskDirsForTree("tests");
+    $dirs = $dirService->getDiskDirsForTree('tests');
 
     expect($dirs)->toBeArray()
         ->and($dirs)->toEqual(
             [
                 [
-                    "diskName" => "tests",
-                    "dirName" => "",
-                    "name" => "fake_dir_0",
-                    "path" => "fake_dir_0",
-                    "type" => "dir",
-                    "subDir" => []
+                    'diskName' => 'tests',
+                    'dirName' => '',
+                    'name' => 'fake_dir_0',
+                    'path' => 'fake_dir_0',
+                    'type' => 'dir',
+                    'subDir' => []
                 ]
             ]
         )
@@ -72,22 +73,22 @@ test('should retrieve disk directories', function () {
 });
 
 test('should retrieve disk files', function () {
-    createFakeFiles(2, "");
+    createFakeFiles(2, '');
     $dirService = new DirService();
 
-    $items = $dirService->getDiskItems("tests");
+    $items = $dirService->getDiskItems('tests');
 
     expect($items)->toBeArray()
         ->and($items[0])->toBeArray()
         ->and($items[0])->toHaveKeys([
-            "diskName",
-            "name",
-            "path",
-            "type",
-            "extension",
-            "url",
-            "size",
-            "lastModified"
+            'diskName',
+            'name',
+            'path',
+            'type',
+            'extension',
+            'url',
+            'size',
+            'lastModified'
         ])
         ->and($items[0]['diskName'])->toBe('tests')
         ->and($items[0]['name'])->toBe('fake_file_0.txt')
@@ -99,14 +100,14 @@ test('should retrieve disk files', function () {
         ->and($items[0]['lastModified'])->toBeString()
         ->and($items[1])->toBeArray()
         ->and($items[1])->toHaveKeys([
-            "diskName",
-            "name",
-            "path",
-            "type",
-            "extension",
-            "url",
-            "size",
-            "lastModified"
+            'diskName',
+            'name',
+            'path',
+            'type',
+            'extension',
+            'url',
+            'size',
+            'lastModified'
         ])
         ->and($items[1]['diskName'])->toBe('tests')
         ->and($items[1]['name'])->toBe('fake_file_1.txt')
@@ -122,22 +123,22 @@ test('should find directory by name', function () {
     $dirs = createFakeDirs();
     $dirService = new DirService();
 
-    $foundedDir = $dirService->findDirectoryByName("tests", $dirs[0]["name"]);
+    $foundedDir = $dirService->findDirectoryByName('tests', $dirs[0]['name']);
 
     expect($foundedDir)->toBeArray()
         ->and($foundedDir)->toMatchArray([
-            "diskName" => "tests",
-              "name" => "fake_dir_0",
-              "path" => "ios/fake_dir_0",
-              "type" => "dir",
-              "subDir" => []
+            'diskName' => 'tests',
+              'name' => 'fake_dir_0',
+              'path' => 'ios/fake_dir_0',
+              'type' => 'dir',
+              'subDir' => []
             ]);
 });
 
 test('should not find directory by name', function () {
     $dirService = new DirService();
 
-    $foundedDir = $dirService->findDirectoryByName("tests", "notExistingDir");
+    $foundedDir = $dirService->findDirectoryByName('tests', 'notExistingDir');
 
     expect($foundedDir)->toBeNull();
 });
@@ -147,22 +148,21 @@ test('should delete specified directory', function () {
     $dirService = new DirService();
     $dir = createFakeDirs();
 
-    $result = $dirService->delete("tests", [
+    $response = $dirService->delete('tests', [
         'items' => [
             [
-                "name" => $dir[0]["name"],
-                'path' => $dir[0]["path"]
+                'name' => $dir[0]['name'],
+                'path' => $dir[0]['path']
             ],
         ]
     ]);
 
-    Storage::disk("tests")->assertMissing($dir[0]["path"]);
-    expect($result)->toBeArray()
-        ->and($result)->toMatchArray([
-           "result" => [
-               "status" => "success",
-               "message" => "Directory deleted successfully"
-           ]
+    Storage::disk('tests')->assertMissing($dir[0]['path']);
+    expect($response->getData(true))->toBeArray()
+        ->and($response->getData(true))->toMatchArray([
+            'status' => 'success',
+            'message' => 'Directory deleted successfully',
+            'result' => []
         ]);
     Event::assertDispatched(ItemDeleted::class);
 });
@@ -171,47 +171,47 @@ test('should create a directory', function () {
     Event::fake();
     $dirService = new DirService();
 
-    $result = $dirService->create("tests", [
-        "destination" => "ios",
-        "path" => "ios/zjztj"
+    $response = $dirService->create('tests', [
+        'destination' => 'ios',
+        'path' => 'ios/zjztj'
     ]);
 
-    Storage::disk("tests")->assertExists("ios/zjztj");
-    expect($result)->toBeArray()
-        ->and($result)->toMatchArray(
+    Storage::disk('tests')->assertExists('ios/zjztj');
+    expect($response->getData(true))->toBeArray()
+        ->and($response->getData(true))->toMatchArray(
             [
-                "result" => [
-                    "status" => "success",
-                    "message" => "Directory created successfully",
-                    "items" => [
+                'status' => 'success',
+                'message' => 'Directory created successfully',
+                'result' => [
+                    'items' => [
                         [
-                            "diskName" => "tests",
-                            "dirName" => "ios",
-                            "name" => "zjztj",
-                            "path" => "ios/zjztj",
-                            "type" => "dir",
-                            "size" => "-",
-                            "lastModified" => "-",
-                            "extension" => null,
-                            "url" => "/storage/ios/zjztj",
-                            "isChecked" => false
+                            'diskName' => 'tests',
+                            'dirName' => 'ios',
+                            'name' => 'zjztj',
+                            'path' => 'ios/zjztj',
+                            'type' => 'dir',
+                            'size' => '-',
+                            'lastModified' => '-',
+                            'extension' => null,
+                            'url' => '/storage/ios/zjztj',
+                            'isChecked' => false
                         ]
                     ],
-                    "dirs" => [
+                    'dirs' => [
                         [
-                            "diskName" => "tests",
-                            "dirName" => "",
-                            "name" => "ios",
-                            "path" => "ios",
-                            "type" => "dir",
-                            "subDir" => [
+                            'diskName' => 'tests',
+                            'dirName' => '',
+                            'name' => 'ios',
+                            'path' => 'ios',
+                            'type' => 'dir',
+                            'subDir' => [
                                 [
-                                    "diskName" => "tests",
-                                    "dirName" => "ios",
-                                    "name" => "zjztj",
-                                    "path" => "ios/zjztj",
-                                    "type" => "dir",
-                                    "subDir" => []
+                                    'diskName' => 'tests',
+                                    'dirName' => 'ios',
+                                    'name' => 'zjztj',
+                                    'path' => 'ios/zjztj',
+                                    'type' => 'dir',
+                                    'subDir' => []
                                 ]
                             ]
 

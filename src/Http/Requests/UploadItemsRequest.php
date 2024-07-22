@@ -17,16 +17,16 @@ class UploadItemsRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            "ifItemExist.required" => "Choose an action overwrite/skip",
-            "ifItemExist.numeric" => "Action is not valid",
-            "ifItemExist.in" => "Invalid action selected",
-            "items.required" => "Select a file",
-            "items.array" => "Select a file",
-            "items.*.file" => "Invalid file format",
-            "items.*.max" => "File size exceeds the limit",
-            "items.*.mimes" => "File extension not allowed",
-            "destination.required" => "File destination path is required",
-            "destination.string" => "File destination path must be a string",
+            'ifItemExist.required' => 'Choose an action overwrite/skip',
+            'ifItemExist.numeric' => 'Action is not valid',
+            'ifItemExist.in' => 'Invalid action selected',
+            'items.required' => 'Select a file',
+            'items.array' => 'Select a file',
+            'items.*.file' => 'Invalid file format',
+            'items.*.max' => 'File size exceeds the limit',
+            'items.*.mimes' => 'File extension not allowed',
+            'destination.required' => 'File destination path is required',
+            'destination.string' => 'File destination path must be a string',
         ];
     }
 
@@ -44,18 +44,18 @@ class UploadItemsRequest extends BaseRequest
         $allowedFileExtensions = ConfigRepository::getAllowedFileExtensions();
 
         $rules = [
-            "ifItemExist" => ["required", "numeric", "in:0,1"],
-            "items" => ["required", "array"],
-            "items.*" => ["file"],
-            "destination" => ["required", "string"],
+            'ifItemExist' => ['required', 'numeric', 'in:0,1'],
+            'items' => ['required', 'array'],
+            'items.*' => ['file'],
+            'destination' => ['required', 'string'],
         ];
 
         if ($allowedFileExtensions !== null) {
-            $rules['items.*'][] = "mimes:" . implode(',', $allowedFileExtensions);
+            $rules['items.*'][] = 'mimes:' . implode(',', $allowedFileExtensions);
         }
 
         if ($maxFileSize !== null) {
-            $rules['items.*'][] = "max:$maxFileSize";
+            $rules['items.*'][] = 'max:$maxFileSize';
         }
 
         return $rules;
@@ -63,11 +63,11 @@ class UploadItemsRequest extends BaseRequest
 
     private function makeErrorsFriendly(): array
     {
-        $files = $this->validationData()["items"];
+        $files = $this->validationData()['items'];
         $modifiedErrors = [];
         $errors = $this->validator->errors()->messages();
         foreach ($errors as $key => $error) {
-            if (Str::startsWith($key, "items.")){
+            if (Str::startsWith($key, 'items.')){
                 $index = (int)explode('.', $key)[1];
 
                 if (array_key_exists($index, $files)) {

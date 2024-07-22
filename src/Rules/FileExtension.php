@@ -13,7 +13,7 @@ class FileExtension implements ValidationRule
         $extension = pathinfo($value, PATHINFO_EXTENSION);
 
         if (!in_array($extension, ConfigRepository::getAllowedFileExtensions())) {
-            $fail("The $extension extension is not allowed.");
+            $fail('The ' . $extension . 'extension is not allowed.');
         }
     }
 }

@@ -17,28 +17,18 @@ class ExplorerInitDataController extends Controller
         $this->dirService = $dirService;
     }
 
-    /**
-     * Initialize the file explorer
-     *
-     * @return JsonResponse
-     */
     public function initExplorer(): JsonResponse
     {
         return response()->json(
             [
-                "result" => [
-                    "status" => "success",
-                    "data" => $this->getDefaultExplorerDataOnInitialization()
+                'result' => [
+                    'status' => 'success',
+                    'data' => $this->getDefaultExplorerDataOnInitialization()
                 ]
             ]
         );
     }
 
-    /**
-     * Get default explorer data on initialization.
-     *
-     * @return array
-     */
     private function getDefaultExplorerDataOnInitialization(): array
     {
         $defaultDisk = ConfigRepository::getDefaultDiskOnLoading();
@@ -46,43 +36,31 @@ class ExplorerInitDataController extends Controller
         $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
 
         return [
-            "disks" => ConfigRepository::getDisks(),
-            "dirsForSelectedDisk" => $this->getDirsForSelectedDisk($defaultDisk),
-            "selectedDisk" => ConfigRepository::getDefaultDiskOnLoading(),
-            "selectedDir" => ConfigRepository::getDefaultDirectoryOnLoading(),
-            "selectedDirPath" =>  $this->getSelectedDirPath($defaultDisk),
-            "selectedDirItems" => $defaultDir ? $dirService->getDirItems($defaultDisk, $defaultDir) : []
+            'disks' => ConfigRepository::getDisks(),
+            'dirsForSelectedDisk' => $this->getDirsForSelectedDisk($defaultDisk),
+            'selectedDisk' => ConfigRepository::getDefaultDiskOnLoading(),
+            'selectedDir' => ConfigRepository::getDefaultDirectoryOnLoading(),
+            'selectedDirPath' =>  $this->getSelectedDirPath($defaultDisk),
+            'selectedDirItems' => $defaultDir ? $dirService->getDirItems($defaultDisk, $defaultDir) : []
         ];
     }
 
-    /**
-     * Get the directories of the default selected disk
-     *
-     * @param string $defaultDisk
-     * @return array
-     */
     private function getDirsForSelectedDisk(string $defaultDisk): array
     {
         return [
-            "dirs" => $this->dirService->getDiskDirsForTree($defaultDisk),
-            "diskName" => $defaultDisk
+            'dirs' => $this->dirService->getDiskDirsForTree($defaultDisk),
+            'diskName' => $defaultDisk
         ];
     }
 
-    /**
-     * Get the path of the default selected dir
-     *
-     * @param string $defaultDisk
-     * @return string
-     */
     private function getSelectedDirPath(string $defaultDisk): string
     {
         $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
         if (is_null($defaultDir)) {
-            return "";
+            return '';
         }
         $dirByLabel = $this->dirService->findDirectoryByName($defaultDisk, $defaultDir);
-        $selectedDirPath = "";
+        $selectedDirPath = '';
         if ($dirByLabel !== null) {
             $selectedDirPath = $dirByLabel['path'];
         }

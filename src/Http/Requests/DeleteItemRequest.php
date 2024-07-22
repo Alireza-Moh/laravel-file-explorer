@@ -11,10 +11,10 @@ class DeleteItemRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            "items" => ["required", "array", "min:1", "max:10"],
-            "items.*" => ["required"],
-            "items.*.name" => ["required", "string", new MatchDefaultDir],
-            "items.*.path" => ["required", "string"],
+            'items' => ['required', 'array', 'min:1', 'max:10'],
+            'items.*' => ['required'],
+            'items.*.name' => ['required', 'string', new MatchDefaultDir],
+            'items.*.path' => ['required', 'string'],
         ];
     }
 

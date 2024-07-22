@@ -18,45 +18,16 @@ class DirController extends Controller
         $this->dirService = $dirService;
     }
 
-    /**
-     * Delete a directory.
-     *
-     * @param string  $diskName
-     * @param DeleteItemRequest $request
-     * @return JsonResponse
-     */
     public function deleteDir(string $diskName, DeleteItemRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-        $result = $this->dirService->delete($diskName, $validatedData);
-
-        return response()->json($result);
+        return $this->dirService->delete($diskName, $request->validated());
     }
 
-    /**
-     * Create a directory.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @param CreateDirRequest $request
-     * @return JsonResponse
-     */
     public function createDir(string $diskName, string $dirName, CreateDirRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-        $result = $this->dirService->create($diskName, $validatedData);
-
-        return response()->json($result);
+        return $this->dirService->create($diskName, $request->validated());
     }
 
-    /**
-     * Load items from a specified directory.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @param PathRequest $pathRequest
-     * @return JsonResponse
-     */
     public function loadDirItems(string $diskName, string $dirName, PathRequest $pathRequest): JsonResponse
     {
         $matchedDir = $this->dirService->findDirectoryByName($diskName, $dirName);
@@ -66,9 +37,9 @@ class DirController extends Controller
             $selectedDirPath = $matchedDir['path'];
         }
         return response()->json([
-            "dirName" => $dirName,
-            "items" => $this->dirService->getDirItems($diskName, $pathRequest->validated()["path"]),
-            "selectedDirPath" => $selectedDirPath,
+            'dirName' => $dirName,
+            'items' => $this->dirService->getDirItems($diskName, $pathRequest->validated()['path']),
+            'selectedDirPath' => $selectedDirPath,
         ]);
     }
 }

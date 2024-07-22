@@ -3,20 +3,15 @@ namespace AlirezaMoh\LaravelFileExplorer\Services;
 
 use AlirezaMoh\LaravelFileExplorer\Events\DirCreated;
 use AlirezaMoh\LaravelFileExplorer\Services\Contracts\ItemUtil;
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DirManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
-class DirService extends BaseItemManager implements ItemUtil
+class DirService implements ItemUtil
 {
     use DirManager;
 
-    /**
-     * Retrieve items within a directory.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @return array
-     */
     public function getDirItems(string $diskName, string $dirName): array
     {
         return array_merge(
@@ -25,13 +20,6 @@ class DirService extends BaseItemManager implements ItemUtil
         );
     }
 
-    /**
-     * Get directories within the disk.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @return array
-     */
     public function getDiskDirsForTree(string $diskName, string $dirName = ''): array
     {
         $dirs = Storage::disk($diskName)->directories($dirName);
@@ -40,23 +28,17 @@ class DirService extends BaseItemManager implements ItemUtil
         foreach ($dirs as $dir) {
             $subDirs = $this->getDiskDirsForTree($diskName, $dir);
             $allDirs[] = [
-                "diskName" => $diskName,
-                "dirName" => $dirName,
-                "name" => basename($dir),
-                "path" => $dir,
-                "type" => "dir",
-                "subDir" => $subDirs,
+                'diskName' => $diskName,
+                'dirName' => $dirName,
+                'name' => basename($dir),
+                'path' => $dir,
+                'type' => 'dir',
+                'subDir' => $subDirs,
             ];
         }
         return $allDirs;
     }
 
-    /**
-     * Get files within the disk.
-     *
-     * @param string $diskName
-     * @return array
-     */
     public function getDiskItems(string $diskName): array
     {
         return array_merge(
@@ -65,14 +47,6 @@ class DirService extends BaseItemManager implements ItemUtil
         );
     }
 
-    /**
-     * Find a directory by name.
-     *
-     * @param string $diskName
-     * @param string $dirName
-     * @param array $dirs
-     * @return array|null
-     */
     public function findDirectoryByName(string $diskName, string $dirName, array $dirs = []): ?array
     {
         if (empty($dirs)) {
@@ -94,42 +68,32 @@ class DirService extends BaseItemManager implements ItemUtil
         return null;
     }
 
-    /**
-     * Delete a directory.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function delete(string $diskName, array $validatedData): array
+    public function delete(string $diskName, array $validatedData): JsonResponse
     {
         $storage = Storage::disk($diskName);
-        foreach ($validatedData["items"] as $dir) {
-            $result = $storage->deleteDirectory($dir["path"]);
+        foreach ($validatedData['items'] as $dir) {
+            $result = $storage->deleteDirectory($dir['path']);
             if ($result) {
                 $this->fireDeleteEvent($diskName, $dir);
             }
         }
 
-        return $this->getResponse(true, success: "Directory deleted successfully");
+        return ApiResponse::success('Directory deleted successfully');
     }
 
-    /**
-     * Create a directory
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function create(string $diskName, array $validatedData): array
+    public function create(string $diskName, array $validatedData): JsonResponse
     {
-        $result = Storage::disk($diskName)->makeDirectory($validatedData["path"]);
-        $message = $result ? "Directory created successfully" : "Failed to create directory";
+        $result = Storage::disk($diskName)->makeDirectory($validatedData['path']);
+        $data =  [
+            'items' => $this->getDirItems($diskName, $validatedData['destination']),
+            'dirs' => $this->getDiskDirsForTree($diskName)
+        ];
 
         if ($result) {
-            event(new DirCreated($diskName, $validatedData["destination"], $validatedData["path"]));
+            event(new DirCreated($diskName, $validatedData['destination'], $validatedData['path']));
+            return ApiResponse::success('Directory created successfully', $data);
         }
 
-        return $this->getCreationResponse($diskName, $result, $message, $validatedData["destination"]);
+        return ApiResponse::error('Failed to create directory', $data);
     }
 }

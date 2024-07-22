@@ -10,12 +10,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 trait DownloadManager
 {
-    /**
-     * Sorts items by type into files and directories
-     *
-     * @return array
-     */
-    private function sortByType(): array
+    public function sortByType(): array
     {
         $items = [];
         $dirs = [];
@@ -31,14 +26,9 @@ trait DownloadManager
         return array($items, $dirs);
     }
 
-    /**
-     * Zip all items
-     *
-     * @return JsonResponse|BinaryFileResponse
-     */
-    private function zipItems(): JsonResponse|BinaryFileResponse
+    public function zipItems(): JsonResponse|BinaryFileResponse
     {
-        $zipName = $this->diskName . ".zip";
+        $zipName = $this->diskName . '.zip';
 
         try {
             $zipper = new Zipper($this->diskName, $zipName, $this->items);
@@ -49,20 +39,14 @@ trait DownloadManager
         }
     }
 
-    /**
-     * Return a json response with the exception message
-     *
-     * @param ZipperException $zipperException
-     * @return JsonResponse
-     */
     public function throwZipperException(ZipperException $zipperException): JsonResponse
     {
         return response()->json(
             [
-                "result" => [
+                'result' => [
                     [
-                        "status" => "failed",
-                        "message" => $zipperException->getMessage()
+                        'status' => 'failed',
+                        'message' => $zipperException->getMessage()
                     ]
                 ]
             ]

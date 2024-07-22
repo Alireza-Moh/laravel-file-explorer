@@ -21,10 +21,10 @@ class ValidateDisk
     private function denyAccess(string $diskName): JsonResponse
     {
         return response()->json([
-            "message" => "Invalid data sent",
-            "errors" => [
+            'message' => 'Invalid data sent',
+            'errors' => [
                 [
-                    "diskName" => "Disk '$diskName' does not exist"
+                    'diskName' => 'Disk '. $diskName . ' does not exist'
                 ]
             ]
         ], Response::HTTP_UNPROCESSABLE_ENTITY);

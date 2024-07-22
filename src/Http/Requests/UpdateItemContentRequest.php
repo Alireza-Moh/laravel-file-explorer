@@ -10,18 +10,18 @@ class UpdateItemContentRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            "path" => ["required", "string"],
-            "item" => ["required", "file"]
+            'path' => ['required', 'string'],
+            'item' => ['required', 'file']
         ];
     }
 
     public function messages(): array
     {
         return [
-            "path.required" => "File path is required",
-            "path.string" => "File path must be string",
-            "item.required" => "File is required",
-            "item.file" => "Incorrect file type"
+            'path.required' => 'File path is required',
+            'path.string' => 'File path must be string',
+            'item.required' => 'File is required',
+            'item.file' => 'Incorrect file type'
         ];
     }
 

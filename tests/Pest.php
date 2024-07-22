@@ -43,44 +43,44 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function createFakeFiles(int $count = 1, string $dirName = "ios"): array
+function createFakeFiles(int $count = 1, string $dirName = 'ios'): array
 {
     $files = [];
     for ($i = 0; $i < $count; $i++) {
-        $path = $dirName . "/fake_file_" . $i . ".txt";
+        $path = $dirName . '/fake_file_' . $i . '.txt';
         $files[] = $path;
-        Storage::disk("tests")->put($path, "");
+        Storage::disk('tests')->put($path, '');
     }
 
     return $files;
 }
 
-function createFakeDirs(int $count = 1, string $dirName = "ios"): array
+function createFakeDirs(int $count = 1, string $dirName = 'ios'): array
 {
     $dirs = [];
     for ($i = 0; $i < $count; $i++) {
-        $dir["name"] = "fake_dir_" . $i;
+        $dir['name'] = 'fake_dir_' . $i;
         if ($dirName) {
-            $dir["path"] = $dirName . "/fake_dir_" . $i;
+            $dir['path'] = $dirName . '/fake_dir_' . $i;
         }
         else {
-            $dir["path"] = "fake_dir_" . $i;
+            $dir['path'] = 'fake_dir_' . $i;
         }
         $dirs[] = $dir;
-        Storage::disk("tests")->makeDirectory($dir["path"]);
+        Storage::disk('tests')->makeDirectory($dir['path']);
     }
 
     return $dirs;
 }
 
-function createFakeImages(int $count = 1, string $dirName = "ios"): array
+function createFakeImages(int $count = 1, string $dirName = 'ios'): array
 {
     $fileFactory = new FileFactory();
     $images = [];
     for ($i = 0; $i < $count; $i++) {
-        $imageName = "fake_image_" . $i . ".png";
+        $imageName = 'fake_image_' . $i . '.png';
         $image = $fileFactory->image($imageName);
-        Storage::disk("tests")->putFileAs($dirName, $image, $imageName);
+        Storage::disk('tests')->putFileAs($dirName, $image, $imageName);
         $images[] = $imageName;
     }
 

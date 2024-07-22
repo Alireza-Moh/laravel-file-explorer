@@ -13,7 +13,7 @@ class MatchDefaultDir implements ValidationRule
         $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
 
         if ($value === $defaultDir) {
-            $fail("Default directory '$value' cannot be deleted or rename as it is required for initialization");
+            $fail('Default directory ' . $value . ' cannot be deleted or rename as it is required for initialization');
         }
     }
 }

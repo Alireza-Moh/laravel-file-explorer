@@ -7,81 +7,79 @@ use Illuminate\Testing\Fluent\AssertableJson;
 test('should throw an error when disk does not exist', function () {
     $response = $this->postJson(
         route(
-            "fx.file-create",
-            ["diskName" => "aa", "dirName" => "ios"]
+            'fx.file-create',
+            ['diskName' => 'aa', 'dirName' => 'ios']
         ),
         [
-            "destination" => "ios",
-            "path" => "ios/config.txt"
+            'destination' => 'ios',
+            'path' => 'ios/config.txt'
         ]
     );
 
     $response->assertStatus(422);
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('message')
-        ->has("errors")
-        ->where('message', "Invalid data sent")
-        ->where('errors.0.diskName', "Disk 'aa' does not exist")
+        ->has('errors')
+        ->where('message', 'Invalid data sent')
+        ->where('errors.0.diskName', 'Disk aa does not exist')
     );
 });
 
 test('should create file and return success response with all file inside the directory', function () {
     $response = $this->postJson(
         route(
-            "fx.file-create",
-            ["diskName" => "tests", "dirName" => "ios"]
+            'fx.file-create',
+            ['diskName' => 'tests', 'dirName' => 'ios']
         ),
         [
-            "destination" => "ios",
-            "path" => "ios/config.txt"
+            'destination' => 'ios',
+            'path' => 'ios/config.txt'
         ]
     );
 
     Storage::disk('tests')->assertExists('ios/config.txt');
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message",
-            "result.items",
-            "result.dirs"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "File created successfully")
-        ->has('result.items')
-        ->has('result.dirs')
-        ->has('result.items.0', fn(AssertableJson $json) =>
-            $json->where("name", "config.txt")
-                ->where('name', 'config.txt')
-                ->where('path', 'ios/config.txt')
-                ->where('type', 'file')
-                ->where('size', 0)
-                ->where('extension', 'txt')
-                ->where('url', '/storage/ios/config.txt')
-                ->etc()
-        )
+        $json->where('status', 'success')
+            ->where('message', 'File created successfully')
+            ->has('result')
+            ->hasAll([
+                'result.items',
+                'result.dirs'
+            ])
+            ->has('result.items')
+            ->has('result.dirs')
+            ->has('result.items.0', fn(AssertableJson $json) =>
+                $json->where('name', 'config.txt')
+                    ->where('name', 'config.txt')
+                    ->where('path', 'ios/config.txt')
+                    ->where('type', 'file')
+                    ->where('size', 0)
+                    ->where('extension', 'txt')
+                    ->where('url', '/storage/ios/config.txt')
+                    ->etc()
+            )
     );
 });
 
 test('should throw an error when path is missing in the form data for creating a file', function () {
     $response = $this->postJson(
         route(
-            "fx.file-create",
-            ["diskName" => "tests", "dirName" => "ios"]
+            'fx.file-create',
+            ['diskName' => 'tests', 'dirName' => 'ios']
         ),
         [
-            "type" => "file",
-            "dirPath" => "ios"
-            //"path" => "ios/config.txt"
+            'type' => 'file',
+            'dirPath' => 'ios'
+            //'path' => 'ios/config.txt'
         ]
     );
 
     Storage::disk('tests')->assertMissing('ios/config.txt');
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
-            "message",
-            "errors"
-        ])->where("message", "Invalid data sent")
+            'message',
+            'errors'
+        ])->where('message', 'Invalid data sent')
         ->has('errors')
         ->has('errors.path')
         ->where('errors.path.0', 'File path is required')
@@ -92,13 +90,13 @@ test('should throw an error when path is missing in the form data for creating a
 test('should upload item or items and return success response with all items inside the directory', function () {
     $response = $this->postJson(
         route(
-            "fx.items-upload",
-            ["diskName" => "tests"]
+            'fx.items-upload',
+            ['diskName' => 'tests']
         ),
         [
-            "ifItemExist" => 0,
-            "destination" => "ios",
-            "items" => [
+            'ifItemExist' => 0,
+            'destination' => 'ios',
+            'items' => [
                 UploadedFile::fake()->image('photo1.jpg'),
                 UploadedFile::fake()->image('photo2.jpg')
             ]
@@ -107,46 +105,44 @@ test('should upload item or items and return success response with all items ins
 
     Storage::disk('tests')->assertExists(['ios/photo1.jpg', 'ios/photo2.jpg']);
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message",
-            "result.items"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "Items uploaded successfully")
-        ->has('result.items')
-        ->has('result.items.0', fn(AssertableJson $json) =>
-        $json->where("diskName", "tests")
-            ->where('name', 'photo1.jpg')
-            ->where('path', 'ios/photo1.jpg')
-            ->where('type', 'file')
-            ->where('extension', 'jpg')
-            ->where('url', '/storage/ios/photo1.jpg')
-            ->etc()
-        )
-        ->has('result.items.1', fn(AssertableJson $json) =>
-        $json->where("diskName", "tests")
-            ->where('name', 'photo2.jpg')
-            ->where('path', 'ios/photo2.jpg')
-            ->where('type', 'file')
-            ->where('extension', 'jpg')
-            ->where('url', '/storage/ios/photo2.jpg')
-            ->etc()
-        )
+        $json->where('status', 'success')
+            ->where('message', 'Items uploaded successfully')
+                ->has('result')
+            ->hasAll([
+                'result.items'
+            ])
+            ->has('result.items')
+            ->has('result.items.0', fn(AssertableJson $json) =>
+            $json->where('diskName', 'tests')
+                ->where('name', 'photo1.jpg')
+                ->where('path', 'ios/photo1.jpg')
+                ->where('type', 'file')
+                ->where('extension', 'jpg')
+                ->where('url', '/storage/ios/photo1.jpg')
+                ->etc()
+            )
+            ->has('result.items.1', fn(AssertableJson $json) =>
+            $json->where('diskName', 'tests')
+                ->where('name', 'photo2.jpg')
+                ->where('path', 'ios/photo2.jpg')
+                ->where('type', 'file')
+                ->where('extension', 'jpg')
+                ->where('url', '/storage/ios/photo2.jpg')
+                ->etc()
+            )
     );
 });
 
 test('should throw an error when ifItemExist is missing in the form while uploading items', function () {
     $response = $this->postJson(
         route(
-            "fx.items-upload",
-            ["diskName" => "tests"]
+            'fx.items-upload',
+            ['diskName' => 'tests']
         ),
         [
-            //"ifItemExist" => 0,
-            "destination" => "ios",
-            "items" => [
+            //'ifItemExist' => 0,
+            'destination' => 'ios',
+            'items' => [
                 UploadedFile::fake()->image('photo1.jpg'),
                 UploadedFile::fake()->image('photo2.jpg')
             ]
@@ -156,14 +152,14 @@ test('should throw an error when ifItemExist is missing in the form while upload
     Storage::disk('tests')->assertMissing(['ios/photo1.jpg', 'ios/photo2.jpg']);
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
-            "message",
-            "errors"
+            'message',
+            'errors'
         ])
-        ->where("message", "Invalid data sent")
+        ->where('message', 'Invalid data sent')
         ->where(
             'errors',
             [
-                "ifItemExist" => ["Choose an action overwrite/skip"],
+                'ifItemExist' => ['Choose an action overwrite/skip'],
             ]
         )
     );
@@ -172,13 +168,13 @@ test('should throw an error when ifItemExist is missing in the form while upload
 test('should throw an error when items have wrong extension while uploading items', function () {
     $response = $this->postJson(
         route(
-            "fx.items-upload",
-            ["diskName" => "tests"]
+            'fx.items-upload',
+            ['diskName' => 'tests']
         ),
         [
-            "ifItemExist" => 0,
-            "destination" => "ios",
-            "items" => [
+            'ifItemExist' => 0,
+            'destination' => 'ios',
+            'items' => [
                 UploadedFile::fake()->create('doc1.pdf'),
                 UploadedFile::fake()->create('doc2.pdf')
             ]
@@ -188,15 +184,15 @@ test('should throw an error when items have wrong extension while uploading item
     Storage::disk('tests')->assertMissing(['ios/doc1.pdf', 'ios/doc2.pdf']);
     $response->assertJson(fn (AssertableJson $json) =>
     $json->hasAll([
-        "message",
-        "errors"
+        'message',
+        'errors'
     ])
-        ->where("message", "Invalid data sent")
+        ->where('message', 'Invalid data sent')
         ->where(
             'errors',
             [
-                "doc1.pdf" => ["File extension not allowed"],
-                "doc2.pdf" => ["File extension not allowed"]
+                'doc1.pdf' => ['File extension not allowed'],
+                'doc2.pdf' => ['File extension not allowed']
             ]
         )
     );
@@ -207,15 +203,15 @@ test('should download a single item', function () {
 
     $response = $this->postJson(
         route(
-            "fx.items-download",
-            ["diskName" => "tests"]
+            'fx.items-download',
+            ['diskName' => 'tests']
         ),
         [
-            "items" => [
+            'items' => [
                 [
-                    "name" => $image[0],
-                    "path" => "ios/" . $image[0],
-                    "type" => "file",
+                    'name' => $image[0],
+                    'path' => 'ios/' . $image[0],
+                    'type' => 'file',
                 ]
             ]
         ]
@@ -229,20 +225,20 @@ test('should download multiple items as a ZIP file', function () {
 
     $response = $this->postJson(
         route(
-            "fx.items-download",
-            ["diskName" => "tests"]
+            'fx.items-download',
+            ['diskName' => 'tests']
         ),
         [
-            "items" => [
+            'items' => [
                 [
-                    "name" => $images[0],
-                    "path" => "ios/" . $images[0],
-                    "type" => "file"
+                    'name' => $images[0],
+                    'path' => 'ios/' . $images[0],
+                    'type' => 'file'
                 ],
                 [
-                    "name" => $images[1],
-                    "path" => "ios/" . $images[1],
-                    "type" => "file"
+                    'name' => $images[1],
+                    'path' => 'ios/' . $images[1],
+                    'type' => 'file'
                 ]
             ]
         ]
@@ -257,50 +253,46 @@ test('should rename a file', function () {
     $images = createFakeImages();
     $response = $this->postJson(
         route(
-            "fx.item-rename",
-            ["diskName" => "tests"]
+            'fx.item-rename',
+            ['diskName' => 'tests']
         ),
         [
-            "oldName" => $images[0],
-            "newName" => "newName.png",
-            "newPath" => "ios/newName.png",
-            "oldPath" => "ios/" . $images[0],
-            "type" => "file",
-            "dirName" => "ios"
+            'oldName' => $images[0],
+            'newName' => 'newName.png',
+            'newPath' => 'ios/newName.png',
+            'oldPath' => 'ios/' . $images[0],
+            'type' => 'file',
+            'dirName' => 'ios'
         ]
     );
 
     Storage::disk('tests')->assertExists('ios/newName.png');
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "Item renamed successfully")
+    $json->where('status', 'success')
+        ->where('message', 'Item renamed successfully')
+        ->etc()
     );
 });
 
 test('should throw an error when something is missing in form for renaming a file', function () {
     $response = $this->postJson(
         route(
-            "fx.item-rename",
-            ["diskName" => "tests", "dirName" => "ios"]
+            'fx.item-rename',
+            ['diskName' => 'tests', 'dirName' => 'ios']
         ),
         [
-            "newPath" => "ios/newName.png",
-            //"oldPath" => "ios/oldName.png",
+            'newPath' => 'ios/newName.png',
+            //'oldPath' => 'ios/oldName.png',
         ]
     );
 
     Storage::disk('tests')->assertMissing('ios/newName.png');
     $response->assertJson(fn (AssertableJson $json) =>
     $json->hasAll([
-        "message",
-        "errors"
+        'message',
+        'errors'
     ])
-        ->where("message", "Invalid data sent")
+        ->where('message', 'Invalid data sent')
         ->has('errors')
         ->has('errors.oldPath')
         ->where('errors.oldPath.0', 'Old file/directory path is required')
@@ -312,29 +304,25 @@ test('should delete one file', function () {
 
     $response = $this->deleteJson(
         route(
-            "fx.items-delete",
-            ["diskName" => "tests"]
+            'fx.items-delete',
+            ['diskName' => 'tests']
         ),
         [
-            "items" => [
+            'items' => [
                [
-                   "name" => $images[0],
-                   "path" => "ios/" . $images[0],
-                   "type" => "file"
+                   'name' => $images[0],
+                   'path' => 'ios/' . $images[0],
+                   'type' => 'file'
                ]
             ]
         ]
     );
 
-    Storage::disk("tests")->assertMissing("ios/" . $images[0]);
+    Storage::disk('tests')->assertMissing('ios/' . $images[0]);
     $response->assertJson(fn (AssertableJson $json) =>
-        $json->has('result')
-            ->hasAll([
-                "result.status",
-                "result.message"
-            ])
-            ->where("result.status", "success")
-            ->where("result.message", "File deleted successfully")
+        $json->where('status', 'success')
+            ->where('message', 'File deleted successfully')
+            ->where('result', [])
     );
 });
 
@@ -344,30 +332,26 @@ test('should delete multiple files', function () {
     $imagesToDelete = [];
     foreach ($images as $image) {
         $imagesToDelete[] = [
-            "name" => $image,
-            "path" => "ios/" . $image,
+            'name' => $image,
+            'path' => 'ios/' . $image,
         ];
     }
     $response = $this->deleteJson(
         route(
-            "fx.items-delete",
-            ["diskName" => "tests"]
+            'fx.items-delete',
+            ['diskName' => 'tests']
         ),
         [
-            "items" => $imagesToDelete
+            'items' => $imagesToDelete
         ]
     );
 
     $paths = array_column($imagesToDelete, 'path');
-    Storage::disk("tests")->assertMissing($paths);
+    Storage::disk('tests')->assertMissing($paths);
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "File deleted successfully")
+        $json->where('status', 'success')
+            ->where('message', 'File deleted successfully')
+            ->where('result', [])
     );
 });
 
@@ -376,26 +360,26 @@ test('should throw an error when something is missing in form for deleting a fil
 
     $response = $this->deleteJson(
         route(
-            "fx.items-delete",
-            ["diskName" => "tests"]
+            'fx.items-delete',
+            ['diskName' => 'tests']
         ),
         [
-            "items" => [
+            'items' => [
                 [
-                    "name" => $images[0]
-                    //"path" => "ios/" . $images[0]
+                    'name' => $images[0]
+                    //'path' => 'ios/' . $images[0]
                 ]
             ]
         ]
     );
 
-    Storage::disk("tests")->assertExists("ios/" . $images[0]);
+    Storage::disk('tests')->assertExists('ios/' . $images[0]);
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
-            "message",
-            "errors"
+            'message',
+            'errors'
         ])
-        ->where("message", "Invalid data sent")
+        ->where('message', 'Invalid data sent')
     );
 });
 
@@ -404,21 +388,21 @@ test('should get item content', function () {
 
     $response = $this->getJson(
         route(
-            "fx.get-item-content",
+            'fx.get-item-content',
             [
-                "diskName" => "tests",
-                "itemName" => "ios"
+                'diskName' => 'tests',
+                'itemName' => 'ios'
             ]
         )
-        . "?path=" . urlencode($item[0])
+        . '?path=' . urlencode($item[0])
     );
 
     $response->assertJson(fn (AssertableJson $json) =>
     $json->has('result')
         ->hasAll([
-            "result.content"
+            'result.content'
         ])
-        ->where("result.content", "")
+        ->where('result.content', '')
     );
 });
 
@@ -427,50 +411,46 @@ test('should throw error when item path is missing', function () {
 
     $response = $this->getJson(
         route(
-            "fx.get-item-content",
+            'fx.get-item-content',
             [
-                "diskName" => "tests",
-                "itemName" => "ios"
+                'diskName' => 'tests',
+                'itemName' => 'ios'
             ]
         )
     );
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll([
-            "message",
-            "errors"
+            'message',
+            'errors'
         ])
-        ->where("message", "Invalid data sent")
-        ->where("errors.path.0", "File or Directory path is missing")
+        ->where('message', 'Invalid data sent')
+        ->where('errors.path.0', 'File or Directory path is missing')
     );
 });
 
 test('should update item content', function () {
     $item = createFakeFiles();
-    $newtItemContent = "new content";
+    $newtItemContent = 'new content';
     $response = $this->postJson(
         route(
-            "fx.update-item-content",
+            'fx.update-item-content',
             [
-                "diskName" => "tests",
-                "itemName", $item[0]
+                'diskName' => 'tests',
+                'itemName', $item[0]
             ]
         ),
         [
-            "path" => $item[0],
-            "item" => UploadedFile::fake()->createWithContent($item[0], $newtItemContent),
+            'path' => $item[0],
+            'item' => UploadedFile::fake()->createWithContent($item[0], $newtItemContent),
         ]
     );
 
-    $itemContent = Storage::disk("tests")->get($item[0]);
+    $itemContent = Storage::disk('tests')->get($item[0]);
     expect($itemContent)->toBe($newtItemContent);
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('result')
-        ->hasAll([
-            "result.status",
-            "result.message"
-        ])
-        ->where("result.status", "success")
-        ->where("result.message", "Changes saved successfully")
+        $json->where('status', 'success')
+            ->where('message', 'Changes saved successfully')
+            ->etc()
     );
 });

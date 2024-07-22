@@ -37,11 +37,11 @@ class Download
     private function downloadSingle(): StreamedResponse|BinaryFileResponse|JsonResponse
     {
         $item = $this->items[0];
-        if ($item["type"] === "dir") {
+        if ($item['type'] === 'dir') {
             return $this->downloadMultiple();
         }
 
-        return $this->storage->download($item["path"]);
+        return $this->storage->download($item['path']);
     }
 
     private function downloadMultiple(): BinaryFileResponse|StreamedResponse|JsonResponse
@@ -58,13 +58,13 @@ class Download
 
     private function getDirItems(array $dir): array
     {
-        $dirItems = $this->storage->allFiles($dir["path"]);
+        $dirItems = $this->storage->allFiles($dir['path']);
         $items = [];
         foreach ($dirItems as $dirItem) {
             $items[] = [
-                "name" => basename($dirItem),
-                "path" => $dirItem,
-                "type" => "file"
+                'name' => basename($dirItem),
+                'path' => $dirItem,
+                'type' => 'file'
             ];
         }
         return $items;

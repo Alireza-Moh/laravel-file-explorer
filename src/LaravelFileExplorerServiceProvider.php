@@ -34,7 +34,7 @@ class LaravelFileExplorerServiceProvider extends ServiceProvider
             [
                 __DIR__ . '/../config/laravel-file-explorer.php' => config_path('laravel-file-explorer.php'),
             ],
-            "lfx.config"
+            'lfx.config'
         );
     }
 

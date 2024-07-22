@@ -7,79 +7,61 @@ use AlirezaMoh\LaravelFileExplorer\Events\ItemRenamed;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemsDownloaded;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemUploaded;
 use AlirezaMoh\LaravelFileExplorer\Services\Contracts\ItemUtil;
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use AlirezaMoh\LaravelFileExplorer\Supports\Download;
 use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DirManager;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ItemService extends BaseItemManager implements ItemUtil
+class ItemService implements ItemUtil
 {
     use DirManager;
 
-    /**
-     * Rename a file.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function rename(string $diskName, array $validatedData): array
+    public function rename(string $diskName, array $validatedData): JsonResponse
     {
-        $result = Storage::disk($diskName)->move($validatedData["oldPath"], $validatedData["newPath"]);
-
+        $result = Storage::disk($diskName)->move($validatedData['oldPath'], $validatedData['newPath']);
         $additionalData = [];
+
         if ($result) {
             event(new ItemRenamed($diskName, $validatedData));
-            $additionalData["updatedItem"] = $this->getMetaData(
+            $additionalData['updatedItem'] = $this->getMetaData(
                 $diskName,
-                $validatedData["dirName"],
-                $validatedData["newPath"],
-                $validatedData["type"]
+                $validatedData['dirName'],
+                $validatedData['newPath'],
+                $validatedData['type']
             );
+            return ApiResponse::success('Item renamed successfully', $additionalData);
         }
-        return $this->getResponse($result, "Item renamed successfully", "Failed to rename item", $additionalData);
+
+        return ApiResponse::error('Failed to rename item', $additionalData);
     }
 
-    /**
-     * Delete a file.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function delete(string $diskName, array $validatedData): array
+    public function delete(string $diskName, array $validatedData): JsonResponse
     {
-        $itemToDelete = collect($validatedData["items"])->pluck("path")->toArray();
+        $itemToDelete = collect($validatedData['items'])->pluck('path')->toArray();
         $result = Storage::disk($diskName)->delete($itemToDelete);
 
         if ($result) {
-            foreach ($validatedData["items"] as $item) {
+            foreach ($validatedData['items'] as $item) {
                 $this->fireDeleteEvent($diskName, $item);
             }
+            return ApiResponse::success('File deleted successfully');
         }
-        return $this->getResponse($result, "File deleted successfully", "Failed to delete file");
+        return ApiResponse::error('Failed to delete file');
     }
 
-    /**
-     * Upload files.
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function upload(string $diskName, array $validatedData): array
+    public function upload(string $diskName, array $validatedData): JsonResponse
     {
         $storage = Storage::disk($diskName);
-        $dirName = $validatedData["destination"];
-        foreach ($validatedData["items"] as $item) {
+        $dirName = $validatedData['destination'];
+        foreach ($validatedData['items'] as $item) {
             $fileName = $this->getFileNameToUpload($item);
 
             $itemPath = $dirName . '/' . $fileName;
-            if (!$storage->exists($itemPath) || (int)$validatedData["ifItemExist"] === 1) {
+            if (!$storage->exists($itemPath) || (int)$validatedData['ifItemExist'] === 1) {
                 $result = $storage->putFileAs($dirName, $item, $fileName);
 
                 if ($result) {
@@ -88,90 +70,58 @@ class ItemService extends BaseItemManager implements ItemUtil
             }
         }
 
-        return $this->getResponse(
-            true,
-            success: "Items uploaded successfully",
-            additionalData: [
+        return ApiResponse::success(
+            'Items uploaded successfully',
+            [
                 'items' => (new DirService())->getDirItems($diskName, $dirName)
             ]
         );
     }
 
-    /**
-     * Create a file
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function create(string $diskName, array $validatedData): array
+    public function create(string $diskName, array $validatedData): JsonResponse
     {
-        $filePath = $validatedData["path"];
-        $destination =$validatedData["destination"];
-        $result = Storage::disk($diskName)->put($filePath, "");
-        $message = $result ? "File created successfully" : "Failed to create file";
+        $destination = $validatedData['destination'];
+        $result = Storage::disk($diskName)->put($validatedData['path'], '');
 
+        $dirService = new DirService();
+        $data =  [
+            'items' => $dirService->getDirItems($diskName, $destination),
+            'dirs' => $dirService->getDiskDirsForTree($diskName)
+        ];
         if ($result) {
-            event(new FileCreated($diskName, $destination, $filePath));
+            event(new FileCreated($diskName, $destination, $validatedData['destination']));
+            return ApiResponse::success('File created successfully', $data);
         }
 
-        return $this->getCreationResponse($diskName, $result, $message, $destination);
+        return ApiResponse::success('Failed to create file', $data);
     }
 
-    /**
-     * Download item/items
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return BinaryFileResponse|JsonResponse|StreamedResponse
-     * @throws Exception
-     */
     public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        $items = $validatedData["items"];
+        $items = $validatedData['items'];
         $downloadFactory = new Download($diskName, $items);
         event(new ItemsDownloaded($diskName, $items));
 
         return $downloadFactory->download();
     }
 
-    /**
-     * Get item content
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return string|null
-     */
     public function getItemContent(string $diskName, array $validatedData): ?string
     {
-        return Storage::disk($diskName)->get($validatedData["path"]);
+        return Storage::disk($diskName)->get($validatedData['path']);
     }
 
-    /**
-     * Update item content
-     *
-     * @param string $diskName
-     * @param array $validatedData
-     * @return array
-     */
-    public function updateItemContent(string $diskName, array $validatedData): array
+    public function updateItemContent(string $diskName, array $validatedData): JsonResponse
     {
-        $result = Storage::disk($diskName)->put($validatedData["path"], $validatedData["item"]->get());
+        $result = Storage::disk($diskName)->put($validatedData['path'], $validatedData['item']->get());
 
-        return $this->getResponse($result, "Changes saved successfully", "Failed to save chnages");
+        if ($result) {
+            return ApiResponse::success('Changes saved successfully');
+        }
+        return ApiResponse::error('Failed to save changes');
     }
 
-    /**
-     * Get file name to upload
-     *
-     * @param $file
-     * @return string
-     */
     private function getFileNameToUpload($file): string
     {
-        if (ConfigRepository::getHashFileWhenUploading()) {
-            return $file->hashName();
-        }
-        return $file->getClientOriginalName();
+        return ConfigRepository::hashFileWhenUploading() ? $file->hashName() : $file->getClientOriginalName();
     }
 }
