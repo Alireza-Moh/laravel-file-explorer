@@ -99,4 +99,15 @@ return [
     | Type: boolean
     */
     "hash_file_name_when_uploading" => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filename hashing
+    |--------------------------------------------------------------------------
+    |
+    | You may want to use a specific time format for showing the last_modified
+    |
+    | Type: string
+    */
+    "modified_file_time_format" => 'Y-m-d H:i:s',
 ];
