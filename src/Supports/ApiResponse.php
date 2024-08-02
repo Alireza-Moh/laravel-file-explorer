@@ -28,4 +28,13 @@ class ApiResponse
             'result' => $additionalData
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    public static function forbidden(string $message, array $additionalData = []): JsonResponse
+    {
+        return response()->json([
+            'status' => self::STATUS_FAILED,
+            'message' => $message,
+            'result' => $additionalData
+        ], Response::HTTP_FORBIDDEN);
+    }
 }

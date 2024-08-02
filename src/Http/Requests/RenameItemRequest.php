@@ -14,9 +14,9 @@ class RenameItemRequest extends BaseRequest
         return array_merge(
             [
                 'type' => ['required', 'string'],
-                'dirName' => ['required', 'string'],
                 'oldName' => ['required', 'string', new MatchDefaultDir],
-                'oldPath' => ['required', 'string']
+                'oldPath' => ['required', 'string'],
+                'parent' => ['string', 'nullable'],
             ],
             $this->getRules()
         );
@@ -35,8 +35,7 @@ class RenameItemRequest extends BaseRequest
             'newPath.string' => 'New file/directory path must be string',
             'type.required' => 'File type is required',
             'type.string' => 'File type must be string',
-            'dirName.required' => 'Directory name is required',
-            'dirName.string' => 'Directory name must be string'
+            'parent.string' => 'Parent directory name must be string'
         ];
     }
 

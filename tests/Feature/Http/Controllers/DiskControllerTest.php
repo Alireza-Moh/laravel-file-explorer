@@ -12,10 +12,13 @@ test('should throw an error when disk does not exist', function () {
 
     $response->assertStatus(422);
     $response->assertJson(fn (AssertableJson $json) =>
-    $json->has('message')
-        ->has('errors')
-        ->where('message', 'Invalid data sent')
-        ->where('errors.0.diskName', 'Disk aa does not exist')
+    $json->hasAll([
+        'status',
+        'message',
+        'result'
+    ])
+        ->where('status', 'failed')
+        ->where('message', 'Disk aa does not exist')
     );
 });
 
@@ -30,8 +33,8 @@ test('should retrieve an empty disk information when requesting a disk with no c
     $response->assertJson(fn (AssertableJson $json) =>
         $json->has('result')
             ->where('result.dirs', [])
-            ->where('result.selectedDir', '')
-            ->where('result.selectedDirPath', '')
+            ->where('result.selectedDir', null)
+            ->where('result.selectedDirPath', null)
             ->where('result.selectedDirItems', [])
     );
 });

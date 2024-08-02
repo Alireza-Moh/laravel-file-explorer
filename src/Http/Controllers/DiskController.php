@@ -2,46 +2,35 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Http\Controllers;
 
-use AlirezaMoh\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
 class DiskController extends Controller
 {
-    private DirService $dirService;
-
-    public function __construct(DirService $dirService)
-    {
-        $this->dirService = $dirService;
-    }
-
     public function loadDiskDirs(string $diskName): JsonResponse
     {
-        $dirs = $this->dirService->getDiskDirsForTree($diskName);
+        $diskManager = new DiskManager($diskName);
 
-        list($diskItems, $selectedDir, $selectedDirPath) = $this->getDiskData($diskName, $dirs);
+        $selectedDir = $diskManager->directories->isNotEmpty()
+            ? $diskManager->directories->first()
+            : null;
+
+        $selectedDirPath = $selectedDir
+            ? $diskManager->findDirectoryByName($selectedDir->name)->path
+            : null;
+
+        $selectedDirItems = $selectedDir
+            ? $diskManager->getItemsByDirectoryName($selectedDir->name, $selectedDir->path)
+            : [];
 
         return response()->json([
             'result' => [
-                'dirs' => $dirs,
+                'dirs' => $diskManager->directories,
                 'selectedDir' => $selectedDir,
                 'selectedDirPath' => $selectedDirPath,
-                'selectedDirItems' => $diskItems
+                'selectedDirItems' => $selectedDirItems
             ]
         ]);
-    }
-
-    private function getDiskData(string $diskName, array $dirs): array
-    {
-        $diskItems = $this->dirService->getDiskItems($diskName);
-        $selectedDir = '';
-        $selectedDirPath = '';
-
-        if (empty($diskItems) && !empty($dirs)) {
-            $selectedDir = $dirs[0]['name'];
-            $selectedDirPath = $dirs[0]['path'];
-            $diskItems = $this->dirService->getDirItems($diskName, $selectedDir);
-        }
-        return array($diskItems, $selectedDir, $selectedDirPath);
     }
 }

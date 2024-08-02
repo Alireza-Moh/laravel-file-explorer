@@ -2,68 +2,46 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Http\Controllers;
 
-use AlirezaMoh\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\DirManager;
+use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
 class ExplorerInitDataController extends Controller
 {
+    private DiskManager $diskManager;
 
-    private DirService $dirService;
-
-    public function __construct(DirService $dirService)
+    public function __construct()
     {
-        $this->dirService = $dirService;
+        $this->diskManager = new DiskManager(ConfigRepository::getDefaultDiskOnLoading());
     }
 
     public function initExplorer(): JsonResponse
     {
-        return response()->json(
-            [
-                'result' => [
-                    'status' => 'success',
-                    'data' => $this->getDefaultExplorerDataOnInitialization()
-                ]
-            ]
-        );
+        return ApiResponse::success('', $this->getDefaultExplorerDataOnInitialization());
     }
 
     private function getDefaultExplorerDataOnInitialization(): array
     {
-        $defaultDisk = ConfigRepository::getDefaultDiskOnLoading();
-        $dirService = new DirService();
         $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
+
+        $selectedDirPath = $defaultDir
+            ? $this->diskManager->findDirectoryByName($defaultDir)?->path
+            : '';
+
+        $selectedDirItems = $defaultDir
+            ? $this->diskManager->getItemsByDirectoryName($defaultDir, $defaultDir)
+            : [];
 
         return [
             'disks' => ConfigRepository::getDisks(),
-            'dirsForSelectedDisk' => $this->getDirsForSelectedDisk($defaultDisk),
+            'dirsForSelectedDisk' => $this->diskManager->directories,
             'selectedDisk' => ConfigRepository::getDefaultDiskOnLoading(),
             'selectedDir' => ConfigRepository::getDefaultDirectoryOnLoading(),
-            'selectedDirPath' =>  $this->getSelectedDirPath($defaultDisk),
-            'selectedDirItems' => $defaultDir ? $dirService->getDirItems($defaultDisk, $defaultDir) : []
+            'selectedDirPath' => $selectedDirPath,
+            'selectedDirItems' => $selectedDirItems
         ];
-    }
-
-    private function getDirsForSelectedDisk(string $defaultDisk): array
-    {
-        return [
-            'dirs' => $this->dirService->getDiskDirsForTree($defaultDisk),
-            'diskName' => $defaultDisk
-        ];
-    }
-
-    private function getSelectedDirPath(string $defaultDisk): string
-    {
-        $defaultDir = ConfigRepository::getDefaultDirectoryOnLoading();
-        if (is_null($defaultDir)) {
-            return '';
-        }
-        $dirByLabel = $this->dirService->findDirectoryByName($defaultDisk, $defaultDir);
-        $selectedDirPath = '';
-        if ($dirByLabel !== null) {
-            $selectedDirPath = $dirByLabel['path'];
-        }
-        return $selectedDirPath;
     }
 }

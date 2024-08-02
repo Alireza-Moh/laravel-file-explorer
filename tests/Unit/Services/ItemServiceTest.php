@@ -25,7 +25,7 @@ test('should rename a given file', function () {
             'oldPath' => $file[0],
             'newPath' => 'ios/newNamdde.txt',
             'type' => 'file',
-            'dirName' => 'ios'
+            'parent' => 'ios'
         ]
     );
 
@@ -46,7 +46,8 @@ test('should delete a given file', function () {
         'items' => [
             [
                 'name' => 'test.txt',
-                'path' => 'ios/test.txt'
+                'path' => 'ios/test.txt',
+                'type' => 'file'
             ],
         ]
     ]);
@@ -55,7 +56,7 @@ test('should delete a given file', function () {
     expect($response->getData(true))->toBeArray()
         ->and($response->getData(true))->toMatchArray([
             'status' => 'success',
-            'message' => 'File deleted successfully',
+            'message' => 'Items deleted successfully',
             'result' => []
         ]);
     Event::assertDispatched(ItemDeleted::class);
@@ -98,7 +99,7 @@ test('should upload multiple items', function () {
 
     $parsedResponse = $response->getData(true);
     foreach ($parsedResponse['result']['items'] as &$item) {
-        unset($item['size'], $item['lastModified']);
+        unset($item['size'], $item['lastModified'], $item['formattedSize']);
     }
     Storage::disk('tests')->assertExists(['ios/photo1.jpg', 'ios/photo2.jpg', 'ios/photo3.jpg', 'ios/photo4.jpg']);
     expect($parsedResponse)->toBeArray()
@@ -110,43 +111,47 @@ test('should upload multiple items', function () {
                     'items' => [
                         [
                             'diskName' => 'tests',
-                            'dirName' => 'ios',
+                            'parent' => 'ios',
                             'name' => 'photo1.jpg',
                             'path' => 'ios/photo1.jpg',
                             'type' => 'file',
-                            'extension' => 'jpg',
                             'url' => '/storage/ios/photo1.jpg',
-                            'isChecked' => false
+                            'extension' => 'jpg',
+                            'isChecked' => false,
+                            'subDir' => []
                         ],
                         [
                             'diskName' => 'tests',
-                            'dirName' => 'ios',
+                            'parent' => 'ios',
                             'name' => 'photo2.jpg',
                             'path' => 'ios/photo2.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
                             'url' => '/storage/ios/photo2.jpg',
-                            'isChecked' => false
+                            'isChecked' => false,
+                            'subDir' => []
                         ],
                         [
                             'diskName' => 'tests',
-                            'dirName' => 'ios',
+                            'parent' => 'ios',
                             'name' => 'photo3.jpg',
                             'path' => 'ios/photo3.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
                             'url' => '/storage/ios/photo3.jpg',
-                            'isChecked' => false
+                            'isChecked' => false,
+                            'subDir' => []
                         ],
                         [
                             'diskName' => 'tests',
-                            'dirName' => 'ios',
+                            'parent' => 'ios',
                             'name' => 'photo4.jpg',
                             'path' => 'ios/photo4.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
                             'url' => '/storage/ios/photo4.jpg',
-                            'isChecked' => false
+                            'isChecked' => false,
+                            'subDir' => []
                         ]
                     ]
                 ]
@@ -165,8 +170,12 @@ test('should create a file', function () {
 
     $parsedResponse = $response->getData(true);
     foreach ($parsedResponse['result']['items'] as &$item) {
-        unset($item['size'], $item['lastModified']);
+        unset($item['size'], $item['lastModified'], $item['formattedSize']);
     }
+    foreach ($parsedResponse['result']['dirs'] as &$item) {
+        unset($item['size'], $item['lastModified'], $item['formattedSize']);
+    }
+
     Storage::disk('tests')->assertExists('ios/zjztj.txt');
     expect($parsedResponse)->toBeArray()
         ->and($parsedResponse)->toMatchArray(
@@ -177,23 +186,27 @@ test('should create a file', function () {
                     'items' => [
                         [
                             'diskName' => 'tests',
-                            'dirName' => 'ios',
+                            'parent' => 'ios',
                             'name' => 'zjztj.txt',
                             'path' => 'ios/zjztj.txt',
                             'type' => 'file',
                             'extension' => 'txt',
                             'url' => '/storage/ios/zjztj.txt',
-                            'isChecked' => false
+                            'isChecked' => false,
+                            'subDir' => []
                         ]
                     ],
                     'dirs' => [
                         [
-                            'diskName' => 'tests',
-                            'dirName' => '',
-                            'name' => 'ios',
-                            'path' => 'ios',
-                            'type' => 'dir',
-                            'subDir' => []
+                            "diskName" => "tests",
+                            "parent" => "",
+                            "name" => "ios",
+                            "path" => "ios",
+                            "type" => "dir",
+                            "url" => "/storage/ios",
+                            "extension" => null,
+                            "isChecked" => false,
+                            "subDir" => []
                         ]
                     ]
                 ]

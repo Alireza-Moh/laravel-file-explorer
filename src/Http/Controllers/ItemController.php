@@ -10,8 +10,10 @@ use AlirezaMoh\LaravelFileExplorer\Http\Requests\RenameItemRequest;
 use AlirezaMoh\LaravelFileExplorer\Http\Requests\UpdateItemContentRequest;
 use AlirezaMoh\LaravelFileExplorer\Http\Requests\UploadItemsRequest;
 use AlirezaMoh\LaravelFileExplorer\Services\ItemService;
-use Exception;
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -50,13 +52,21 @@ class ItemController extends Controller
         return $this->itemService->download($diskName, $request->validated());
     }
 
-    public function getContent(string $diskName, string $itemName, PathRequest $pathRequest): JsonResponse
+    public function getContent(string $diskName, string $itemName, PathRequest $request): JsonResponse
     {
-        return response()->json([
-            'result' => [
-                'content' => $this->itemService->getItemContent($diskName, $pathRequest->validated()),
-            ]
-        ]);
+        $data = [
+            'content' => $this->itemService->getItemContent($diskName, $request->validated()),
+            'readOnly' => false
+        ];
+
+        if (ConfigRepository::isACLEnabled()) {
+            $data['readOnly'] = ! $request->user()->hasPermission('write');
+        }
+
+        return ApiResponse::success(
+            '',
+            $data
+        );
     }
 
     public function updateContent(string $diskName, string $itemName, UpdateItemContentRequest $request): JsonResponse

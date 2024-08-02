@@ -3,9 +3,10 @@
 namespace AlirezaMoh\LaravelFileExplorer\Http\Controllers;
 
 use AlirezaMoh\LaravelFileExplorer\Http\Requests\CreateDirRequest;
-use AlirezaMoh\LaravelFileExplorer\Http\Requests\DeleteItemRequest;
 use AlirezaMoh\LaravelFileExplorer\Http\Requests\PathRequest;
 use AlirezaMoh\LaravelFileExplorer\Services\DirService;
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
+use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
@@ -18,28 +19,22 @@ class DirController extends Controller
         $this->dirService = $dirService;
     }
 
-    public function deleteDir(string $diskName, DeleteItemRequest $request): JsonResponse
-    {
-        return $this->dirService->delete($diskName, $request->validated());
-    }
-
     public function createDir(string $diskName, string $dirName, CreateDirRequest $request): JsonResponse
     {
         return $this->dirService->create($diskName, $request->validated());
     }
 
-    public function loadDirItems(string $diskName, string $dirName, PathRequest $pathRequest): JsonResponse
+    public function loadDirectoryItems(string $diskName, string $dirName, PathRequest $request): JsonResponse
     {
-        $matchedDir = $this->dirService->findDirectoryByName($diskName, $dirName);
-        $selectedDirPath = null;
+        $diskManager = new DiskManager($diskName);
 
-        if ($matchedDir !== null) {
-            $selectedDirPath = $matchedDir['path'];
-        }
-        return response()->json([
-            'dirName' => $dirName,
-            'items' => $this->dirService->getDirItems($diskName, $pathRequest->validated()['path']),
-            'selectedDirPath' => $selectedDirPath,
-        ]);
+        return ApiResponse::success(
+            '',
+            [
+                'dirName' => $dirName,
+                'items' =>$diskManager->getItemsByDirectoryName($dirName, $request['path']),
+                'selectedDirPath' => $request['path']
+            ]
+        );
     }
 }

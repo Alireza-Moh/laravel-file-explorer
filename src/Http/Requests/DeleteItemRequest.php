@@ -15,6 +15,7 @@ class DeleteItemRequest extends BaseRequest
             'items.*' => ['required'],
             'items.*.name' => ['required', 'string', new MatchDefaultDir],
             'items.*.path' => ['required', 'string'],
+            'items.*.type' => ['required', 'string'],
         ];
     }
 
@@ -28,7 +29,9 @@ class DeleteItemRequest extends BaseRequest
             'files.*.name.required' => 'File name is required',
             'files.*.name.string' => 'File name must be string',
             'files.*.path.required' => 'File path is required',
-            'files.*.path.string' => 'File path must be string'
+            'files.*.path.string' => 'File path must be string',
+            'files.*.type.required' => 'Type is required',
+            'files.*.type.string' => 'Type must be string'
         ];
     }
 

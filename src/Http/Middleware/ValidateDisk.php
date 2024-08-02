@@ -1,12 +1,12 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Middleware;
+namespace AlirezaMoh\LaravelFileExplorer\Http\Middleware;
 
+use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class ValidateDisk
 {
@@ -20,13 +20,6 @@ class ValidateDisk
 
     private function denyAccess(string $diskName): JsonResponse
     {
-        return response()->json([
-            'message' => 'Invalid data sent',
-            'errors' => [
-                [
-                    'diskName' => 'Disk '. $diskName . ' does not exist'
-                ]
-            ]
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        return ApiResponse::error('Disk '. $diskName . ' does not exist');
     }
 }

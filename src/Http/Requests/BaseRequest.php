@@ -15,7 +15,6 @@ class BaseRequest extends FormRequest
         }
 
         return response()->json([
-            'message' => 'Invalid data sent',
             'errors' => $customErrors,
         ], $status);
     }

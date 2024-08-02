@@ -3,35 +3,32 @@
 namespace AlirezaMoh\LaravelFileExplorer\Services;
 
 use AlirezaMoh\LaravelFileExplorer\Events\FileCreated;
+use AlirezaMoh\LaravelFileExplorer\Events\ItemDeleted;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemRenamed;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemsDownloaded;
 use AlirezaMoh\LaravelFileExplorer\Events\ItemUploaded;
-use AlirezaMoh\LaravelFileExplorer\Services\Contracts\ItemUtil;
 use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use AlirezaMoh\LaravelFileExplorer\Supports\Download;
-use AlirezaMoh\LaravelFileExplorer\Supports\Traits\DirManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ItemService implements ItemUtil
+class ItemService
 {
-    use DirManager;
-
     public function rename(string $diskName, array $validatedData): JsonResponse
     {
         $result = Storage::disk($diskName)->move($validatedData['oldPath'], $validatedData['newPath']);
         $additionalData = [];
-
         if ($result) {
             event(new ItemRenamed($diskName, $validatedData));
-            $additionalData['updatedItem'] = $this->getMetaData(
-                $diskName,
-                $validatedData['dirName'],
+            $diskManager = new DiskManager($diskName);
+            $additionalData['updatedItem'] = $diskManager->createItem(
+                $validatedData['type'],
                 $validatedData['newPath'],
-                $validatedData['type']
+                $validatedData['parent']
             );
             return ApiResponse::success('Item renamed successfully', $additionalData);
         }
@@ -41,14 +38,17 @@ class ItemService implements ItemUtil
 
     public function delete(string $diskName, array $validatedData): JsonResponse
     {
-        $itemToDelete = collect($validatedData['items'])->pluck('path')->toArray();
-        $result = Storage::disk($diskName)->delete($itemToDelete);
+        [$files, $dirs] = $this->sortByType($validatedData['items']);
+        $filesToDelete = collect($files)->pluck('path')->toArray();
+
+        $result = Storage::disk($diskName)->delete($filesToDelete);
+        $this->deleteDirectories($diskName, $dirs);
 
         if ($result) {
-            foreach ($validatedData['items'] as $item) {
+            foreach ($files as $item) {
                 $this->fireDeleteEvent($diskName, $item);
             }
-            return ApiResponse::success('File deleted successfully');
+            return ApiResponse::success('Items deleted successfully');
         }
         return ApiResponse::error('Failed to delete file');
     }
@@ -73,7 +73,7 @@ class ItemService implements ItemUtil
         return ApiResponse::success(
             'Items uploaded successfully',
             [
-                'items' => (new DirService())->getDirItems($diskName, $dirName)
+                'items' => (new DiskManager($diskName))->getItemsByDirectoryName($dirName, $dirName)
             ]
         );
     }
@@ -82,17 +82,16 @@ class ItemService implements ItemUtil
     {
         $destination = $validatedData['destination'];
         $result = Storage::disk($diskName)->put($validatedData['path'], '');
-
-        $dirService = new DirService();
+        $diskManager = new DiskManager($diskName);
         $data =  [
-            'items' => $dirService->getDirItems($diskName, $destination),
-            'dirs' => $dirService->getDiskDirsForTree($diskName)
+            'items' => $diskManager->getItemsByDirectoryName($destination, $destination),
+            'dirs' => $diskManager->directories
         ];
+
         if ($result) {
             event(new FileCreated($diskName, $destination, $validatedData['destination']));
             return ApiResponse::success('File created successfully', $data);
         }
-
         return ApiResponse::success('Failed to create file', $data);
     }
 
@@ -123,5 +122,36 @@ class ItemService implements ItemUtil
     private function getFileNameToUpload($file): string
     {
         return ConfigRepository::hashFileWhenUploading() ? $file->hashName() : $file->getClientOriginalName();
+    }
+
+    private function deleteDirectories(string $diskName, array $dirs): void
+    {
+        $storage = Storage::disk($diskName);
+        foreach ($dirs as $dir) {
+            $result = $storage->deleteDirectory($dir['path']);
+            if ($result) {
+                $this->fireDeleteEvent($diskName, $dir);
+            }
+        }
+    }
+
+    private function sortByType(array $items): array
+    {
+        $files = [];
+        $dirs = [];
+        foreach ($items as $item) {
+            if ($item['type'] === 'file') {
+                $files[] = $item;
+            } elseif ($item['type'] === 'dir') {
+                $dirs[] = $item;
+            }
+        }
+
+        return array($files, $dirs);
+    }
+
+    private function fireDeleteEvent(string $diskName, array $item): void
+    {
+        event(new ItemDeleted($diskName, $item['name'], $item['path']));
     }
 }

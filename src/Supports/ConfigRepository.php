@@ -48,4 +48,24 @@ final class ConfigRepository
     {
         return config('laravel-file-explorer.modified_file_time_format');
     }
+
+    final public static function getUserModel(): string
+    {
+        return config('laravel-file-explorer.user_model');
+    }
+
+    final public static function getRoles(): array
+    {
+        return config('laravel-file-explorer.roles');
+    }
+
+    final public static function isACLEnabled(): bool
+    {
+        return config('laravel-file-explorer.acl_enabled');
+    }
+
+    final public static function getPermissions(): array
+    {
+        return config('laravel-file-explorer.permissions');
+    }
 }
