@@ -7,23 +7,12 @@ use ZipArchive;
 
 class ZipperException extends Exception
 {
-    /**
-     * ZipperException constructor
-     *
-     * @param int $errorCode The ZipArchive error code
-     */
     public function __construct(int $errorCode)
     {
         parent::__construct();
         $this->message = $this->makeHumanFriendly($errorCode);
     }
 
-    /**
-     * Converts a ZipArchive error code to a human-readable message
-     *
-     * @param int $errorCode The ZipArchive error code.
-     * @return string error message
-     */
     public function makeHumanFriendly(int $errorCode): string
     {
         return match ($errorCode) {
