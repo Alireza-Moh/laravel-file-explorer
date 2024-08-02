@@ -4,7 +4,6 @@ namespace AlirezaMoh\LaravelFileExplorer\Http\Controllers;
 
 use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
-use AlirezaMoh\LaravelFileExplorer\Supports\DirManager;
 use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
