@@ -14,7 +14,10 @@ class ValidatePermission
     {
         if (ConfigRepository::isACLEnabled()) {
             $user = $request->user();
-            return $user->hasPermission($requiredPermission) ? $next($request) : $this->denyAccess();
+
+            return ($user && $user->hasPermission($requiredPermission))
+                ? $next($request)
+                : $this->denyAccess();
         }
         return $next($request);
     }
