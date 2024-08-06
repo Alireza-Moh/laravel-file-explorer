@@ -14,18 +14,18 @@ Route::middleware("validateDisk")->group(function () {
     Route::get('disks/{diskName}', [DiskController::class, 'loadDiskDirs'])
         ->name("fx.disks");
 
-    Route::get('disks/{diskName}/content/items/{itemName}', [ItemController::class, 'getContent'])
+    Route::get('disks/{diskName}/content/items', [ItemController::class, 'getContent'])
         ->name("fx.get-item-content")
         ->middleware('checkPermission:read');
 
     Route::get('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirectoryItems'])
         ->name("fx.load-dir-items");
 
-    Route::post('disks/{diskName}/dirs/{dirName}/new-file', [ItemController::class, 'createFile'])
+    Route::post('disks/{diskName}/new-file', [ItemController::class, 'createFile'])
         ->name("fx.file-create")
         ->middleware('checkPermission:create');
 
-    Route::post('disks/{diskName}/dirs/{dirName}/new-dir', [DirController::class, 'createDir'])
+    Route::post('disks/{diskName}/new-dir', [DirController::class, 'createDir'])
         ->name("fx.dir-create")
         ->middleware('checkPermission:create');
 
@@ -41,7 +41,7 @@ Route::middleware("validateDisk")->group(function () {
         ->name("fx.item-rename")
         ->middleware('checkPermission:update');
 
-    Route::post('disks/{diskName}/items/{itemName}', [ItemController::class, 'updateContent'])
+    Route::post('disks/{diskName}/content/items/update', [ItemController::class, 'updateContent'])
         ->name("fx.update-item-content")
         ->middleware('checkPermission:write');
 

@@ -6,16 +6,10 @@ class ItemUploaded
 {
     public string $diskName;
 
-    public string $parentDirName;
+    public string $path;
 
-    public string $itemName;
-
-    public string $itemPath;
-
-    public function __construct(string $diskName, string $parentDirName, string $itemName, string $itemPath) {
+    public function __construct(string $diskName, string $path) {
         $this->diskName = $diskName;
-        $this->parentDirName = $parentDirName;
-        $this->itemName = $itemName;
-        $this->itemPath = $itemPath;
+        $this->path = $path;
     }
 }
