@@ -19,7 +19,7 @@ class DirController extends Controller
         $this->dirService = $dirService;
     }
 
-    public function createDir(string $diskName, string $dirName, CreateDirRequest $request): JsonResponse
+    public function createDir(string $diskName, CreateDirRequest $request): JsonResponse
     {
         return $this->dirService->create($diskName, $request->validated());
     }
@@ -32,7 +32,7 @@ class DirController extends Controller
             '',
             [
                 'dirName' => $dirName,
-                'items' =>$diskManager->getItemsByDirectoryName($dirName, $request['path']),
+                'items' =>$diskManager->getItemsByParentName($dirName, $request['path']),
                 'selectedDirPath' => $request['path']
             ]
         );

@@ -31,10 +31,14 @@ test('should retrieve an empty disk information when requesting a disk with no c
     );
 
     $response->assertJson(fn (AssertableJson $json) =>
-        $json->has('result')
-            ->where('result.dirs', [])
-            ->where('result.selectedDir', null)
-            ->where('result.selectedDirPath', null)
-            ->where('result.selectedDirItems', [])
+        $json->hasAll([
+            'status',
+            'message',
+            'result'
+        ])
+        ->where('result.dirs', [])
+        ->where('result.selectedDir', '')
+        ->where('result.selectedDirPath', '')
+        ->where('result.selectedDirItems', [])
     );
 });

@@ -1,9 +1,11 @@
 <?php
 
+use AlirezaMoh\LaravelFileExplorer\Exceptions\NullUserException;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Support\Facades\Exceptions;
 
 beforeEach(function () {
+    Exceptions::fake();
     Config::set([
         'laravel-file-explorer.acl_enabled' => true,
     ]);
@@ -12,34 +14,24 @@ beforeEach(function () {
 test('should throw error when user does not have the __read__ permission to get item content', function () {
     $item = createFakeFiles();
 
-    $response = $this->getJson(
+    $this->getJson(
         route(
             'fx.get-item-content',
             [
-                'diskName' => 'tests',
-                'itemName' => 'ios'
+                'diskName' => 'tests'
             ]
         )
         . '?path=' . urlencode($item[0])
     );
 
-    $response->assertJson(fn (AssertableJson $json) =>
-        $json->hasAll([
-            'status',
-            'message',
-            'result'
-        ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __create__ permission to create a file', function () {
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.file-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'destination' => 'ios',
@@ -48,23 +40,14 @@ test('should throw error when user does not have the __create__ permission to cr
     );
 
     Storage::disk('tests')->assertMissing('ios/config.txt');
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __create__ permission to create a dir', function () {
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.dir-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'destination' => 'ios',
@@ -73,20 +56,11 @@ test('should throw error when user does not have the __create__ permission to cr
     );
 
     Storage::disk('tests')->assertMissing('ios/configDir');
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __upload__ permission to upload files', function () {
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.items-upload',
             ['diskName' => 'tests']
@@ -102,22 +76,13 @@ test('should throw error when user does not have the __upload__ permission to up
     );
 
     Storage::disk('tests')->assertMissing(['ios/photo1.jpg', 'ios/photo2.jpg']);
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __download__ permission to download files', function () {
     $images = createFakeImages(2);
 
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.items-download',
             ['diskName' => 'tests']
@@ -138,21 +103,12 @@ test('should throw error when user does not have the __download__ permission to 
         ]
     );
 
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __update__ permission to file item', function () {
     $images = createFakeImages();
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.item-rename',
             [
@@ -170,22 +126,13 @@ test('should throw error when user does not have the __update__ permission to fi
     );
 
     Storage::disk('tests')->assertMissing('ios/newName.png');
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __write__ permission to write into a file', function () {
     $item = createFakeFiles();
     $newtItemContent = 'new content';
-    $response = $this->postJson(
+    $this->postJson(
         route(
             'fx.update-item-content',
             [
@@ -199,22 +146,13 @@ test('should throw error when user does not have the __write__ permission to wri
         ]
     );
 
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });
 
 test('should throw error when user does not have the __delete__ permission to delete an item', function () {
     $images = createFakeImages();
 
-    $response = $this->post(
+    $this->post(
         route(
             'fx.items-delete',
             ['diskName' => 'tests']
@@ -231,14 +169,5 @@ test('should throw error when user does not have the __delete__ permission to de
     );
 
     Storage::disk('tests')->assertExists('ios/' . $images[0]);
-    $response->assertJson(fn (AssertableJson $json) =>
-    $json->hasAll([
-        'status',
-        'message',
-        'result'
-    ])
-        ->where('status', 'failed')
-        ->where('message', 'You dont have the necessary permission for this action')
-        ->where('result', [])
-    );
+    Exceptions::assertReported(NullUserException::class);
 });

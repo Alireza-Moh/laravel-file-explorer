@@ -42,24 +42,7 @@ class DiskManager
         return $this->searchRecursiveForDirectory($this->directories, $directoryName);
     }
 
-    public function findByParentName(Collection $items, string $parent): Collection
-    {
-        $foundItems = collect();
-
-        foreach ($items as $item) {
-            if ($item->parent === $parent) {
-                $foundItems->push($item);
-            }
-
-            if ($item->subDir->isNotEmpty()) {
-                $foundItems = $foundItems->merge($this->findByParentName($item->subDir, $parent));
-            }
-        }
-
-        return $foundItems;
-    }
-
-    public function getItemsByDirectoryName(string $directoryName, string $directoryPath): array
+    public function getItemsByParentName(string $directoryName, string $directoryPath): array
     {
         $directories = $this->findByParentName($this->all, $directoryName);
         $files = $this->setUpItems($this->storage->files($directoryPath), self::FILE_TYPE, $directoryName);
@@ -67,7 +50,7 @@ class DiskManager
         return $directories->merge($files)->toArray();
     }
 
-    public function createItem(mixed $type, mixed $item, ?string $parentName): Item
+    public function createItem(mixed $type, mixed $item, string $parentName): Item
     {
         $size = $type === self::DIRECTORY_TYPE
             ? $this->getDirectorySize($item)
@@ -86,7 +69,7 @@ class DiskManager
             $type,
             $size,
             $this->formatSize($size),
-            $this->storage->url($item),
+            $this->getFileUrl($type, $item),
             $this->getFileExtension($type, $item),
             false,
             $this->getLastModified($item, $type),
@@ -94,7 +77,7 @@ class DiskManager
         );
     }
 
-    private function setUpItems(array $items, string $type, ?string $parentName = null, bool $searchingForSubDirs = false): Collection
+    private function setUpItems(array $items, string $type, string $parentName = "", bool $searchingForSubDirs = false): Collection
     {
         $allItems = collect();
 
@@ -126,7 +109,7 @@ class DiskManager
 
     private function getLastModified(string $item, string $type): string
     {
-        $lastModifiedTimestamp =  $this->storage->lastModified($item);
+        $lastModifiedTimestamp = ($type === self::FILE_TYPE) ? $this->storage->lastModified($item) : "";
         if ($type === self::DIRECTORY_TYPE) {
             $items = $this->storage->files($item);
             if (!empty($items))  {
@@ -139,9 +122,9 @@ class DiskManager
         return $lastModified->format(ConfigRepository::getModifiedFileTimeFormat());
     }
 
-    private function getFileExtension(string $type, string $item): string|null
+    private function getFileExtension(string $type, string $item): string
     {
-        return ($type === self::FILE_TYPE) ? pathinfo($item, PATHINFO_EXTENSION) : null;
+        return ($type === self::FILE_TYPE) ? pathinfo($item, PATHINFO_EXTENSION) : "";
     }
 
     private function searchRecursiveForDirectory(Collection $items, string $directoryName): Item|null
@@ -160,5 +143,28 @@ class DiskManager
         }
 
         return null;
+    }
+
+    private function findByParentName(Collection $items, string $parent): Collection
+    {
+        $foundItems = collect();
+
+        foreach ($items as $item) {
+            if ($item->parent === $parent) {
+                $foundItems->push($item);
+            }
+
+            if ($item->subDir->isNotEmpty()) {
+                $foundItems = $foundItems->merge($this->findByParentName($item->subDir, $parent));
+            }
+        }
+
+        return $foundItems;
+    }
+
+    private function getFileUrl(string $type, string $item): string
+    {
+
+        return ($type === self::FILE_TYPE) ? $this->storage->url($item) : "";
     }
 }

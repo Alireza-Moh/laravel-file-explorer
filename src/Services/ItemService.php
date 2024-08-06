@@ -11,6 +11,7 @@ use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use AlirezaMoh\LaravelFileExplorer\Supports\DiskManager;
 use AlirezaMoh\LaravelFileExplorer\Supports\Download;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -20,20 +21,18 @@ class ItemService
 {
     public function rename(string $diskName, array $validatedData): JsonResponse
     {
-        $result = Storage::disk($diskName)->move($validatedData['oldPath'], $validatedData['newPath']);
+        Storage::disk($diskName)->move($validatedData['oldPath'], $validatedData['newPath']);
         $additionalData = [];
-        if ($result) {
-            event(new ItemRenamed($diskName, $validatedData));
-            $diskManager = new DiskManager($diskName);
-            $additionalData['updatedItem'] = $diskManager->createItem(
-                $validatedData['type'],
-                $validatedData['newPath'],
-                $validatedData['parent']
-            );
-            return ApiResponse::success('Item renamed successfully', $additionalData);
-        }
 
-        return ApiResponse::error('Failed to rename item', $additionalData);
+        event(new ItemRenamed($diskName, $validatedData));
+        $diskManager = new DiskManager($diskName);
+        $additionalData['updatedItem'] = $diskManager->createItem(
+            $validatedData['type'],
+            $validatedData['newPath'],
+            $validatedData['parent']
+        );
+
+        return ApiResponse::success('Item renamed successfully', $additionalData);
     }
 
     public function delete(string $diskName, array $validatedData): JsonResponse
@@ -56,16 +55,19 @@ class ItemService
     public function upload(string $diskName, array $validatedData): JsonResponse
     {
         $storage = Storage::disk($diskName);
-        $dirName = $validatedData['destination'];
+        $dirName = $validatedData['destination'] ?? "";
         foreach ($validatedData['items'] as $item) {
             $fileName = $this->getFileNameToUpload($item);
 
-            $itemPath = $dirName . '/' . $fileName;
+            $itemPath = $dirName
+                ? ($dirName . '/' . $fileName)
+                : $fileName;
+
             if (!$storage->exists($itemPath) || (int)$validatedData['ifItemExist'] === 1) {
                 $result = $storage->putFileAs($dirName, $item, $fileName);
 
                 if ($result) {
-                    event(new ItemUploaded($diskName, $dirName, $fileName, $itemPath));
+                    event(new ItemUploaded($diskName, $itemPath));
                 }
             }
         }
@@ -73,26 +75,28 @@ class ItemService
         return ApiResponse::success(
             'Items uploaded successfully',
             [
-                'items' => (new DiskManager($diskName))->getItemsByDirectoryName($dirName, $dirName)
+                'items' => (new DiskManager($diskName))->getItemsByParentName($dirName, $dirName)
             ]
         );
     }
 
     public function create(string $diskName, array $validatedData): JsonResponse
     {
-        $destination = $validatedData['destination'];
-        $result = Storage::disk($diskName)->put($validatedData['path'], '');
-        $diskManager = new DiskManager($diskName);
-        $data =  [
-            'items' => $diskManager->getItemsByDirectoryName($destination, $destination),
-            'dirs' => $diskManager->directories
-        ];
+        try {
+            $destination = $validatedData['destination'] ?? "";
+            Storage::disk($diskName)->put($validatedData['path'], '');
+            $diskManager = new DiskManager($diskName);
+            $data =  [
+                'items' => $diskManager->getItemsByParentName($destination, $destination),
+                'dirs' => $diskManager->directories
+            ];
 
-        if ($result) {
-            event(new FileCreated($diskName, $destination, $validatedData['destination']));
+            event(new FileCreated($diskName, $validatedData['path']));
+
             return ApiResponse::success('File created successfully', $data);
+        } catch (Exception $exception) {
+            return ApiResponse::success('Failed to create file');
         }
-        return ApiResponse::success('Failed to create file', $data);
     }
 
     public function download(string $diskName, array $validatedData): BinaryFileResponse|StreamedResponse|JsonResponse
@@ -111,17 +115,19 @@ class ItemService
 
     public function updateItemContent(string $diskName, array $validatedData): JsonResponse
     {
-        $result = Storage::disk($diskName)->put($validatedData['path'], $validatedData['item']->get());
-
-        if ($result) {
-            return ApiResponse::success('Changes saved successfully');
+        try {
+            Storage::disk($diskName)->put($validatedData['path'], $validatedData['item']);
+            return ApiResponse::success('Content updated successfully');
+        } catch (Exception $exception) {
+            return ApiResponse::error('Failed to save changes');
         }
-        return ApiResponse::error('Failed to save changes');
     }
 
     private function getFileNameToUpload($file): string
     {
-        return ConfigRepository::hashFileWhenUploading() ? $file->hashName() : $file->getClientOriginalName();
+        return ConfigRepository::hashFileWhenUploading()
+            ? $file->hashName()
+            : $file->getClientOriginalName();
     }
 
     private function deleteDirectories(string $diskName, array $dirs): void
@@ -152,6 +158,6 @@ class ItemService
 
     private function fireDeleteEvent(string $diskName, array $item): void
     {
-        event(new ItemDeleted($diskName, $item['name'], $item['path']));
+        event(new ItemDeleted($diskName, $item['path']));
     }
 }

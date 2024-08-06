@@ -16,7 +16,7 @@ trait FormatAbleSize
         return $formattedSize;
     }
 
-    protected function getDirectorySize(string $directoryPath): float
+    private function getDirectorySize(string $directoryPath): float
     {
         $size = 0;
         foreach ($this->storage->allFiles($directoryPath) as $file) {
@@ -25,7 +25,7 @@ trait FormatAbleSize
         return $size;
     }
 
-    protected function getFileSize(string $filePath): float
+    private function getFileSize(string $filePath): float
     {
         return $this->storage->size($filePath);
     }

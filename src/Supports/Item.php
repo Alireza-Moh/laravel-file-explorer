@@ -8,7 +8,7 @@ class Item
 {
     public string $diskName;
 
-    public ?string $parent;
+    public string $parent;
 
     public string $name;
 
@@ -23,7 +23,7 @@ class Item
 
     public string $url;
 
-    public ?string $extension;
+    public string $extension;
 
     public bool $isChecked;
 
@@ -31,7 +31,7 @@ class Item
 
     public Collection $subDir;
 
-    public function __construct(string $diskName, ?string $parent, string $name, string $path, string $type, float $size, string $formattedSize, string $url, string|null $extension, bool $isChecked, string $lastModified, Collection $subDir)
+    public function __construct(string $diskName, string $parent, string $name, string $path, string $type, float $size, string $formattedSize, string $url, string $extension, bool $isChecked, string $lastModified, Collection $subDir)
     {
         $this->diskName = $diskName;
         $this->parent = $parent;

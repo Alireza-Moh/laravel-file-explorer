@@ -203,8 +203,8 @@ test('should create a file', function () {
                             "name" => "ios",
                             "path" => "ios",
                             "type" => "dir",
-                            "url" => "/storage/ios",
-                            "extension" => null,
+                            "url" => "",
+                            "extension" => '',
                             "isChecked" => false,
                             "subDir" => []
                         ]
@@ -237,7 +237,7 @@ test('should set new item content', function () {
         'tests',
         [
             'path' => $item[0],
-            'item' => UploadedFile::fake()->createWithContent($item[0], $newtItemContent),
+            'item' => UploadedFile::fake()->createWithContent($item[0], $newtItemContent)->getContent(),
         ]
     );
 
@@ -249,6 +249,6 @@ test('should set new item content', function () {
         ->and($result->getData(true))->toBeArray()
         ->and($result->getData(true))->toMatchArray([
             'status' => 'success',
-            'message' => 'Changes saved successfully'
+            'message' => 'Content updated successfully'
         ]);
 });

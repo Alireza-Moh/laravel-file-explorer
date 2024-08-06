@@ -45,7 +45,7 @@ test('should get items by directory name', function () {
     Storage::disk('local')->put('exampleDir/exampleFile.txt', 'content');
 
     $diskManager = new DiskManager('local');
-    $items = $diskManager->getItemsByDirectoryName('exampleDir', 'exampleDir');
+    $items = $diskManager->getItemsByParentName('exampleDir', 'exampleDir');
 
     expect($items)->toHaveCount(1)
         ->and($items[0]->name)->toBe('exampleFile.txt');

@@ -8,7 +8,7 @@ test('should throw an error when disk does not exist', function () {
     $response = $this->postJson(
         route(
             'fx.file-create',
-            ['diskName' => 'aa', 'dirName' => 'ios']
+            ['diskName' => 'aa']
         ),
         [
             'destination' => 'ios',
@@ -32,7 +32,7 @@ test('should create file and return success response with all file inside the di
     $response = $this->postJson(
         route(
             'fx.file-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'destination' => 'ios',
@@ -68,7 +68,7 @@ test('should throw an error when path is missing in the form data for creating a
     $response = $this->postJson(
         route(
             'fx.file-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'destination' => 'ios',
@@ -396,8 +396,7 @@ test('should get item content', function () {
         route(
             'fx.get-item-content',
             [
-                'diskName' => 'tests',
-                'itemName' => 'ios'
+                'diskName' => 'tests'
             ]
         )
         . '?path=' . urlencode($item[0])
@@ -421,8 +420,7 @@ test('should throw error when item path is missing', function () {
         route(
             'fx.get-item-content',
             [
-                'diskName' => 'tests',
-                'itemName' => 'ios'
+                'diskName' => 'tests'
             ]
         )
     );
@@ -437,13 +435,14 @@ test('should throw error when item path is missing', function () {
 
 test('should update item content', function () {
     $item = createFakeFiles();
+
     $newtItemContent = 'new content';
     $response = $this->postJson(
         route(
             'fx.update-item-content',
             [
                 'diskName' => 'tests',
-                'itemName', $item[0]
+                'itemName', 'fake_file_0.txt'
             ]
         ),
         [
@@ -456,7 +455,7 @@ test('should update item content', function () {
     expect($itemContent)->toBe($newtItemContent);
     $response->assertJson(fn (AssertableJson $json) =>
         $json->where('status', 'success')
-            ->where('message', 'Changes saved successfully')
+            ->where('message', 'Content updated successfully')
             ->etc()
     );
 });

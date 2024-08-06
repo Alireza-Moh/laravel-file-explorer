@@ -27,7 +27,7 @@ test('should load file explorer initial data', function () {
             )
             ->has('result.dirsForSelectedDisk.0', fn (AssertableJson $json) =>
             $json->where('diskName', 'tests')
-                ->where('parent', null)
+                ->where('parent', '')
                 ->where('name', 'ios')
                 ->where('type', 'dir')
                 ->has('subDir', 2)

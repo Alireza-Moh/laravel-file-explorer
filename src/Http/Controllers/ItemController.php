@@ -37,7 +37,7 @@ class ItemController extends Controller
         return $this->itemService->delete($diskName, $request->validated());
     }
 
-    public function createFile(string $diskName, string $dirName, CreateFileRequest $request): JsonResponse
+    public function createFile(string $diskName, CreateFileRequest $request): JsonResponse
     {
         return $this->itemService->create($diskName, $request->validated());
     }
@@ -52,7 +52,7 @@ class ItemController extends Controller
         return $this->itemService->download($diskName, $request->validated());
     }
 
-    public function getContent(string $diskName, string $itemName, PathRequest $request): JsonResponse
+    public function getContent(string $diskName, PathRequest $request): JsonResponse
     {
         $data = [
             'content' => $this->itemService->getItemContent($diskName, $request->validated()),
@@ -69,8 +69,14 @@ class ItemController extends Controller
         );
     }
 
-    public function updateContent(string $diskName, string $itemName, UpdateItemContentRequest $request): JsonResponse
+    public function updateContent(string $diskName, UpdateItemContentRequest $request): JsonResponse
     {
-        return $this->itemService->updateItemContent($diskName, $request->validated());
+        return $this->itemService->updateItemContent(
+            $diskName,
+            [
+                'path' => $request->validated()['path'],
+                'item' => $request->file('item')->getContent(),
+            ]
+        );
     }
 }

@@ -47,7 +47,7 @@ class UploadItemsRequest extends BaseRequest
             'ifItemExist' => ['required', 'numeric', 'in:0,1'],
             'items' => ['required', 'array'],
             'items.*' => ['file'],
-            'destination' => ['required', 'string'],
+            'destination' => ['nullable', 'string'],
         ];
 
         if ($allowedFileExtensions !== null) {

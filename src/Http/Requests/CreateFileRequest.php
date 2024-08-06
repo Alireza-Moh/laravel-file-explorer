@@ -12,7 +12,7 @@ class CreateFileRequest extends BaseRequest
     {
         return [
             'path' => ['required', 'string', new FileExtension],
-            'destination' => ['required', 'string']
+            'destination' => ['nullable', 'string']
         ];
     }
 
@@ -21,7 +21,6 @@ class CreateFileRequest extends BaseRequest
         return [
             'path.required' => 'File path is required',
             'path.string' => 'File path must be a string',
-            'destination.required' => 'Destination directory is required',
             'destination.string' => 'Destination directory must be a string'
         ];
     }

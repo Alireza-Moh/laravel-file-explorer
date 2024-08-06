@@ -34,8 +34,8 @@ test('should create a directory', function () {
                             "type" => "dir",
                             "size" => 0,
                             "formattedSize" => "-",
-                            "url" => "/storage/ios/zjztj",
-                            "extension" => null,
+                            "url" => "",
+                            "extension" => "",
                             "isChecked" => false,
                             "subDir" => []
                       ]
@@ -49,8 +49,8 @@ test('should create a directory', function () {
                             'type' => 'dir',
                             'size' => 0,
                             'formattedSize' => '-',
-                            'url' => '/storage/ios',
-                            'extension' => null,
+                            'url' => '',
+                            'extension' => "",
                             'isChecked' => false,
                             'subDir' => [
                                [
@@ -61,8 +61,8 @@ test('should create a directory', function () {
                                    "type" => "dir",
                                    "size" => 0,
                                    "formattedSize" => "-",
-                                   "url" => "/storage/ios/zjztj",
-                                   "extension" => null,
+                                   "url" => "",
+                                   "extension" => "",
                                    "isChecked" => false,
                                    "subDir" => []
                                ]

@@ -30,9 +30,12 @@ class ExplorerInitDataController extends Controller
             ? $this->diskManager->findDirectoryByName($defaultDir)?->path
             : '';
 
-        $selectedDirItems = $defaultDir
-            ? $this->diskManager->getItemsByDirectoryName($defaultDir, $defaultDir)
-            : [];
+        $selectedDirItems = $this->diskManager->diskFiles->isNotEmpty()
+            ? $this->diskManager->diskFiles
+            : ($defaultDir
+                ? $this->diskManager->getItemsByParentName($defaultDir, $defaultDir)
+                : []
+            );
 
         return [
             'disks' => ConfigRepository::getDisks(),

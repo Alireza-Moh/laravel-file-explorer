@@ -7,7 +7,7 @@ test('should throw an error when disk does not exist', function () {
     $response = $this->postJson(
         route(
             'fx.dir-create',
-            ['diskName' => 'aa', 'dirName' => 'ios']
+            ['diskName' => 'aa']
         ),
         [
             'destination' => 'ios',
@@ -31,7 +31,7 @@ test('should create directory and return success response with all file inside t
     $response = $this->postJson(
         route(
             'fx.dir-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'destination' => 'ios',
@@ -59,7 +59,7 @@ test('should create directory and return success response with all file inside t
         ->has('result.dirs')
         ->has('result.dirs.0', fn(AssertableJson $json) =>
             $json->where('diskName', 'tests')
-                ->where('parent', null)
+                ->where('parent', '')
                 ->where('name', 'ios')
                 ->where('path', 'ios')
                 ->where('type', 'dir')
@@ -72,7 +72,7 @@ test('should create directory and return success response with all file inside t
 test('should throw an error when form data is missing', function () {
     $response = $this->postJson(
         route('fx.dir-create',
-            ['diskName' => 'tests', 'dirName' => 'ios']
+            ['diskName' => 'tests']
         ),
         [
             'type' => 'dir',
@@ -118,8 +118,8 @@ test('should get all items from a specified directory', function () {
                 ->where('name', 'fake_dir_0')
                 ->where('path', 'ios/fake_dir_0')
                 ->where('type', 'dir')
-                ->where('extension', null)
-                ->where('url', '/storage/ios/fake_dir_0')
+                ->where('extension', '')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.1', fn(AssertableJson $json) =>

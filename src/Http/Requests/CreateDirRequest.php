@@ -11,7 +11,7 @@ class CreateDirRequest extends BaseRequest
     {
         return [
             'path' => ['required', 'string'],
-            'destination' => ['required', 'string']
+            'destination' => ['nullable', 'string']
         ];
     }
 
@@ -20,7 +20,6 @@ class CreateDirRequest extends BaseRequest
         return [
             'path.required' => 'Directory path is required',
             'path.string' => 'Directory path must be a string',
-            'destination.required' => 'Destination directory is required',
             'destination.string' => 'Destination directory must be a string'
         ];
     }
