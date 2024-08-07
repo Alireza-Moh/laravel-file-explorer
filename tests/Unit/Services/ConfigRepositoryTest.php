@@ -1,6 +1,6 @@
 <?php
 
-use AlirezaMoh\LaravelFileExplorer\Services\ConfigRepository;
+use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Illuminate\Support\Facades\Config;
 
 test('returns the default disk on loading', function () {
@@ -19,7 +19,7 @@ test('returns the default directory on loading from the default disk', function 
 });
 
 test('returns the list of configured disks', function () {
-    Config::set("laravel-file-explorer.disks", ["mobile", "tests"]);
+    Config::set('laravel-file-explorer.disks', ['mobile', 'tests']);
 
     $result = ConfigRepository::getDisks();
 
@@ -27,7 +27,7 @@ test('returns the list of configured disks', function () {
 });
 
 test('returns the allowed file extensions', function () {
-    Config::set("laravel-file-explorer.allowed_file_extensions", ['jpg', 'png']);
+    Config::set('laravel-file-explorer.allowed_file_extensions', ['jpg', 'png']);
 
     $result = ConfigRepository::getAllowedFileExtensions();
 
@@ -35,7 +35,7 @@ test('returns the allowed file extensions', function () {
 });
 
 test('returns the maximum allowed file size', function () {
-    Config::set("laravel-file-explorer.max_allowed_file_size", 1024);
+    Config::set('laravel-file-explorer.max_allowed_file_size', 1024);
 
     $result = ConfigRepository::getMaxAllowedFileSize();
 
@@ -43,7 +43,7 @@ test('returns the maximum allowed file size', function () {
 });
 
 test('returns the configured middlewares', function () {
-    Config::set("laravel-file-explorer.middlewares", ['auth', 'admin']);
+    Config::set('laravel-file-explorer.middlewares', ['auth', 'admin']);
 
     $result = ConfigRepository::getMiddlewares();
 
@@ -51,7 +51,7 @@ test('returns the configured middlewares', function () {
 });
 
 test('returns the route prefix', function () {
-    Config::set("laravel-file-explorer.route_prefix", "file-explorer");
+    Config::set('laravel-file-explorer.route_prefix', 'file-explorer');
 
     $result = ConfigRepository::getRoutePrefix();
 
@@ -59,9 +59,9 @@ test('returns the route prefix', function () {
 });
 
 test('returns whether to hash file names when uploading', function () {
-    Config::set("laravel-file-explorer.hash_file_name_when_uploading", true);
+    Config::set('laravel-file-explorer.hash_file_name_when_uploading', true);
 
-    $result = ConfigRepository::getHashFileWhenUploading();
+    $result = ConfigRepository::hashFileWhenUploading();
 
     expect($result)->toBeTrue();
 });

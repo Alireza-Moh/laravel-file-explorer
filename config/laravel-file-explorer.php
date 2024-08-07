@@ -1,8 +1,6 @@
 <?php
 
 return [
-
-
     /*
     |--------------------------------------------------------------------------
     | List of the disks
@@ -48,9 +46,9 @@ return [
     | You may specify the allowed file extensions for uploads.
     | Set to null for no restrictions.
     |
-    | Type: string | null
+    | Type: array
     */
-    "allowed_file_extensions" => null,
+    "allowed_file_extensions" => ['json', 'txt'],
 
     /*
     |--------------------------------------------------------------------------
@@ -61,6 +59,7 @@ return [
     | Set to null for no restrictions.
     |
     | Type: int | null
+    | null => no restrictions
     */
     "max_allowed_file_size" => null,
 
@@ -72,7 +71,7 @@ return [
     | You may specify middlewares applied to the file explorer
     | for example, ['web', 'auth'].
     |
-    | Type: array | null
+    | Type: array
     */
     "middlewares" => ["web"],
 
@@ -101,12 +100,45 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Timezone
+    | Filename hashing
     |--------------------------------------------------------------------------
     |
-    | You may want to set your timezone for the file timestamp
+    | You may want to use a specific time format for showing the last_modified
     |
     | Type: string
     */
-    "timezone" => "Europe/Vienna",
+    "modified_file_time_format" => 'Y-m-d H:i:s',
+
+    /*
+    |--------------------------------------------------------------------------
+    | User model
+    |--------------------------------------------------------------------------
+    |
+    | Add the user model
+    |
+    | Type: class
+    */
+    "user_model" => App\Models\User::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Permissions
+    |--------------------------------------------------------------------------
+    |
+    | You may want to add more permissions
+    |
+    | Type: bool
+    */
+    "acl_enabled" => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Permissions
+    |--------------------------------------------------------------------------
+    |
+    | DO NOT CHANGE
+    |
+    | Type: array
+    */
+    "permissions" => ['create', 'read', 'write', 'delete', 'update', 'upload', 'download'],
 ];
