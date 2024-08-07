@@ -13,8 +13,8 @@ use AlirezaMoh\LaravelFileExplorer\Services\ItemService;
 use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -76,6 +76,16 @@ class ItemController extends Controller
             [
                 'path' => $request->validated()['path'],
                 'item' => $request->file('item')->getContent(),
+            ]
+        );
+    }
+
+    public function getUrl(string $diskName, PathRequest $request)
+    {
+        return ApiResponse::success(
+            '',
+            [
+                'url' => Storage::disk($diskName)->url($request->validated()['path'])
             ]
         );
     }

@@ -21,6 +21,10 @@ Route::middleware("validateDisk")->group(function () {
     Route::get('disks/{diskName}/dirs/{dirName}', [DirController::class, 'loadDirectoryItems'])
         ->name("fx.load-dir-items");
 
+    Route::get('disks/{diskName}/items/url', [ItemController::class, 'getUrl'])
+        ->name("fx.item-url")
+        ->middleware('checkPermission:read');
+
     Route::post('disks/{diskName}/new-file', [ItemController::class, 'createFile'])
         ->name("fx.file-create")
         ->middleware('checkPermission:create');

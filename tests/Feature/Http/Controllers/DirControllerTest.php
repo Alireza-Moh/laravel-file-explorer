@@ -128,7 +128,7 @@ test('should get all items from a specified directory', function () {
                 ->where('path', 'ios/fake_file_0.txt')
                 ->where('type', 'file')
                 ->where('extension', 'txt')
-                ->where('url', '/storage/ios/fake_file_0.txt')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.2', fn(AssertableJson $json) =>
@@ -137,7 +137,7 @@ test('should get all items from a specified directory', function () {
                 ->where('path', 'ios/fake_file_1.txt')
                 ->where('type', 'file')
                 ->where('extension', 'txt')
-                ->where('url', '/storage/ios/fake_file_1.txt')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.3', fn(AssertableJson $json) =>
@@ -146,7 +146,7 @@ test('should get all items from a specified directory', function () {
                 ->where('path', 'ios/fake_file_2.txt')
                 ->where('type', 'file')
                 ->where('extension', 'txt')
-                ->where('url', '/storage/ios/fake_file_2.txt')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.4', fn(AssertableJson $json) =>
@@ -155,7 +155,7 @@ test('should get all items from a specified directory', function () {
                 ->where('path', 'ios/fake_file_3.txt')
                 ->where('type', 'file')
                 ->where('extension', 'txt')
-                ->where('url', '/storage/ios/fake_file_3.txt')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.5', fn(AssertableJson $json) =>
@@ -164,7 +164,7 @@ test('should get all items from a specified directory', function () {
                 ->where('path', 'ios/fake_file_4.txt')
                 ->where('type', 'file')
                 ->where('extension', 'txt')
-                ->where('url', '/storage/ios/fake_file_4.txt')
+                ->where('url', '')
                 ->etc()
             )
             ->where('result.selectedDirPath', 'ios')

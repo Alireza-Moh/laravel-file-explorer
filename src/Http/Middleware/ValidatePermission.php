@@ -2,7 +2,6 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Http\Middleware;
 
-use AlirezaMoh\LaravelFileExplorer\Exceptions\NullUserException;
 use AlirezaMoh\LaravelFileExplorer\Supports\ApiResponse;
 use AlirezaMoh\LaravelFileExplorer\Supports\ConfigRepository;
 use Closure;
@@ -11,16 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ValidatePermission
 {
-    /**
-     * @throws NullUserException
-     */
     public function handle(Request $request, Closure $next, string $requiredPermission)
     {
         if (ConfigRepository::isACLEnabled()) {
             $user = $request->user();
 
             if (is_null($user)) {
-                throw new NullUserException();
+                return ApiResponse::error('Could not validate user permission');
             }
             return ($user && $user->hasPermission($requiredPermission))
                 ? $next($request)

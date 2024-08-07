@@ -1,6 +1,6 @@
 <?php
 
-namespace AlirezaMoh\LaravelFileExplorer\Supports;
+namespace AlirezaMoh\LaravelFileExplorer\Supports\Traits;
 
 trait FormatAbleSize
 {

@@ -2,6 +2,7 @@
 
 namespace AlirezaMoh\LaravelFileExplorer\Supports;
 
+use AlirezaMoh\LaravelFileExplorer\Supports\Traits\FormatAbleSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -69,7 +70,7 @@ class DiskManager
             $type,
             $size,
             $this->formatSize($size),
-            $this->getFileUrl($type, $item),
+            '',
             $this->getFileExtension($type, $item),
             false,
             $this->getLastModified($item, $type),
@@ -160,11 +161,5 @@ class DiskManager
         }
 
         return $foundItems;
-    }
-
-    private function getFileUrl(string $type, string $item): string
-    {
-
-        return ($type === self::FILE_TYPE) ? $this->storage->url($item) : "";
     }
 }

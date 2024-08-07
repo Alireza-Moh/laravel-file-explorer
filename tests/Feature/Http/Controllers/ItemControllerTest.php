@@ -58,7 +58,7 @@ test('should create file and return success response with all file inside the di
                     ->where('type', 'file')
                     ->where('size', 0)
                     ->where('extension', 'txt')
-                    ->where('url', '/storage/ios/config.txt')
+                    ->where('url', '')
                     ->etc()
             )
     );
@@ -121,7 +121,7 @@ test('should upload item or items and return success response with all items ins
                 ->where('path', 'ios/photo1.jpg')
                 ->where('type', 'file')
                 ->where('extension', 'jpg')
-                ->where('url', '/storage/ios/photo1.jpg')
+                ->where('url', '')
                 ->etc()
             )
             ->has('result.items.1', fn(AssertableJson $json) =>
@@ -130,7 +130,7 @@ test('should upload item or items and return success response with all items ins
                 ->where('path', 'ios/photo2.jpg')
                 ->where('type', 'file')
                 ->where('extension', 'jpg')
-                ->where('url', '/storage/ios/photo2.jpg')
+                ->where('url', '')
                 ->etc()
             )
     );

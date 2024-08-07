@@ -115,7 +115,7 @@ test('should upload multiple items', function () {
                             'name' => 'photo1.jpg',
                             'path' => 'ios/photo1.jpg',
                             'type' => 'file',
-                            'url' => '/storage/ios/photo1.jpg',
+                            'url' => '',
                             'extension' => 'jpg',
                             'isChecked' => false,
                             'subDir' => []
@@ -127,7 +127,7 @@ test('should upload multiple items', function () {
                             'path' => 'ios/photo2.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
-                            'url' => '/storage/ios/photo2.jpg',
+                            'url' => '',
                             'isChecked' => false,
                             'subDir' => []
                         ],
@@ -138,7 +138,7 @@ test('should upload multiple items', function () {
                             'path' => 'ios/photo3.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
-                            'url' => '/storage/ios/photo3.jpg',
+                            'url' => '',
                             'isChecked' => false,
                             'subDir' => []
                         ],
@@ -149,7 +149,7 @@ test('should upload multiple items', function () {
                             'path' => 'ios/photo4.jpg',
                             'type' => 'file',
                             'extension' => 'jpg',
-                            'url' => '/storage/ios/photo4.jpg',
+                            'url' => '',
                             'isChecked' => false,
                             'subDir' => []
                         ]
@@ -191,7 +191,7 @@ test('should create a file', function () {
                             'path' => 'ios/zjztj.txt',
                             'type' => 'file',
                             'extension' => 'txt',
-                            'url' => '/storage/ios/zjztj.txt',
+                            'url' => '',
                             'isChecked' => false,
                             'subDir' => []
                         ]

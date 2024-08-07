@@ -3,6 +3,22 @@
 use AlirezaMoh\LaravelFileExplorer\Exceptions\NullUserException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Testing\Fluent\AssertableJson;
+
+function assertResponse($response): void
+{
+    $response->assertJson(fn (AssertableJson $json) =>
+        $json->hasAll([
+            'status',
+            'message',
+            'result'
+        ])
+        ->where('status', 'failed')
+        ->where('message', 'Could not validate user permission')
+        ->where('result', [])
+    );
+}
+
 
 beforeEach(function () {
     Exceptions::fake();
@@ -14,7 +30,7 @@ beforeEach(function () {
 test('should throw error when user does not have the __read__ permission to get item content', function () {
     $item = createFakeFiles();
 
-    $this->getJson(
+    $response = $this->getJson(
         route(
             'fx.get-item-content',
             [
@@ -24,11 +40,11 @@ test('should throw error when user does not have the __read__ permission to get 
         . '?path=' . urlencode($item[0])
     );
 
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __create__ permission to create a file', function () {
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.file-create',
             ['diskName' => 'tests']
@@ -40,11 +56,11 @@ test('should throw error when user does not have the __create__ permission to cr
     );
 
     Storage::disk('tests')->assertMissing('ios/config.txt');
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __create__ permission to create a dir', function () {
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.dir-create',
             ['diskName' => 'tests']
@@ -56,11 +72,11 @@ test('should throw error when user does not have the __create__ permission to cr
     );
 
     Storage::disk('tests')->assertMissing('ios/configDir');
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __upload__ permission to upload files', function () {
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.items-upload',
             ['diskName' => 'tests']
@@ -76,13 +92,13 @@ test('should throw error when user does not have the __upload__ permission to up
     );
 
     Storage::disk('tests')->assertMissing(['ios/photo1.jpg', 'ios/photo2.jpg']);
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __download__ permission to download files', function () {
     $images = createFakeImages(2);
 
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.items-download',
             ['diskName' => 'tests']
@@ -103,12 +119,12 @@ test('should throw error when user does not have the __download__ permission to 
         ]
     );
 
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __update__ permission to file item', function () {
     $images = createFakeImages();
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.item-rename',
             [
@@ -126,13 +142,13 @@ test('should throw error when user does not have the __update__ permission to fi
     );
 
     Storage::disk('tests')->assertMissing('ios/newName.png');
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __write__ permission to write into a file', function () {
     $item = createFakeFiles();
     $newtItemContent = 'new content';
-    $this->postJson(
+    $response = $this->postJson(
         route(
             'fx.update-item-content',
             [
@@ -146,13 +162,13 @@ test('should throw error when user does not have the __write__ permission to wri
         ]
     );
 
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
 
 test('should throw error when user does not have the __delete__ permission to delete an item', function () {
     $images = createFakeImages();
 
-    $this->post(
+    $response = $this->post(
         route(
             'fx.items-delete',
             ['diskName' => 'tests']
@@ -169,5 +185,5 @@ test('should throw error when user does not have the __delete__ permission to de
     );
 
     Storage::disk('tests')->assertExists('ios/' . $images[0]);
-    Exceptions::assertReported(NullUserException::class);
+    assertResponse($response);
 });
