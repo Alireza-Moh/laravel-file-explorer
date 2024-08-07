@@ -60,7 +60,7 @@ Use the component inside your vue component
 The Laravel File Explorer with ACL (Access Control List) lets you control what each user can do with files.
 You can give permissions to each user like creating, reading, updating, deleting, uploading, and downloading files.
 
-Setup: [ACL DOC](docs/CONFIGURATION.md)
+Setup: [ACL DOC](docs/ACL.md)
 
 
 ## Using Dropbox for Laravel Storage
