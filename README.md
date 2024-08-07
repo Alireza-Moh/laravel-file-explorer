@@ -7,10 +7,6 @@
 
 Laravel File Explorer is a package for easy file management in Laravel apps, offering features like browsing, uploading, and deleting files.
 
-
-
-
-
 ## Features
 
 ![](docs/video.gif)
@@ -65,3 +61,16 @@ The Laravel File Explorer with ACL (Access Control List) lets you control what e
 You can give permissions to each user like creating, reading, updating, deleting, uploading, and downloading files.
 
 Setup: [ACL DOC](docs/CONFIGURATION.md)
+
+
+## Using Dropbox for Laravel Storage
+
+The Laravel Flysystem integration provides simple drivers for working with local filesystems, SFTP, and Amazon S3
+
+Laravel Documentation: [Doc](https://laravel.com/docs/11.x/filesystem#configuration)
+
+
+- For using Dropbox install the `spatie/flysystem-dropbox` via composer
+- For using AWS S3 install the `league/flysystem-aws-s3-v3` via composer
+- For using FTP install the `league/flysystem-ftp` via composer
+- For using SFTP install the `league/flysystem-sftp-v3` via composer
