@@ -1,6 +1,5 @@
 <?php
 
-use AlirezaMoh\LaravelFileExplorer\Exceptions\NullUserException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Testing\Fluent\AssertableJson;
