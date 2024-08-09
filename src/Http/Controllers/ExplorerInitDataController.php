@@ -43,7 +43,8 @@ class ExplorerInitDataController extends Controller
             'selectedDisk' => ConfigRepository::getDefaultDiskOnLoading(),
             'selectedDir' => ConfigRepository::getDefaultDirectoryOnLoading(),
             'selectedDirPath' => $selectedDirPath,
-            'selectedDirItems' => $selectedDirItems
+            'selectedDirItems' => $selectedDirItems,
+            'isAclEnabled' => ConfigRepository::isACLEnabled()
         ];
     }
 }

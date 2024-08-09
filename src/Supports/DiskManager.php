@@ -4,8 +4,10 @@ namespace AlirezaMoh\LaravelFileExplorer\Supports;
 
 use AlirezaMoh\LaravelFileExplorer\Supports\Traits\FormatAbleSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DiskManager
@@ -70,7 +72,7 @@ class DiskManager
             $type,
             $size,
             $this->formatSize($size),
-            '',
+            $this->getFileUrl($type, $item),
             $this->getFileExtension($type, $item),
             false,
             $this->getLastModified($item, $type),
@@ -161,5 +163,18 @@ class DiskManager
         }
 
         return $foundItems;
+    }
+
+    private function getFileUrl(string $type, string $item): string
+    {
+        if ($type !== self::FILE_TYPE) {
+            return "";
+        }
+
+        if (!ConfigRepository::isACLEnabled()) {
+            return "";
+        }
+
+        return Auth::user()->hasPermission('read') ? $this->storage->url($item) : "";
     }
 }
